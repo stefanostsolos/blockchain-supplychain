@@ -1,4 +1,4 @@
-# blockchain-supplychain
+# Blockchain Supplychain, NTUA ECE Diploma
 
 ## Stakeholders
 1) Producer
