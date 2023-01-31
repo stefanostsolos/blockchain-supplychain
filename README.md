@@ -8,7 +8,7 @@
 5) Consumer
 
 ## Architecture and Network Details
-
+![Architecture of the blockchain system](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/architecture.png?raw=true)
 - Five Orgs (Producer/Manufacturer/Distributor/Retailer/Consumer)
 - Five Peers (Producer/Manufacturer/Distributor/Retailer/Consumer)
 - One Orderer
