@@ -20,7 +20,7 @@
 ### Prerequisities
 > cURL
 
-Install the latest version of cURL if it is not already installed.
+Install the latest version of cURL if it is not already installed:
 ```sudo apt-get install curl```
 
 > Docker
