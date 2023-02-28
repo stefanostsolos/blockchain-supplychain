@@ -1,0 +1,84 @@
+OrdererOrgs:
+  # ---------------------------------------------------------------------------
+  # Orderer
+  # ---------------------------------------------------------------------------
+  - Name: Orderer
+    Domain: example.com
+    EnableNodeOUs: true
+    
+    Specs:
+      - Hostname: orderer
+    CA:
+      OrganizationalUnit: admin
+PeerOrgs:
+  # ---------------------------------------------------------------------------
+  # Org1 : Manufacturer
+  # ---------------------------------------------------------------------------
+  - Name: Producer
+    Domain: producer.example.com
+
+    #CA:
+    #   Hostname: ca # implicitly ca.producer.example.com
+
+    EnableNodeOUs: true
+
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  # ---------------------------------------------------------------------------
+  # Org2: Manufacturer
+  # ---------------------------------------------------------------------------
+  - Name: Manufacturer
+    Domain: manufacturer.example.com
+
+    #CA:
+    #   Hostname: ca # implicitly ca.manufacturer.example.com
+
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+  # ---------------------------------------------------------------------------
+  # Org3: Distributor
+  # ---------------------------------------------------------------------------
+  - Name: Distributor
+    Domain: distributor.example.com
+
+    #CA:
+    #   Hostname: ca # implicitly ca.distributor.example.com
+
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+  # ---------------------------------------------------------------------------
+  # Org4: Retailer
+  # ---------------------------------------------------------------------------
+  - Name: Retailer
+    Domain: retailer.example.com
+
+    #CA:
+    #   Hostname: ca # implicitly ca.retailer.example.com
+
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  # ---------------------------------------------------------------------------
+  # Org5: Consumer
+  # ---------------------------------------------------------------------------
+  - Name: Consumer
+    Domain: consumer.example.com
+
+    #CA:
+    #   Hostname: ca # implicitly ca.consumer.example.com
+
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
