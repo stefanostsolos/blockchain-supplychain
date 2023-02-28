@@ -25,16 +25,16 @@ Install the latest version of cURL if it is not already installed.
 
 > Docker
 
-Install the latest version of Docker if it is not already installed.
+Install the latest version of Docker if it is not already installed:
 ```sudo apt-get -y install docker-compose```
 
-Make sure the Docker daemon is running.
+Make sure the Docker daemon is running:
 ```sudo systemctl start docker```
 
-Optional: If you want the Docker daemon to start when the system starts, use the following:
+If you want the Docker daemon to start when the system starts, use the following:
 ```sudo systemctl enable docker```
 
-Add your user to the Docker group.
+Add your user to the Docker group:
 ```sudo usermod -a -G docker <username>```
 
 > Fabric
