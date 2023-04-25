@@ -8,10 +8,8 @@ echo ""
 # Shut down the Docker containers for the system tests.
 docker-compose -f artifacts/docker-compose.yaml down -v
 rm -fr artifacts/network
-#docker rm $(docker ps -aq)
-#docker kill $(docker ps -aq)
-#docker container stop $(docker container ls -aq)
-docker container prune -f
+docker rm $(docker ps -aq)
+docker kill $(docker ps -aq)
 # remove the local store
 echo ""
 # Your system is now clean
