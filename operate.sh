@@ -7,10 +7,7 @@
 
 export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}/artifacts
-export CHANNEL_NAME=supplychainchannel
 export VERBOSE=false
-export DOCKER_CLIENT_TIMEOUT=120
-export COMPOSE_HTTP_TIMEOUT=120
 
 # Print the usage message
 function printHelp() {
@@ -108,13 +105,12 @@ function networkUp() {
         generateCerts
         generateChannelArtifacts
     fi
-    
+
     export PRODUCER_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/producer.example.com/ca && ls *_sk)
     export MANUFACTURER_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/manufacturer.example.com/ca && ls *_sk)
     export DISTRIBUTOR_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/distributor.example.com/ca && ls *_sk)
     export RETAILER_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/retailer.example.com/ca && ls *_sk)
     export CONSUMER_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/consumer.example.com/ca && ls *_sk)
-
     docker-compose -f $COMPOSE_FILE up -d 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR !!!! Unable to start network"
@@ -184,7 +180,7 @@ function generateChannelArtifacts() {
     echo "CONSENSUS_TYPE="$CONSENSUS_TYPE
     set -x
     if [ $CONSENSUS_TYPE == "solo" ]; then
-    configtxgen -profile TraceOrdererGenesis -outputBlock ./artifacts/network/genesis.block -channelID supplychainchanneldeploy
+    configtxgen -profile TraceOrdererGenesis -outputBlock ./artifacts/network/genesis.block
     else
         set +x
         echo "unrecognized CONSESUS_TYPE='$CONSENSUS_TYPE'. exiting"
@@ -201,7 +197,7 @@ function generateChannelArtifacts() {
     echo "#####  Generating channel configuration transaction: channel.tx  #####"
     echo "######################################################################"
     set -x
-    configtxgen -profile TraceOrgsChannel -outputCreateChannelTx ./artifacts/network/channel.tx -channelID supplychainchannel
+    configtxgen -profile TraceOrgsChannel -outputCreateChannelTx ./artifacts/network/channel.tx -channelID $CHANNEL_NAME
     res=$?
     set +x
     if [ $res -ne 0 ]; then
@@ -278,7 +274,7 @@ function generateChannelArtifacts() {
 
 # Obtain the OS and Architecture string that will be used to select the correct
 OS_ARCH=$(echo "$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
-SYS_CHANNEL="supplychain-sys-channel"
+SYS_CHANNEL="supplychain_hlfn-sys-channel"
 CHANNEL_NAME="supplychainchannel"
 CC_NAME="dummycc6"
 COMPOSE_FILE=./artifacts/docker-compose.yaml
