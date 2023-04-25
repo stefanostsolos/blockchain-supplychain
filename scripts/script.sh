@@ -12,7 +12,7 @@ echo "\___ \    | |     / _ \   | |_) |   | |  "
 echo " ___) |   | |    / ___ \  |  _ <    | |  "
 echo "|____/    |_|   /_/   \_\ |_| \_\   |_|  "
 echo
-echo "supplychain end-to-end test"
+echo "supplychain_hlfn end-to-end test"
 echo
 CHANNEL_NAME="supplychainchannel"
 LANGUAGE="go"
@@ -21,14 +21,14 @@ COUNTER=1
 MAX_RETRY=5
 
 CC_NAME="dummycc6"
-CC_SRC_PATH="github.com/chaincode/"
+CC_SRC_PATH="github.com/chaincode"
 echo "Channel name : "$CHANNEL_NAME
 
 # import utils
 . scripts/utils.sh
 
 createChannel() {
-    setGlobals 0 2
+    setGlobals 0 1
 
     if [ -z $CORE_PEER_TLS_ENABLED -o $CORE_PEER_TLS_ENABLED = "false" ]; then
         set -x
@@ -69,28 +69,36 @@ joinChannel
 ## Set the anchor peers for each org in the channel
 echo "Updating anchor peers for producer..."
 updateAnchorPeers 0 1
+#updateAnchorPeers 1 1
 echo "Updating anchor peers for manufacturer..."
 updateAnchorPeers 0 2
 echo "Updating anchor peers for distributor..."
 updateAnchorPeers 0 3
 echo "Updating anchor peers for retailer..."
 updateAnchorPeers 0 4
+#updateAnchorPeers 1 4
 echo "Updating anchor peers for consumer..."
 updateAnchorPeers 0 5
+#updateAnchorPeers 1 5
 
-## Install chaincode on peer0.manufacturer and peer0.student
-#echo "Install chaincode on peer0.manufacturer..."
-#installChaincode 0 1
-#installChaincode 0 2
-#installChaincode 0 3
+## Install chaincode on peer0.manufacturer etc
+echo "Install chaincode on peer0.manufacturer..."
+installChaincode 0 1
+installChaincode 1 1
+installChaincode 0 2
+installChaincode 0 3
+installChaincode 0 4
+installChaincode 1 4
+installChaincode 0 5
+installChaincode 1 5
 
 # Instantiate chaincode on peer0.manufacturer
-#echo "Instantiating chaincode on peer0.manufacturer..."
-#instantiateChaincode 0 1
+echo "Instantiating chaincode on peer0.manufacturer..."
+instantiateChaincode 0 2
 
 # Invoke chaincode on peer0.manufacturer
-#echo "Sending invoke transaction on peer0.manufacturer"
-#chaincodeInvoke "manufacturer" 0 1
+echo "Sending invoke transaction on peer0.manufacturer"
+chaincodeInvoke "manufacturer" 0 2
 
 echo
 echo "========= All GOOD, execution completed =========== "
