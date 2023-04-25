@@ -50,41 +50,41 @@ setGlobals() {
         if [ $PEER -eq 0 ]; then
             CORE_PEER_ADDRESS=peer0.producer.example.com:7051
         elif [ $PEER -eq 1 ]; then
-            CORE_PEER_ADDRESS=peer1.producer.example.com:7052
+            CORE_PEER_ADDRESS=peer1.producer.example.com:8051
         fi
     elif [ $ORG -eq 2 ]; then
         CORE_PEER_LOCALMSPID="ManufacturerMSP"
         CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_MANUFACTURER_CA
         CORE_PEER_MSPCONFIGPATH=$MANUFACTURER_MSP
         if [ $PEER -eq 0 ]; then
-            CORE_PEER_ADDRESS=peer0.manufacturer.example.com:8051
+            CORE_PEER_ADDRESS=peer0.manufacturer.example.com:9051
         fi
     elif [ $ORG -eq 3 ]; then
         CORE_PEER_LOCALMSPID="DistributorMSP"
         CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_DISTRIBUTOR_CA
         CORE_PEER_MSPCONFIGPATH=$DISTRIBUTOR_MSP
         if [ $PEER -eq 0 ]; then
-            CORE_PEER_ADDRESS=peer0.distributor.example.com:9051
+            CORE_PEER_ADDRESS=peer0.distributor.example.com:10051
         fi
-     elif [ $ORG -eq 4 ]; then
+    elif [ $ORG -eq 4 ]; then
         CORE_PEER_LOCALMSPID="RetailerMSP"
         CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_RETAILER_CA
         CORE_PEER_MSPCONFIGPATH=$RETAILER_MSP
         if [ $PEER -eq 0 ]; then
-            CORE_PEER_ADDRESS=peer0.retailer.example.com:10051
+            CORE_PEER_ADDRESS=peer0.retailer.example.com:11051
         fi
         if [ $PEER -eq 1 ]; then
-            CORE_PEER_ADDRESS=peer1.retailer.example.com:10052
+            CORE_PEER_ADDRESS=peer1.retailer.example.com:12051
         fi
-     elif [ $ORG -eq 5 ]; then
+    elif [ $ORG -eq 5 ]; then
         CORE_PEER_LOCALMSPID="ConsumerMSP"
         CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_CONSUMER_CA
         CORE_PEER_MSPCONFIGPATH=$CONSUMER_MSP
         if [ $PEER -eq 0 ]; then
-            CORE_PEER_ADDRESS=peer0.consumer.example.com:10151
+            CORE_PEER_ADDRESS=peer0.consumer.example.com:13051
         fi
         if [ $PEER -eq 1 ]; then
-            CORE_PEER_ADDRESS=peer1.consumer.example.com:10152
+            CORE_PEER_ADDRESS=peer1.consumer.example.com:14051
         fi
     else
         echo "================== ERROR !!! ORG Unknown =================="
