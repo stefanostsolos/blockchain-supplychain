@@ -17,90 +17,81 @@ volumes:
   peer1.consumer.example.com:
 
 networks:
-  supplychain:
+  supplychain_hlfn:
 
 services:
   orderer.example.com:
-    container_name: orderer.example.com
-    dns_search: . 
     extends:
       file: base/docker-compose-base.yaml
       service: orderer.example.com
+    container_name: orderer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer0.producer.example.com:
     container_name: peer0.producer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer0.producer.example.com
     networks:
-      - supplychain
-
+      - supplychain_hlfn
+      
   peer1.producer.example.com:
     container_name: peer1.producer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer1.producer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer0.manufacturer.example.com:
     container_name: peer0.manufacturer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer0.manufacturer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer0.distributor.example.com:
     container_name: peer0.distributor.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer0.distributor.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer0.retailer.example.com:
     container_name: peer0.retailer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer0.retailer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer1.retailer.example.com:
     container_name: peer1.retailer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer1.retailer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   peer0.consumer.example.com:
     container_name: peer0.consumer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer0.consumer.example.com
     networks:
-      - supplychain
-
+      - supplychain_hlfn
+      
   peer1.consumer.example.com:
     container_name: peer1.consumer.example.com
-    dns_search: .
     extends:
       file: base/docker-compose-base.yaml
       service: peer1.consumer.example.com
     networks:
-      - supplychain
-
+      - supplychain_hlfn
+  
   ca.producer.example.com:
     container_name: ca.producer.example.com
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -117,8 +108,8 @@ services:
     ports:
       - 7054:7054
     networks:
-      - supplychain
-
+      - supplychain_hlfn
+  
   ca.manufacturer.example.com:
     container_name: ca.manufacturer.example.com
     image: hyperledger/fabric-ca:$IMAGE_TAG
@@ -128,14 +119,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.manufacturer.example.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${MANUFACTURER_CA_PRIVATE_KEY}
-      - FABRIC_CA_SERVER_PORT=8054
+      - FABRIC_CA_SERVER_PORT=9054
     volumes:
       - ./network/crypto-config/peerOrganizations/manufacturer.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.manufacturer.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${MANUFACTURER_CA_PRIVATE_KEY} -b admin:adminpw -d'
     ports:
-      - 8054:8054
+      - 9054:9054
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   ca.distributor.example.com:
     container_name: ca.distributor.example.com
@@ -146,14 +137,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.distributor.example.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${DISTRIBUTOR_CA_PRIVATE_KEY}
-      - FABRIC_CA_SERVER_PORT=9054
+      - FABRIC_CA_SERVER_PORT=10054
     volumes:
       - ./network/crypto-config/peerOrganizations/distributor.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.distributor.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${DISTRIBUTOR_CA_PRIVATE_KEY} -b admin:adminpw -d'
     ports:
-      - 9054:9054
+      - 10054:10054
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   ca.retailer.example.com:
     container_name: ca.retailer.example.com
@@ -164,14 +155,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.retailer.example.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${RETAILER_CA_PRIVATE_KEY}
-      - FABRIC_CA_SERVER_PORT=10054
+      - FABRIC_CA_SERVER_PORT=11054
     volumes:
       - ./network/crypto-config/peerOrganizations/retailer.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.retailer.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${RETAILER_CA_PRIVATE_KEY} -b admin:adminpw -d'
     ports:
-      - 10054:10054
+      - 11054:11054
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   ca.consumer.example.com:
     container_name: ca.consumer.example.com
@@ -182,28 +173,27 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.consumer.example.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${CONSUMER_CA_PRIVATE_KEY}
-      - FABRIC_CA_SERVER_PORT=10154
+      - FABRIC_CA_SERVER_PORT=13054
     volumes:
       - ./network/crypto-config/peerOrganizations/consumer.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.consumer.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${CONSUMER_CA_PRIVATE_KEY} -b admin:adminpw -d'
     ports:
-      - 10154:10154
+      - 13054:13054
     networks:
-      - supplychain
+      - supplychain_hlfn
 
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:$IMAGE_TAG
     tty: true
     stdin_open: true
-    dns_search: .
     environment:
       - SYS_CHANNEL=$SYS_CHANNEL
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_ID=cli
-      - CORE_PEER_ADDRESS=127.0.0.1:8051
+      - CORE_PEER_ADDRESS=peer0.manufacturer.example.com:9051
       - CORE_PEER_LOCALMSPID=ManufacturerMSP
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturer.example.com/peers/peer0.manufacturer.example.com/tls/server.crt
@@ -214,7 +204,7 @@ services:
     command: /bin/bash
     volumes:
       - /var/run/:/host/var/run/
-      - ../chaincode/:/opt/gopath/src/github.com/chaincode/
+      - /home/stef/src/github.com/chaincode/:/opt/gopath/src/github.com/chaincode/
       - ./network/crypto-config/:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
       - ../scripts/:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
       - ./network/:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/
@@ -229,4 +219,4 @@ services:
       - peer0.consumer.example.com
       - peer1.consumer.example.com
     networks:
-      - supplychain
+      - supplychain_hlfn
