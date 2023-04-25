@@ -8,11 +8,9 @@ OrdererOrgs:
     
     Specs:
       - Hostname: orderer
-    CA:
-      OrganizationalUnit: admin
 PeerOrgs:
   # ---------------------------------------------------------------------------
-  # Org1 : Manufacturer
+  # Org1 : Producer
   # ---------------------------------------------------------------------------
   - Name: Producer
     Domain: producer.example.com
@@ -25,10 +23,8 @@ PeerOrgs:
     Template:
       Count: 2
     Users:
-      Count: 1
-  # ---------------------------------------------------------------------------
-  # Org2: Manufacturer
-  # ---------------------------------------------------------------------------
+      Count: 2
+      
   - Name: Manufacturer
     Domain: manufacturer.example.com
 
@@ -36,13 +32,12 @@ PeerOrgs:
     #   Hostname: ca # implicitly ca.manufacturer.example.com
 
     EnableNodeOUs: true
+
     Template:
       Count: 1
     Users:
       Count: 1
-  # ---------------------------------------------------------------------------
-  # Org3: Distributor
-  # ---------------------------------------------------------------------------
+
   - Name: Distributor
     Domain: distributor.example.com
 
@@ -54,9 +49,7 @@ PeerOrgs:
       Count: 1
     Users:
       Count: 1
-  # ---------------------------------------------------------------------------
-  # Org4: Retailer
-  # ---------------------------------------------------------------------------
+
   - Name: Retailer
     Domain: retailer.example.com
 
@@ -67,9 +60,10 @@ PeerOrgs:
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2
+      
   # ---------------------------------------------------------------------------
-  # Org5: Consumer
+  # Org: Consumer
   # ---------------------------------------------------------------------------
   - Name: Consumer
     Domain: consumer.example.com
@@ -81,4 +75,4 @@ PeerOrgs:
     Template:
       Count: 2
     Users:
-      Count: 1
+      Count: 2
