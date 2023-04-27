@@ -23,6 +23,12 @@
 Install the latest version of cURL if it is not already installed:
 ```sudo apt-get install curl```
 
+> Go
+
+Install Golang 1.14.15:
+wget https://go.dev/dl/go1.14.15.linux-amd64.tar.gz
+...
+
 > Docker
 
 Install the latest version of Docker if it is not already installed:
@@ -45,7 +51,7 @@ Get the install script:
 ```curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh && chmod +x install-fabric.sh```
 
 Pull the Docker containers and binaries:
-```./install-fabric.sh docker --fabric-version 1.4.6 binary```
+```./install-fabric.sh docker --fabric-version 1.4.12 binary```
 
 
 ### Application Setup
