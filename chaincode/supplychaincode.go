@@ -11,7 +11,7 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-type food_supplychain struct {
+type s_supplychain struct {
 }
 
 type CounterNO struct {
@@ -44,7 +44,7 @@ type Product struct {
 	Consumer_ID     string       `json:"ConsumerID"`
 	Manufacturer_ID string       `json:"ManufacturerID"`
 	Retailer_ID     string       `json:"RetailerID"`
-	Distributer_ID  string       `json:"DistributerID"`
+	Distributor_ID  string       `json:"DistributorID"`
 	Wholesaler_ID   string       `json:"WholesalerID"`
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
@@ -54,15 +54,15 @@ type Product struct {
 // =================================================================================== // Main // ===================================================================================
 
 func main() {
-	err := shim.Start(new(food_supplychain))
+	err := shim.Start(new(s_supplychain))
 	if err != nil {
-		fmt.Printf("Error starting simple chaincode: %s", err)
+		fmt.Printf("Error starting chaincode: %s", err)
 	}
 }
 
 // Init initializes chaincode // ===========================
 
-func (t *food_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response {
+func (t *s_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response {
 
 	// Initializing Product Counter
 	ProductCounterBytes, _ := APIstub.GetState("ProductCounterNO")
@@ -71,7 +71,7 @@ func (t *food_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response
 		ProductCounterBytes, _ := json.Marshal(ProductCounter)
 		err := APIstub.PutState("ProductCounterNO", ProductCounterBytes)
 		if err != nil {
-			return shim.Error(fmt.Sprintf("Failed to inititate Product Counter"))
+			return shim.Error(fmt.Sprintf("Failed to initiate Product Counter"))
 		}
 	}
 	// Initializing Order Counter
@@ -81,7 +81,7 @@ func (t *food_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response
 		OrderCounterBytes, _ := json.Marshal(OrderCounter)
 		err := APIstub.PutState("OrderCounterNO", OrderCounterBytes)
 		if err != nil {
-			return shim.Error(fmt.Sprintf("Failed to Intitate Order Counter"))
+			return shim.Error(fmt.Sprintf("Failed to initiate Order Counter"))
 		}
 	}
 	// Initializing User Counter
@@ -91,7 +91,7 @@ func (t *food_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response
 		UserCounterBytes, _ := json.Marshal(UserCounter)
 		err := APIstub.PutState("UserCounterNO", UserCounterBytes)
 		if err != nil {
-			return shim.Error(fmt.Sprintf("Failed to inititate User Counter"))
+			return shim.Error(fmt.Sprintf("Failed to initiate User Counter"))
 		}
 	}
 
@@ -100,7 +100,7 @@ func (t *food_supplychain) Init(APIstub shim.ChaincodeStubInterface) pb.Response
 
 // Invoke - Our entry point for Invocations // ========================================
 
-func (t *food_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	fmt.Println("invoke is running " + function)
 
@@ -129,9 +129,9 @@ func (t *food_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 	} else if function == "sendToWholesaler" {
 		// send to wholesaler
 		return t.sendToWholesaler(stub, args)
-	} else if function == "sendToDistributer" {
-		// send to Distributer
-		return t.sendToDistributer(stub, args)
+	} else if function == "sendToDistributor" {
+		// send to Distributor
+		return t.sendToDistributor(stub, args)
 	} else if function == "sendToRetailer" {
 		// send to Retailer
 		return t.sendToRetailer(stub, args)
@@ -185,7 +185,7 @@ func incrementCounter(APIstub shim.ChaincodeStubInterface, AssetType string) int
 }
 
 // GetTxTimestampChannel Function gets the Transaction time when the chain code was executed it remains same on all the peers where chaincode executes
-func (t *food_supplychain) GetTxTimestampChannel(APIstub shim.ChaincodeStubInterface) (string, error) {
+func (t *s_supplychain) GetTxTimestampChannel(APIstub shim.ChaincodeStubInterface) (string, error) {
 	txTimeAsPtr, err := APIstub.GetTxTimestamp()
 	if err != nil {
 		fmt.Printf("Returning error in timestamp \n")
@@ -197,7 +197,7 @@ func (t *food_supplychain) GetTxTimestampChannel(APIstub shim.ChaincodeStubInter
 	return timeStr, nil
 }
 
-func (t *food_supplychain) initLedger(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) initLedger(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// seed admin
 	entityUser := User{Name: "admin", User_ID: "admin", Email: "admin@pg.com", User_Type: "admin", Address: "bangalore", Password: "adminpw"}
 	entityUserAsBytes, errMarshal := json.Marshal(entityUser)
@@ -218,7 +218,7 @@ func (t *food_supplychain) initLedger(APIstub shim.ChaincodeStubInterface, args 
 }
 
 //sign in
-func (t *food_supplychain) signIn(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) signIn(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
@@ -237,7 +237,7 @@ func (t *food_supplychain) signIn(APIstub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Cannot find Entity")
 	}
 	entityUser := User{}
-	// unmarsahlling the entity data
+	// unmarshalling the entity data
 	json.Unmarshal(entityUserBytes, &entityUser)
 
 	// check if password matched
@@ -249,7 +249,7 @@ func (t *food_supplychain) signIn(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 //create user
-func (t *food_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 5 {
 		return shim.Error("Incorrect number of arguments, expected 5 arguments")
@@ -301,7 +301,7 @@ func (t *food_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args 
 
 }
 
-func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	//To check number of arguments are 3
 	if len(args) != 3 {
@@ -328,7 +328,7 @@ func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, ar
 
 	user := User{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(userBytes, &user)
 
 	// User type check for the function
@@ -345,7 +345,7 @@ func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, ar
 	productCounter := getCounter(APIstub, "ProductCounterNO")
 	productCounter++
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -357,7 +357,7 @@ func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, ar
 
 	dates.ManufactureDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Manufacturer_ID: args[1], Retailer_ID: "", Distributer_ID: "", Wholesaler_ID: "", Status: "Available", Date: dates, Price: i1}
+	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Manufacturer_ID: args[1], Retailer_ID: "", Distributor_ID: "", Wholesaler_ID: "", Status: "Available", Date: dates, Price: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -371,7 +371,7 @@ func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, ar
 		return shim.Error(fmt.Sprintf("Failed to create Product Asset: %s", comAsset.Product_ID))
 	}
 
-	//TO Increment the Product Counter
+	//To Increment the Product Counter
 	incrementCounter(APIstub, "ProductCounterNO")
 
 	fmt.Println("Success in creating Product Asset %v", comAsset)
@@ -381,7 +381,7 @@ func (t *food_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, ar
 
 // function to update the product name and price
 // Input params : product id , user id , product name , preduct price
-func (t *food_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
 	if len(args) != 4 {
@@ -414,7 +414,7 @@ func (t *food_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, ar
 
 	user := User{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(userBytes, &user)
 
 	// User type check for the function
@@ -429,7 +429,7 @@ func (t *food_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, ar
 	}
 	product := Product{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(productBytes, &product)
 
 	//Price conversion - Error handeling
@@ -449,14 +449,14 @@ func (t *food_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, ar
 
 	errPut := APIstub.PutState(product.Product_ID, updatedProductAsBytes)
 	if errPut != nil {
-		return shim.Error(fmt.Sprintf("Failed to sell To Consumer : %s", product.Product_ID))
+		return shim.Error(fmt.Sprintf("Failed to sell To Consumer: %s", product.Product_ID))
 	}
 
 	fmt.Println("Success in updating Product %v ", product.Product_ID)
 	return shim.Success(updatedProductAsBytes)
 }
 
-func (t *food_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// parameter length check
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
@@ -479,7 +479,7 @@ func (t *food_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, arg
 
 	user := User{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(userBytes, &user)
 
 	// User type check for the function
@@ -493,13 +493,13 @@ func (t *food_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, arg
 	}
 	product := Product{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(productBytes, &product)
 
 	orderCounter := getCounter(APIstub, "OrderCounterNO")
 	orderCounter++
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -526,7 +526,7 @@ func (t *food_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, arg
 	return shim.Success(updatedProductAsBytes)
 }
 
-func (t *food_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// parameter length check
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments, expected 4 arguments")
@@ -542,14 +542,14 @@ func (t *food_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface,
 	}
 	product := Product{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(productBytes, &product)
 
 	if product.Status != "Sold" {
 		return shim.Error("Product is not delivered yet")
 	}
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -573,7 +573,7 @@ func (t *food_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface,
 }
 
 // send to Wholesaler
-func (t *food_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
@@ -615,7 +615,7 @@ func (t *food_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface,
 		return shim.Error("Product is sent to Wholesaler already")
 	}
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -638,7 +638,7 @@ func (t *food_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface,
 }
 
 // send to distributor
-func (t *food_supplychain) sendToDistributer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) sendToDistributor(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
@@ -676,17 +676,17 @@ func (t *food_supplychain) sendToDistributer(APIstub shim.ChaincodeStubInterface
 
 	json.Unmarshal(productBytes, &product)
 
-	if product.Distributer_ID != "" {
+	if product.Distributor_ID != "" {
 		return shim.Error("Product is sent to distributor already")
 	}
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	product.Distributer_ID = user.User_ID
+	product.Distributor_ID = user.User_ID
 	product.Date.SendToDistributorDate = txTimeAsPtr
 	updatedProductAsBytes, errMarshal := json.Marshal(product)
 	if errMarshal != nil {
@@ -703,7 +703,7 @@ func (t *food_supplychain) sendToDistributer(APIstub shim.ChaincodeStubInterface
 }
 
 // send to retailer
-func (t *food_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
 	}
@@ -738,7 +738,7 @@ func (t *food_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, a
 		return shim.Error("Product has already been sent to retailer")
 	}
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -762,7 +762,7 @@ func (t *food_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, a
 
 // function to sell the product to consumer
 // Input params , product id  consumer id
-func (t *food_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
 	if len(args) != 1 {
@@ -783,7 +783,7 @@ func (t *food_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, a
 
 	product := Product{}
 
-	// unmarsahlling product the data from API
+	// unmarshalling product the data from API
 	json.Unmarshal(productBytes, &product)
 
 	// check if the product is ordered or not
@@ -796,7 +796,7 @@ func (t *food_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, a
 		return shim.Error("Customer Id should be set to sell to customer")
 	}
 
-	//To Get the transaction TimeStamp from the Channel Header
+	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
 		return shim.Error("Returning error in transaction timestamp")
@@ -820,7 +820,7 @@ func (t *food_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, a
 }
 
 //queryAsset
-func (t *food_supplychain) queryAsset(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) queryAsset(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments, expected 1 argument")
 	}
@@ -830,7 +830,7 @@ func (t *food_supplychain) queryAsset(APIstub shim.ChaincodeStubInterface, args 
 }
 
 // query all asset of a type
-func (t *food_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments, expected 1 argument")
