@@ -313,11 +313,11 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 
 	if len(args[1]) == 0 {
-		return shim.Error("Manufacturer_ID must be provided")
+		return shim.Error("Producer_ID must be provided")
 	}
 
 	if len(args[2]) == 0 {
-		return shim.Error("Price must be non-empty ")
+		return shim.Error("Price must be non-empty")
 	}
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
 	userBytes, _ := APIstub.GetState(args[1])
@@ -332,11 +332,11 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	json.Unmarshal(userBytes, &user)
 
 	// User type check for the function
-	if user.User_Type != "manufacturer" {
-		return shim.Error("User type must be manufacturer")
+	if user.User_Type != "producer" {
+		return shim.Error("User type must be producer")
 	}
 
-	//Price conversion - Error handeling
+	//Price conversion - Error handling
 	i1, errPrice := strconv.ParseFloat(args[2], 64)
 	if errPrice != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
@@ -357,7 +357,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ManufactureDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Manufacturer_ID: args[1], Retailer_ID: "", Distributor_ID: "", Wholesaler_ID: "", Status: "Available", Date: dates, Price: i1}
+	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Producer_ID: args[1], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Price: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -380,7 +380,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 }
 
 // function to update the product name and price
-// Input params : product id , user id , product name , preduct price
+// Input params : product id , user id , product name , product price
 func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
@@ -432,7 +432,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	// unmarshalling product the data from API
 	json.Unmarshal(productBytes, &product)
 
-	//Price conversion - Error handeling
+	//Price conversion - Error handling
 	i1, errPrice := strconv.ParseFloat(args[3], 64)
 	if errPrice != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
