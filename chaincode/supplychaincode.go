@@ -28,8 +28,8 @@ type User struct {
 }
 
 type ProductDates struct {
-	ManufactureDate       string `json:"ManufactureDate"`
-	SendToWholesalerDate  string `json:"SendToWholesalerDate"`
+	ProductionDate       string `json:"ProductionDate"`
+	SendToManufacturerDate  string `json:"SendToManufacturerDate"`
 	SendToDistributorDate string `json:"SendToDistributorDate"`
 	SendToRetailerDate    string `json:"SendToRetailerDate"`
 	SellToConsumerDate    string `json:"SellToConsumerDate"`
@@ -45,7 +45,7 @@ type Product struct {
 	Manufacturer_ID string       `json:"ManufacturerID"`
 	Retailer_ID     string       `json:"RetailerID"`
 	Distributor_ID  string       `json:"DistributorID"`
-	Wholesaler_ID   string       `json:"WholesalerID"`
+	Producer_ID   string       `json:"ProducerID"`
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Price           float64      `json:"Price"`
@@ -126,9 +126,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "deliveredProduct" {
 		// order a product
 		return t.deliveredProduct(stub, args)
-	} else if function == "sendToWholesaler" {
-		// send to wholesaler
-		return t.sendToWholesaler(stub, args)
+	} else if function == "sendToManufacturer" {
+		// send to Manufacturer
+		return t.sendToManufacturer(stub, args)
 	} else if function == "sendToDistributor" {
 		// send to Distributor
 		return t.sendToDistributor(stub, args)
@@ -174,11 +174,8 @@ func incrementCounter(APIstub shim.ChaincodeStubInterface, AssetType string) int
 
 	err := APIstub.PutState(AssetType, counterAsBytes)
 	if err != nil {
-
 		fmt.Sprintf("Failed to increment counter")
-
 	}
-
 	fmt.Println("Success in incrementing counter  %v", counterAsset)
 
 	return counterAsset.Counter
@@ -199,7 +196,7 @@ func (t *s_supplychain) GetTxTimestampChannel(APIstub shim.ChaincodeStubInterfac
 
 func (t *s_supplychain) initLedger(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// seed admin
-	entityUser := User{Name: "admin", User_ID: "admin", Email: "admin@pg.com", User_Type: "admin", Address: "bangalore", Password: "adminpw"}
+	entityUser := User{Name: "admin", User_ID: "admin", Email: "admin@pg.com", User_Type: "admin", Address: "athens", Password: "adminpw"}
 	entityUserAsBytes, errMarshal := json.Marshal(entityUser)
 
 	if errMarshal != nil {
@@ -333,7 +330,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	// User type check for the function
 	if user.User_Type != "producer" {
-		return shim.Error("User type must be producer")
+		return shim.Error("User type must be manufacturer")
 	}
 
 	//Price conversion - Error handling
@@ -355,7 +352,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	dates := ProductDates{}
 	// json.Unmarshal(product.Date, &dates)
 
-	dates.ManufactureDate = txTimeAsPtr
+	dates.ProductionDate = txTimeAsPtr
 
 	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Producer_ID: args[1], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Price: i1}
 
@@ -572,8 +569,8 @@ func (t *s_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface, ar
 
 }
 
-// send to Wholesaler
-func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+// send to Manufacturer
+func (t *s_supplychain) sendToManufacturer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
 		return shim.Error("Incorrect number of arguments, expected 2 arguments")
@@ -584,21 +581,21 @@ func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, ar
 	}
 
 	if len(args[1]) == 0 {
-		return shim.Error("Wholesaler Id must be provided")
+		return shim.Error("Manufacturer Id must be provided")
 	}
 
 	userBytes, _ := APIstub.GetState(args[1])
 
 	if userBytes == nil {
-		return shim.Error("Cannot find Wholesaler user")
+		return shim.Error("Cannot find Manufacturer user")
 	}
 
 	user := User{}
 
 	json.Unmarshal(userBytes, &user)
 
-	if user.User_Type != "wholesaler" {
-		return shim.Error("User type must be Wholesaler")
+	if user.User_Type != "manufacturer" {
+		return shim.Error("User type must be Manufacturer")
 	}
 
 	productBytes, _ := APIstub.GetState(args[0])
@@ -611,8 +608,8 @@ func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, ar
 
 	json.Unmarshal(productBytes, &product)
 
-	if product.Wholesaler_ID != "" {
-		return shim.Error("Product is sent to Wholesaler already")
+	if product.Manufacturer_ID != "" {
+		return shim.Error("Product is sent to Manufacturer already")
 	}
 
 	//To get the transaction TimeStamp from the Channel Header
@@ -621,8 +618,8 @@ func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, ar
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	product.Wholesaler_ID = user.User_ID
-	product.Date.SendToWholesalerDate = txTimeAsPtr
+	product.Manufacturer_ID = user.User_ID
+	product.Date.SendToManufacturerDate = txTimeAsPtr
 	updatedProductAsBytes, errMarshal := json.Marshal(product)
 	if errMarshal != nil {
 		return shim.Error(fmt.Sprintf("Marshal Error: %s", errMarshal))
@@ -630,7 +627,7 @@ func (t *s_supplychain) sendToWholesaler(APIstub shim.ChaincodeStubInterface, ar
 
 	errPut := APIstub.PutState(product.Product_ID, updatedProductAsBytes)
 	if errPut != nil {
-		return shim.Error(fmt.Sprintf("Failed to send to Wholesaler: %s", product.Product_ID))
+		return shim.Error(fmt.Sprintf("Failed to send to Manufacturer: %s", product.Product_ID))
 	}
 
 	fmt.Println("Success in sending Product %v ", product.Product_ID)
@@ -709,11 +706,11 @@ func (t *s_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, args
 	}
 
 	if len(args[0]) == 0 {
-		return shim.Error("ProductId must be specified")
+		return shim.Error("Product Id must be specified")
 	}
 
 	if len(args[1]) == 0 {
-		return shim.Error("RetailerId must be specified")
+		return shim.Error("Retailer Id must be specified")
 	}
 
 	userBytes, _ := APIstub.GetState(args[1])
@@ -812,7 +809,7 @@ func (t *s_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, args
 
 	errPut := APIstub.PutState(product.Product_ID, updatedProductAsBytes)
 	if errPut != nil {
-		return shim.Error(fmt.Sprintf("Failed to sell To Consumer : %s", product.Product_ID))
+		return shim.Error(fmt.Sprintf("Failed to sell To Consumer: %s", product.Product_ID))
 	}
 
 	fmt.Println("Success in sending Product %v ", product.Product_ID)
@@ -850,9 +847,7 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 
 	if err != nil {
-
 		return shim.Error(err.Error())
-
 	}
 
 	defer resultsIterator.Close()
@@ -870,35 +865,25 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 		queryResponse, err := resultsIterator.Next()
 		// respValue := string(queryResponse.Value)
 		if err != nil {
-
 			return shim.Error(err.Error())
-
 		}
 
 		// Add a comma before array members, suppress it for the first array member
 
 		if bArrayMemberAlreadyWritten == true {
-
 			buffer.WriteString(",")
-
 		}
 
 		buffer.WriteString("{\"Key\":")
-
 		buffer.WriteString("\"")
-
 		buffer.WriteString(queryResponse.Key)
-
 		buffer.WriteString("\"")
-
 		buffer.WriteString(", \"Record\":")
 
 		// Record is a JSON object, so we write as-is
 
 		buffer.WriteString(string(queryResponse.Value))
-
 		buffer.WriteString("}")
-
 		bArrayMemberAlreadyWritten = true
 
 	}
