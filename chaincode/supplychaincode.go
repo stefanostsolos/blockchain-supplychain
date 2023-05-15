@@ -123,9 +123,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "orderProduct" {
 		// order a product
 		return t.orderProduct(stub, args)
-	} else if function == "deliveredProduct" {
+	} else if function == "deliverProduct" {
 		// order a product
-		return t.deliveredProduct(stub, args)
+		return t.deliverProduct(stub, args)
 	} else if function == "sendToManufacturer" {
 		// send to Manufacturer
 		return t.sendToManufacturer(stub, args)
@@ -330,7 +330,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	// User type check for the function
 	if user.User_Type != "producer" {
-		return shim.Error("User type must be manufacturer")
+		return shim.Error("User type must be producer")
 	}
 
 	//Price conversion - Error handling
@@ -523,10 +523,10 @@ func (t *s_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args [
 	return shim.Success(updatedProductAsBytes)
 }
 
-func (t *s_supplychain) deliveredProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) deliverProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// parameter length check
 	if len(args) != 1 {
-		return shim.Error("Incorrect number of arguments, expected 4 arguments")
+		return shim.Error("Incorrect number of arguments, expected 1 argument")
 	}
 
 	if len(args[0]) == 0 {
