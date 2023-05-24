@@ -1,0 +1,72 @@
+{
+    "name": "supplychainchannel",
+    "description": "Connection Profile",
+    "version": "1.0",
+    "client": {
+        "organization": "Distributor",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "supplychainchannel": {
+            "orderers": ["orderer.example.com"],
+            "peers": {
+                "peer0.distributor.example.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Distributor": {
+            "mspid": "DistributorMSP",
+            "peers": ["peer0.distributor.example.com"],
+            "certificateAuthorities": ["ca.distributor.example.com"]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpcs://localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.distributor.example.com": {
+            "url": "grpcs://localhost:11051",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.distributor.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/distributor.example.com/peers/peer0.distributor.example.com/msp/tlscacerts/tlsca.distributor.example.com-cert.pem"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.distributor.example.com": {
+            "url": "https://localhost:9054",
+            "caName": "ca.distributor.example.com",
+            "httpOptions": {
+                "verify": false
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/distributor.example.com/ca/ca.distributor.example.com-cert.pem"
+            }
+        }
+    }
+}

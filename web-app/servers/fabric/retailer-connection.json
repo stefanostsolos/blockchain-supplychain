@@ -1,0 +1,87 @@
+{
+    "name": "supplychainchannel",
+    "description": "Connection Profile",
+    "version": "1.0",
+    "client": {
+        "organization": "Retailer",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "supplychainchannel": {
+            "orderers": ["orderer.example.com"],
+            "peers": {
+                "peer0.retailer.example.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                },
+                "peer1.retailer.example.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Retailer": {
+            "mspid": "RetailerMSP",
+            "peers": ["peer0.retailer.example.com", "peer1.retailer.example.com"],
+            "certificateAuthorities": ["ca.retailer.example.com"]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpcs://localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.retailer.example.com": {
+            "url": "grpcs://localhost:11051",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.retailer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/retailer.example.com/peers/peer0.retailer.example.com/msp/tlscacerts/tlsca.retailer.example.com-cert.pem"
+            }
+        },
+        "peer1.retailer.example.com": {
+            "url": "grpcs://localhost:12051",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.retailer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/retailer.example.com/peers/peer1.retailer.example.com/msp/tlscacerts/tlsca.retailer.example.com-cert.pem"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.retailer.example.com": {
+            "url": "https://localhost:9054",
+            "caName": "ca.retailer.example.com",
+            "httpOptions": {
+                "verify": false
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/retailer.example.com/ca/ca.retailer.example.com-cert.pem"
+            }
+        }
+    }
+}

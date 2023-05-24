@@ -1,0 +1,81 @@
+{
+    "name": "supplychainchannel",
+    "description": "Connection Profile",
+    "version": "1.0",
+    "client": {
+        "organization": "Producer",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "supplychainchannel": {
+            "orderers": ["orderer.example.com"],
+            "peers": {
+                "peer0.producer.example.com": {
+                    "endorsingPeer": true,
+                    "chaincodeQuery": true,
+                    "ledgerQuery": true,
+                    "eventSource": true
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Producer": {
+            "mspid": "ProducerMSP",
+            "peers": ["peer0.producer.example.com", "peer1.producer.example.com"],
+            "certificateAuthorities": ["ca.producer.example.com"]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpcs://localhost:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+            }
+        }
+    },
+    "peers": {
+        "peer0.producer.example.com": {
+            "url": "grpcs://localhost:8051",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.producer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/producer.example.com/peers/peer0.producer.example.com/msp/tlscacerts/tlsca.producer.example.com-cert.pem"
+            }
+        },
+        "peer1.producer.example.com": {
+            "url": "grpcs://localhost:9051",
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.producer.example.com"
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/producer.example.com/peers/peer1.producer.example.com/msp/tlscacerts/tlsca.producer.example.com-cert.pem"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.producer.example.com": {
+            "url": "https://localhost:8054",
+            "caName": "ca.producer.example.com",
+            "httpOptions": {
+                "verify": false
+            },
+            "tlsCACerts": {
+                "path": "../../artifacts/network/crypto-config/peerOrganizations/producer.example.com/ca/ca.producer.example.com-cert.pem"
+            }
+        }
+    }
+}
