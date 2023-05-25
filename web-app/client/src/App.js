@@ -17,19 +17,21 @@ function App() {
   console.log(role)
   return (
     <Router>
-      <div className="container">
-        <Navbar />
-        <br />
-        <Route path="/" exact component={SignIn} />
-        <Route path="/products" component={ProductsList} />
-        <Route path="/createUser" component={CreateUser} />
-        <Route path="/createProduct" component={CreateProduct} />
-        <Route path="/createOrder" component={CreateOrder} />
-        <Route path="/updateUser/:id" component={EditUser} />
-        <Route path="/updateProduct/:id" component={EditProduct} />
-        <Route path="/users" component={UsersList} />
-        <Route path="/orders" component={OrdersList} />
-      </div>
+      <Routes>
+        <div className="container">
+          <Navbar />
+          <br />
+          <Route path="/" exact component={SignIn} />
+          <Route path="/products" component={ProductsList} />
+          <Route path="/createUser" component={CreateUser} />
+          <Route path="/createProduct" component={CreateProduct} />
+          <Route path="/createOrder" component={CreateOrder} />
+          <Route path="/updateUser/:id" component={EditUser} />
+          <Route path="/updateProduct/:id" component={EditProduct} />
+          <Route path="/users" component={UsersList} />
+          <Route path="/orders" component={OrdersList} />
+        </div>
+      </Routes>
     </Router>
   );
 }
