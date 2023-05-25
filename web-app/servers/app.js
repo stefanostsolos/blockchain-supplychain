@@ -12,9 +12,11 @@ const router = require('./routes/index.js');
 
 async function main() {
 
-    await network.enrollAdmin(true, false, false);
-    await network.enrollAdmin(false,true,false);
-    await network.enrollAdmin(false,false,true);
+    await network.enrollAdmin(true, false, false, false, false);
+    await network.enrollAdmin(false, true, false, false, false);
+    await network.enrollAdmin(false, false, true, false, false);
+    await network.enrollAdmin(false, false, false, true, false);
+    await network.enrollAdmin(false, false, false, false, true);
     const app = express();
     app.use(morgan('combined'));
     app.use(bodyParser.json());

@@ -43,7 +43,7 @@ exports.signin = async (isProducer, isManufacturer, isDistributor, isRetailer, i
 exports.getAllUser = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
     const { id } = information;
 
-    const networkObj = await network.connect(true, false, false, 'admin');
+    const networkObj = await network.connect(true, false, false, false, false, 'admin');
 
     const contractRes = await network.invoke(networkObj, 'queryAll', 'User');
 

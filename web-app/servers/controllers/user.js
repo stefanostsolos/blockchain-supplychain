@@ -15,12 +15,16 @@ exports.signup = async (req, res) => {
 
     let modelRes;
 
-    if (role === 'manufacturer') {
-        modelRes = await authModel.signup(true, false, false, {  id, userType, address, name, email, password });
-    } else if (role === 'middlemen') {
-        modelRes = await authModel.signup(false, true, false, {  id, userType, address, name, email, password });
+    if (role === 'producer') {
+        modelRes = await authModel.signup(true, false, false, false, false, {  id, userType, address, name, email, password });
+    } else if (role === 'manufacturer') {
+        modelRes = await authModel.signup(false, true, false, false, false, {  id, userType, address, name, email, password });
+    } else if (role === 'distributor') {
+        modelRes = await authModel.signup(false, false, true, false, false, {  id, userType, address, name, email, password });
+    } else if (role === 'retailer') {
+        modelRes = await authModel.signup(false, false, false, true, false, {  id, userType, address, name, email, password });
     } else if (role === 'consumer') {
-        modelRes = await authModel.signup(false, false, true, {  id, userType, address, name, email, password });
+        modelRes = await authModel.signup(false, false, false, false, true, {  id, userType, address, name, email, password });
     } else {
         return apiResponse.badRequest(res);
     }
@@ -36,12 +40,16 @@ exports.signin = async (req, res) => {
     }
 
     let modelRes;
-    if (role === 'manufacturer') {
-        modelRes = await authModel.signin(true, false, false, { id, password });
-    } else if (role === 'middlemen') {
-        modelRes = await authModel.signin(false, true, false, { id, password });
+    if (role === 'producer') {
+        modelRes = await authModel.signin(true, false, false, false, false, { id, password });
+    } else if (role === 'manufacturer') {
+        modelRes = await authModel.signin(false, true, false, false, false, { id, password });
+    } else if (role === 'distributor') {
+        modelRes = await authModel.signin(false, false, true, false, false, { id, password });
+    } else if (role === 'retailer') {
+        modelRes = await authModel.signin(false, false, false, true, false, { id, password });
     } else if (role === 'consumer') {
-        modelRes = await authModel.signin(false, false, true, { id, password });
+        modelRes = await authModel.signin(false, false, false, false, true, { id, password });
     } else {
         return apiResponse.badRequest(res);
     }
@@ -49,18 +57,21 @@ exports.signin = async (req, res) => {
     return apiResponse.send(res, modelRes);
 };
 
-
 exports.getAllUser = async (req, res) => {
     const { id } = req.body;
     const { role } = req.params;
 
     let modelRes;
-    if (role === 'manufacturer') {
-        modelRes = await authModel.getAllUser(true, false, false, {id});
-    } else if (role === 'middlemen') {
-        modelRes = await authModel.getAllUser(false, true, false, {id});
+    if (role === 'producer') {
+        modelRes = await authModel.getAllUser(true, false, false, false, false, {id});
+    } else if (role === 'manufacturer') {
+        modelRes = await authModel.getAllUser(false, true, false, false, false, {id});
+    } else if (role === 'distibutor') {
+        modelRes = await authModel.getAllUser(false, false, true, false, false, {id});
+    } else if (role === 'retailer') {
+        modelRes = await authModel.getAllUser(false, false, false, true, false, {id});
     } else if (role === 'consumer') {
-        modelRes = await authModel.getAllUser(false, false, true, {id});
+        modelRes = await authModel.getAllUser(false, false, false, false, true, {id});
     } else {
         return apiResponse.badRequest(res);
     }
