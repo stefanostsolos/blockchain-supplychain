@@ -7,9 +7,9 @@ export class Navbar extends Component {
     console.log(role);
     return (
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
-        <div className="navbar-brand">SupplyChain</div>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav mr-auto">
+        <div className="collapse navbar-collapse justify-content-center" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="navbar-brand">SupplyChain</div>
+          <ul className="navbar-nav ml-auto">
             <li className="navbar-item">
               <Link to="/createUser" className="nav-link">
                 Create User
@@ -28,6 +28,16 @@ export class Navbar extends Component {
             <li className="navbar-item">
               <Link to="/products" className="nav-link">
                 Products
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/updateUser" className="nav-link">
+                Edit User
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/updateProduct" className="nav-link">
+                Edit Product
               </Link>
             </li>
             {/* <li className="navbar-item">

@@ -17,22 +17,26 @@ function App() {
   console.log(role)
   return (
     <Router>
-  <div className="container">
-    <Navbar />
-    <br />
-    <Routes>
-      <Route path="/" element={<SignIn />} />
-      <Route path="/products" element={<ProductsList />} />
-      <Route path="/createUser" element={<CreateUser />} />
-      <Route path="/createProduct" element={<CreateProduct />} />
-      <Route path="/createOrder" element={<CreateOrder />} />
-      <Route path="/updateUser/:id" element={<EditUser />} />
-      <Route path="/updateProduct/:id" element={<EditProduct />} />
-      <Route path="/users" element={<UsersList />} />
-      <Route path="/orders" element={<OrdersList />} />
-    </Routes>
-  </div>
-</Router>
+     <div style={{ backgroundColor: '#0A0A0A', color: '#ffffff', minHeight: '100vh' }}> 
+      <div style={{ borderRadius: '80px', overflow: 'hidden' }}>
+        <Navbar />
+      </div>
+      <br />
+      <div className="container" style={{ display: 'flex', justifyContent: 'center' }}>
+        <Routes>
+          <Route path="/" element={<SignIn />} />
+          <Route path="/products" element={<ProductsList />} />
+          <Route path="/createUser" element={<CreateUser />} />
+          <Route path="/createProduct" element={<CreateProduct />} />
+          <Route path="/createOrder" element={<CreateOrder />} />
+          <Route path="/updateUser/:id" element={<EditUser />} />
+          <Route path="/updateProduct/:id" element={<EditProduct />} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/orders" element={<OrdersList />} />
+        </Routes>
+      </div>
+      </div>
+    </Router>
   );
 }
 
