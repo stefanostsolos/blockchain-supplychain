@@ -41,11 +41,11 @@ type Product struct {
 	Product_ID      string       `json:"ProductID"`
 	Order_ID        string       `json:"OrderID"`
 	Name            string       `json:"Name"`
-	Consumer_ID     string       `json:"ConsumerID"`
-	Manufacturer_ID string       `json:"ManufacturerID"`
-	Retailer_ID     string       `json:"RetailerID"`
-	Distributor_ID  string       `json:"DistributorID"`
 	Producer_ID   string       `json:"ProducerID"`
+	Manufacturer_ID string       `json:"ManufacturerID"`
+	Distributor_ID  string       `json:"DistributorID"`
+	Retailer_ID     string       `json:"RetailerID"`
+	Consumer_ID     string       `json:"ConsumerID"`
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Price           float64      `json:"Price"`

@@ -34,7 +34,7 @@ export class EditProduct extends Component {
     .then((response) => {
       this.setState({
         product_name: response.data.product_name,
-        manufacturer_id: response.data.manufacturer_id,
+        producer_id: response.data.producer_id,
         productionDate: response.data.productionDate,
         status: response.data.status,
         price: response.data.price,
@@ -54,13 +54,13 @@ export class EditProduct extends Component {
     });
   }
 
-  onChangeManufacturerId(e) {
+  onChangeProducerId(e) {
     this.setState({
-      manufacturer_id: e.target.value,
+      producer_id: e.target.value,
     });
   }
 
-  onChangeManufacturerDate(date) {
+  onChangeProducerDate(date) {
     const newDate = { ...this.state.date, productionDate: date };
     this.setState({ date: newDate });
   }
@@ -81,32 +81,32 @@ export class EditProduct extends Component {
             />
           </div>
           <div className="form-group">
-            <label>ManufacturerID: </label>
+            <label>ProducerID: </label>
             <select
-              ref="manufacturerInput"
+              ref="producerInput"
               required
               className="form-control"
-              value={this.state.manufacturer_id}
-              onChange={this.onChangeManufacturerId}
+              value={this.state.producer_id}
+              onChange={this.onChangeProducerId}
             >
-              {this.state.manufacturers.map(function (manufacturer) {
+              {this.state.producers.map(function (producer) {
                 return (
                   <option
-                    key={manufacturer.user_id}
-                    value={manufacturer.user_id}
+                    key={producer.user_id}
+                    value={producer.user_id}
                   >
-                    {manufacturer.user_id}
+                    {producer.user_id}
                   </option>
                 );
               })}
             </select>
           </div>
           <div className="form-group">
-            <label>Manufacturer Date: </label>
+            <label>Production Date: </label>
             <div>
               <DatePicker
                 selected={this.state.date.productionDate}
-                onChange={this.onChangeManufacturerDate}
+                onChange={this.onChangeProducerDate}
               />
             </div>
           </div>
