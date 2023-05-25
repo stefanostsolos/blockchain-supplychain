@@ -18,7 +18,7 @@ exports.sendToManufacturer = async information => {
 exports.sendToDistributor = async information => {
     const { productId, userId, id } = information;
 
-    const networkObj = await network.connect(false, true, false, id);
+    const networkObj = await network.connect(false, true, false, false, false, id);
     const contractRes = await network.invoke(networkObj, 'sendToDistributor', productId, userId);
 
     const error = networkObj.error || contractRes.error;
@@ -32,7 +32,7 @@ exports.sendToDistributor = async information => {
 exports.sendToRetailer = async information => {
     const { productId, userId, id } = information;
 
-    const networkObj = await network.connect(false, true, false, id);
+    const networkObj = await network.connect(false, false, true, false, false, id);
     const contractRes = await network.invoke(networkObj, 'sendToRetailer', productId, userId);
 
     const error = networkObj.error || contractRes.error;
@@ -46,7 +46,7 @@ exports.sendToRetailer = async information => {
 exports.sellToConsumer = async information => {
     const { productId, id } = information;
 
-    const networkObj = await network.connect(false, true, false, id);
+    const networkObj = await network.connect(false, false, false, true, false, id);
     const contractRes = await network.invoke(networkObj, 'sellToConsumer', productId);
 
     const error = networkObj.error || contractRes.error;
