@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/navbar.component";
 import SignIn from "./components/signIn.component";
@@ -17,22 +17,22 @@ function App() {
   console.log(role)
   return (
     <Router>
-      <Routes>
-        <div className="container">
-          <Navbar />
-          <br />
-          <Route path="/" exact component={SignIn} />
-          <Route path="/products" component={ProductsList} />
-          <Route path="/createUser" component={CreateUser} />
-          <Route path="/createProduct" component={CreateProduct} />
-          <Route path="/createOrder" component={CreateOrder} />
-          <Route path="/updateUser/:id" component={EditUser} />
-          <Route path="/updateProduct/:id" component={EditProduct} />
-          <Route path="/users" component={UsersList} />
-          <Route path="/orders" component={OrdersList} />
-        </div>
-      </Routes>
-    </Router>
+  <div className="container">
+    <Navbar />
+    <br />
+    <Routes>
+      <Route path="/" element={<SignIn />} />
+      <Route path="/products" element={<ProductsList />} />
+      <Route path="/createUser" element={<CreateUser />} />
+      <Route path="/createProduct" element={<CreateProduct />} />
+      <Route path="/createOrder" element={<CreateOrder />} />
+      <Route path="/updateUser/:id" element={<EditUser />} />
+      <Route path="/updateProduct/:id" element={<EditProduct />} />
+      <Route path="/users" element={<UsersList />} />
+      <Route path="/orders" element={<OrdersList />} />
+    </Routes>
+  </div>
+</Router>
   );
 }
 
