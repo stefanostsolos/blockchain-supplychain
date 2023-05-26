@@ -48,7 +48,7 @@
     },
     "peers": {
         "peer0.producer.example.com": {
-            "url": "grpcs://localhost:8051",
+            "url": "grpcs://localhost:7051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.producer.example.com"
             },
@@ -57,7 +57,7 @@
             }
         },
         "peer1.producer.example.com": {
-            "url": "grpcs://localhost:9051",
+            "url": "grpcs://localhost:8051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer1.producer.example.com"
             },
@@ -68,7 +68,7 @@
     },
     "certificateAuthorities": {
         "ca.producer.example.com": {
-            "url": "https://localhost:8054",
+            "url": "https://localhost:7054",
             "caName": "ca.producer.example.com",
             "httpOptions": {
                 "verify": false

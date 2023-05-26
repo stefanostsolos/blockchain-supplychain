@@ -48,7 +48,7 @@
     },
     "peers": {
         "peer0.distributor.example.com": {
-            "url": "grpcs://localhost:11051",
+            "url": "grpcs://localhost:10051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.distributor.example.com"
             },
@@ -59,7 +59,7 @@
     },
     "certificateAuthorities": {
         "ca.distributor.example.com": {
-            "url": "https://localhost:9054",
+            "url": "https://localhost:10054",
             "caName": "ca.distributor.example.com",
             "httpOptions": {
                 "verify": false

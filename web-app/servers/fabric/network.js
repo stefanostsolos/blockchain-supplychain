@@ -23,7 +23,6 @@ const consumerCcpPath = path.join(process.cwd(), process.env.CONSUMER_CONN);
 const consumerCcpFile = fs.readFileSync(consumerCcpPath, 'utf8');
 const consumerCcp = JSON.parse(consumerCcpFile);
 
-
 function getConnectionMaterial(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer) {
     const connectionMaterial = {};
 

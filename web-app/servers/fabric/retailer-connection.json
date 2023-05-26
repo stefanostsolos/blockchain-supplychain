@@ -74,7 +74,7 @@
     },
     "certificateAuthorities": {
         "ca.retailer.example.com": {
-            "url": "https://localhost:9054",
+            "url": "https://localhost:11054",
             "caName": "ca.retailer.example.com",
             "httpOptions": {
                 "verify": false

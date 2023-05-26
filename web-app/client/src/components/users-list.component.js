@@ -32,7 +32,7 @@ export class UsersList extends Component {
     const role = sessionStorage.getItem('role')
 
     axios
-      .get("http://192.168.0.108:8090/user/all/manufacturer", {headers: headers})
+      .get("http://192.168.0.108:8090/user/all/producer", {headers: headers})
       .then((response) => {
         this.setState({
           users: response.data.data,
@@ -57,7 +57,7 @@ export class UsersList extends Component {
     return (
       <div>
         <h3>Users List</h3>
-        <table className="table">
+        <table className="table" style={{ color: '#ffffff' }}>
           <thead className="thead-light">
             <tr>
               <th>UserID</th>

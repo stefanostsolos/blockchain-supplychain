@@ -54,7 +54,7 @@
     },
     "peers": {
         "peer0.consumer.example.com": {
-            "url": "grpcs://localhost:11051",
+            "url": "grpcs://localhost:13051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.consumer.example.com"
             },
@@ -63,7 +63,7 @@
             }
         },
         "peer1.consumer.example.com": {
-            "url": "grpcs://localhost:12051",
+            "url": "grpcs://localhost:14051",
             "grpcOptions": {
                 "ssl-target-name-override": "peer1.consumer.example.com"
             },
@@ -74,7 +74,7 @@
     },
     "certificateAuthorities": {
         "ca.consumer.example.com": {
-            "url": "https://localhost:9054",
+            "url": "https://localhost:13054",
             "caName": "ca.consumer.example.com",
             "httpOptions": {
                 "verify": false
