@@ -32,7 +32,7 @@ export class ProductsList extends Component {
     };
 
     axios
-      .get("http://192.168.0.108:8090/product/" + this.state.role, {
+      .get("http://localhost:8090/product/" + this.state.role, {
         headers: headers,
       })
       .then((response) => {

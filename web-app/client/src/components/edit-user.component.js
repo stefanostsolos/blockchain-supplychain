@@ -21,7 +21,7 @@ export class EditUser extends Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:5000/users/" + this.props.match.params.id)
+      .get("http://localhost:8090/users/" + this.props.match.params.id)
       .then((response) => {
         this.setState({
           name: response.data.name,

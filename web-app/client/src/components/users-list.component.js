@@ -32,7 +32,7 @@ export class UsersList extends Component {
     const role = sessionStorage.getItem('role')
 
     axios
-      .get("http://192.168.0.108:8090/user/all/producer", {headers: headers})
+      .get("http://localhost:8090/user/all/producer", {headers: headers})
       .then((response) => {
         this.setState({
           users: response.data.data,

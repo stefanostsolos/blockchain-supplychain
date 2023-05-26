@@ -96,7 +96,7 @@ export class CreateUser extends Component {
     console.log(user);
 
     axios
-      .post("http://192.168.0.108:8090/user/signup/" + this.state.role, user, {
+      .post("http://localhost:8090/user/signup/" + this.state.role, user, {
         headers: headers,
       })
       .then((res) => console.log(res));

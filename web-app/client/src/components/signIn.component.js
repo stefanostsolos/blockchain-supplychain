@@ -73,7 +73,7 @@ export class SignIn extends Component {
     console.log(signIn);
 
     axios
-      .post("http://192.168.0.108:8090/user/signin/" + this.state.role, signIn)
+      .post("http://localhost:8090/user/signin/" + this.state.role, signIn)
       .then((res) => {
         console.log(res.data.data.accessToken);
         sessionStorage.setItem("jwtToken", res.data.data.accessToken);
