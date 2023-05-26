@@ -79,14 +79,13 @@ export class SignIn extends Component {
         sessionStorage.setItem("jwtToken", res.data.data.accessToken);
         sessionStorage.setItem("role", this.state.role);
         sessionStorage.setItem("usertype", this.state.userType);
+        if (this.state.usertype === "admin") {
+          window.location = "/users"
+        }
+        else {
+          window.location = "/products"
+        }
       });
-
-    if (this.state.usertype === "admin") {
-      window.location = "/users"
-    }
-    else {
-      window.location = "/products"
-    }
   }
 
   render() {
