@@ -278,7 +278,7 @@ SYS_CHANNEL="supplychain_hlfn-sys-channel"
 CHANNEL_NAME="supplychainchannel"
 CC_NAME="dummycc6"
 COMPOSE_FILE=./artifacts/docker-compose.yaml
-IMAGETAG="1.4.6"
+IMAGETAG="1.4.12"
 CONSENSUS_TYPE="solo"
 PROCEED_ASK="true"
 # Parse commandline args
