@@ -43,9 +43,14 @@ export class CreateProduct extends Component {
 
     axios
       .post("http://localhost:8090/product", product, { headers: headers })
-      .then((res) => console.log(res));
-
-    window.location = "/products";
+      .then((res) => {
+      console.log(res);
+      window.location = "/products";
+      })
+      .catch((error) => {
+      console.log(error)
+      });
+      
   }
 
   render() {

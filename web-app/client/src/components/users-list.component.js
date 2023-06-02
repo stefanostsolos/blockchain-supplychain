@@ -10,7 +10,7 @@ const User = (props) => (
     <td>{props.user.UserType}</td>
     <td>{props.user.Address}</td>
     <td>
-      <Link to={"/updateUser/" + props.user._id}>Edit</Link>
+      <Link to={"/updateUser/" + props.user.user_id}>Edit</Link>
     </td>
   </tr>
 );

@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
     }
 
     try {
-        if( loggedUserType === 'admin') {
+        if (loggedUserType === 'admin') {
             return next();
         }
         return apiResponse.unauthorized(res, "User type admin required");

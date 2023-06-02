@@ -5,20 +5,21 @@ exports.transactProduct = async (req, res) => {
     // find who initiates this event by decoding the token and getting the user type
     const { id, loggedUserType , productId , userId } = req.body;
     console.log('1');
-    if ( !userId || !loggedUserType || !productId || !id) {
+    if (!userId || !loggedUserType || !productId || !id) {
+        console.log('controller transact')
         return apiResponse.badRequest(res);
     }
     console.log('2');
     let modelRes;
-    if(loggedUserType == 'manufacturer')
+    if(loggedUserType == 'producer')
     {
-        // call send to Wholesaler
-        modelRes= await transactModel.sendToWholesaler({ productId , userId , id });
+        // call send to Manufacturer
+        modelRes= await transactModel.sendToManufacturer({ productId , userId , id });
     }
-    else if(loggedUserType == 'wholesaler')
+    else if(loggedUserType == 'manufacturer')
     {
         // call send to Distributor
-        modelRes = await transactModel.sendToDistributer({ productId , userId , id });
+        modelRes = await transactModel.sendToDistributor({ productId , userId , id });
     }
     else if(loggedUserType == 'distributor')
     {
@@ -33,7 +34,7 @@ exports.transactProduct = async (req, res) => {
 
 exports.transactProductConsumer = async (req, res) => {
     // find who initiates this event by decoding the token and getting the user type
-    const { id, loggedUserType, name , productId , userId } = req.body;
+    const { id, loggedUserType, name, productId, userId } = req.body;
     console.log('1');
     if (!name || !userId || !loggedUserType || !productId || !id) {
         return apiResponse.badRequest(res);
@@ -41,7 +42,7 @@ exports.transactProductConsumer = async (req, res) => {
     console.log('2');
     let modelRes;
     if(loggedUserType == 'retailer') {
-        modelRes= await transactModel.sellToConsumer({ productId , id });
+        modelRes= await transactModel.sellToConsumer({ productId, id });
     } else {
         return apiResponse.badRequest(res);
     }

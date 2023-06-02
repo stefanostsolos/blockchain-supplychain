@@ -15,10 +15,10 @@ export class CreateUser extends Component {
     this.state = {
       name: "",
       email: "",
-      userType: "",
+      userType: "producer",
       address: "",
       password: "",
-      role: "",
+      role: "producer",
     };
   }
 
@@ -42,10 +42,12 @@ export class CreateUser extends Component {
 
   onChangeUsertype(e) {
     if (e.target.value === "admin") {
+      console.log('onchangeusertype admin')
       this.setState({
         role: "admin",
       });
     } else if (e.target.value === "producer") {
+      console.log('onchangeusertype producer')
       this.setState({
         role: "producer",
       });
@@ -79,10 +81,12 @@ export class CreateUser extends Component {
   }
 
   onSubmit(e) {
+    console.log("Form submitted");
     e.preventDefault();
 
     const user = {
       name: this.state.name,
+      user_id: this.state.name,
       email: this.state.email,
       userType: this.state.userType,
       address: this.state.address,
@@ -94,18 +98,24 @@ export class CreateUser extends Component {
     };
 
     console.log(user);
+    console.log("http://localhost:8090/user/signup/" + this.state.role);
 
     axios
       .post("http://localhost:8090/user/signup/" + this.state.role, user, {
         headers: headers,
       })
-      .then((res) => console.log(res));
-
-    this.setState({
-      user_id: user.user_id,
-    });
-
-    window.location = "/users";
+      .then((res) => {
+      console.log('after signup post')
+      console.log(res);
+      //this.setState({
+      //user_id: user.name,
+      //});
+      window.location = "/users";
+      })
+      .catch((error) => {
+      console.log(error)
+      });
+    
   }
 
   render() {

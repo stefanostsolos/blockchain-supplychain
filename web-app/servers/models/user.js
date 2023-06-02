@@ -16,6 +16,7 @@ exports.signup = async (isProducer, isManufacturer, isDistributor, isRetailer, i
 
     const error = walletRes.error || networkObj.error || contractRes.error;
     if (error) {
+        console.log('signup model error')
         const status = walletRes.status || networkObj.status || contractRes.status;
         return apiResponse.createModelRes(status, error);
     }

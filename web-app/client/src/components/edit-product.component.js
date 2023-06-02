@@ -1,45 +1,95 @@
 import React, { Component } from "react";
+import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 
-export class EditProduct extends Component {
+function EditProductWrapper() {
+  const { id } = useParams();
+  return <EditProduct id={id} />;
+}
+
+class EditProduct extends Component {
   constructor(props) {
     super(props);
+
+    // method binding
+    this.onChangeProductName = this.onChangeProductName.bind(this);
+    this.onChangePrice = this.onChangePrice.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
       product_name: "",
       date: {
-        productionDate: "",
-        sendToManufacturerDate: "",
-        sendToDistributorDate: "",
-        sendToRetailerDate: "",
-        sellToConsumerDate: "",
-        orderedDate: "",
-        deliveredDate: "",
+        productionDate: new Date(),
+        sendToManufacturerDate: new Date(),
+        sendToDistributorDate: new Date(),
+        sendToRetailerDate: new Date(),
+        sellToConsumerDate: new Date(),
+        orderedDate: new Date(),
+        deliveredDate: new Date(),
       },
       producer_id: "",
-      manufactuer_id: "",
+      manufacturer_id: "",
       distributor_id: "",
       retailer_id: "",
       consumer_id: "",
       status: "",
       price: 0,
-      manufacturers: [],
+      role: sessionStorage.getItem('role'),
+      loggedUser_id: sessionStorage.getItem('userId'),
     };
   }
 
   componentDidMount() {
-    axios.get("http://localhost:8090/products/" + this.props.match.params.id)
-    .then((response) => {
-      this.setState({
-        product_name: response.data.product_name,
-        producer_id: response.data.producer_id,
-        productionDate: response.data.productionDate,
-        status: response.data.status,
-        price: response.data.price,
+    const headers = {
+      "x-access-token": sessionStorage.getItem("jwtToken"),
+    };
+
+    axios.get("http://localhost:8090/product/" + this.props.id + "/" + this.state.role, { headers: headers })
+      .then((response) => {
+        this.setState({
+          product_name: response.data.product_name,
+          price: response.data.price,
+        })
       })
-    })
+      .catch((error) => {
+        // handle error
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        console.log(error.config);
+      });
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+    console.log(sessionStorage.getItem('userId'))
+    // update the product here
+    const product = {
+      id: this.props.id,
+      loggedUserId: sessionStorage.getItem('userId'),
+      name: this.state.product_name,
+      price: this.state.price,
+      //loggedUserType: sessionStorage.getItem("role"), // retrieve the role from session storage
+      //loggedUserType: this.state.role, // is it needed?
+    };
+
+    console.log(product);
+
+    const headers = {
+      "x-access-token": sessionStorage.getItem("jwtToken"),
+    };
+
+    axios.put("http://localhost:8090/product/" + this.props.id + "/" + this.state.role, product, { headers: headers })
+      .then(res => console.log(res.data))
+      .catch(error => console.error(error));
   }
 
   onChangeProductName(e) {
@@ -50,20 +100,20 @@ export class EditProduct extends Component {
 
   onChangePrice(e) {
     this.setState({
-      price: e.target.value,
+      price: Number(e.target.value),
     });
   }
 
-  onChangeProducerId(e) {
-    this.setState({
-      producer_id: e.target.value,
-    });
-  }
+  //onChangeProducerId(e) {
+  //  this.setState({
+  //    producer_id: e.target.value,
+  //  });
+  //}
 
-  onChangeProducerDate(date) {
-    const newDate = { ...this.state.date, productionDate: date };
-    this.setState({ date: newDate });
-  }
+  //onChangeProductionDate(date) {
+  //  const newDate = { ...this.state.date, productionDate: date };
+  //  this.setState({ date: newDate });
+  //}
 
   render() {
     return (
@@ -81,40 +131,9 @@ export class EditProduct extends Component {
             />
           </div>
           <div className="form-group">
-            <label>ProducerID: </label>
-            <select
-              ref="producerInput"
-              required
-              className="form-control"
-              value={this.state.producer_id}
-              onChange={this.onChangeProducerId}
-            >
-              {this.state.producers.map(function (producer) {
-                return (
-                  <option
-                    key={producer.user_id}
-                    value={producer.user_id}
-                  >
-                    {producer.user_id}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Production Date: </label>
-            <div>
-              <DatePicker
-                selected={this.state.date.productionDate}
-                onChange={this.onChangeProducerDate}
-              />
-            </div>
-          </div>
-          <div className="form-group">
             <label>Price: </label>
             <input
-              type="number"
-              required
+              type="text"
               className="form-control"
               value={this.state.price}
               onChange={this.onChangePrice}
@@ -123,7 +142,7 @@ export class EditProduct extends Component {
           <div className="form-group">
             <input
               type="submit"
-              value="Create Product"
+              value="Update Product"
               className="btn btn-primary"
             />
           </div>
@@ -133,4 +152,4 @@ export class EditProduct extends Component {
   }
 }
 
-export default EditProduct;
+export default EditProductWrapper;

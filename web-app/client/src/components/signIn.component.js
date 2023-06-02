@@ -11,10 +11,10 @@ export class SignIn extends Component {
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      userType: "manufacturer",
+      userType: "producer",
       name: "",
       password: "",
-      role: "manufacturer",
+      role: "producer",
     };
   }
 
@@ -79,6 +79,9 @@ export class SignIn extends Component {
         sessionStorage.setItem("jwtToken", res.data.data.accessToken);
         sessionStorage.setItem("role", this.state.role);
         sessionStorage.setItem("usertype", this.state.userType);
+        sessionStorage.setItem("userId", res.data.data.userId);
+        //sessionStorage.setItem('userId', user.producerId || user.manufacturerId || user.distributorId || user.retailerId || user.consumerId);
+
         if (this.state.usertype === "admin") {
           window.location = "/users"
         }
