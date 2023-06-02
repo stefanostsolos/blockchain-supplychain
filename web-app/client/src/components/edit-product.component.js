@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function EditProductWrapper() {
   const { id } = useParams();
@@ -91,8 +93,19 @@ class EditProduct extends Component {
     };
 
     axios.put("http://localhost:8090/product/" + this.props.id + "/" + this.state.role, product, { headers: headers })
-      .then(res => console.log(res.data))
-      .catch(error => console.error(error));
+      .then((res) => {
+      console.log(res.data);
+      toast.success(`Updated product successfully.`, {
+            position: toast.POSITION.TOP_CENTER,
+            onClose: () => {
+                window.location = "/products";
+            }
+       });
+      })
+      .catch((error) => {
+      console.error(error);
+      toast.error("An error occurred while updating the product.");
+      });
   }
 
   onChangeProductName(e) {
@@ -151,6 +164,7 @@ class EditProduct extends Component {
             />
           </div>
         </form>
+        <ToastContainer autoClose={2000} theme="dark" />
       </div>
     );
   }
