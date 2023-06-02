@@ -37,7 +37,7 @@ class EditProduct extends Component {
       status: "",
       price: 0,
       role: sessionStorage.getItem('role'),
-      loggedUser_id: sessionStorage.getItem('userId'),
+      loggedUserid: sessionStorage.getItem('userId'),
     };
   }
 
@@ -49,8 +49,10 @@ class EditProduct extends Component {
     axios.get("http://localhost:8090/product/" + this.props.id + "/" + this.state.role, { headers: headers })
       .then((response) => {
         this.setState({
-          product_name: response.data.product_name,
-          price: response.data.price,
+          product_name: response.data.data.Name,
+          price: response.data.data.Price,
+          initialProductName: response.data.data.Name,
+          initialPrice: response.data.data.Price,
         })
       })
       .catch((error) => {
@@ -70,17 +72,18 @@ class EditProduct extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    console.log(sessionStorage.getItem('userId'))
+    console.log('Product id:', this.props.id);
+    console.log('Logged user id:', sessionStorage.getItem('userId'));
     // update the product here
     const product = {
-      id: this.props.id,
+      product_id: this.props.id,
       loggedUserId: sessionStorage.getItem('userId'),
       name: this.state.product_name,
       price: this.state.price,
       //loggedUserType: sessionStorage.getItem("role"), // retrieve the role from session storage
       //loggedUserType: this.state.role, // is it needed?
     };
-
+    console.log(product.product_id);
     console.log(product);
 
     const headers = {
@@ -144,6 +147,7 @@ class EditProduct extends Component {
               type="submit"
               value="Update Product"
               className="btn btn-primary"
+              disabled={this.state.product_name === this.state.initialProductName && this.state.price === this.state.initialPrice}
             />
           </div>
         </form>

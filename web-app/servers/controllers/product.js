@@ -23,29 +23,30 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
-    const { id, loggedUserId, name, price } = req.body;
+    const { product_id, loggedUserId, name, price } = req.body;
     const { role } = req.params;
+    console.log(req.body);
     console.log('controller update 1');
 
-    if (!name || !id || !price || !role || !loggedUserId) {
+    if (!name || !product_id || !price || !role || !loggedUserId) {
         return apiResponse.badRequest(res);
     }
     console.log('controller update 2');
 
-    if (loggedUserType === 'consumer' ) {
+    if (role === 'consumer' ) {
         return apiResponse.badRequest(res);
     }
     console.log('controller update 3');
 
     let modelRes
     if (role === 'producer') {
-        modelRes = await productModel.updateProduct(true, false, false, false, { id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(true, false, false, false, { product_id, loggedUserId, name, price });
     } else if (role === 'manufacturer') {
-        modelRes = await productModel.updateProduct(false, true, false, false, { id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, true, false, false, { product_id, loggedUserId, name, price });
     } else if (role === 'distributor') {
-        modelRes = await productModel.updateProduct(false, false, true, false, { id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, price });
     } else if (role === 'retailer') {
-        modelRes = await productModel.updateProduct(false, false, false, true, { id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, price });
     } else {
         return apiResponse.badRequest(res);
     }
