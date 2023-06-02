@@ -41,11 +41,11 @@ type Product struct {
 	Product_ID      string       `json:"ProductID"`
 	Order_ID        string       `json:"OrderID"`
 	Name            string       `json:"Name"`
-	Producer_ID   string       `json:"ProducerID"`
-	Manufacturer_ID string       `json:"ManufacturerID"`
-	Distributor_ID  string       `json:"DistributorID"`
-	Retailer_ID     string       `json:"RetailerID"`
 	Consumer_ID     string       `json:"ConsumerID"`
+	Manufacturer_ID string       `json:"ManufacturerID"`
+	Retailer_ID     string       `json:"RetailerID"`
+	Distributor_ID  string       `json:"DistributorID"`
+	Producer_ID   string       `json:"ProducerID"`
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Price           float64      `json:"Price"`
@@ -446,7 +446,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	errPut := APIstub.PutState(product.Product_ID, updatedProductAsBytes)
 	if errPut != nil {
-		return shim.Error(fmt.Sprintf("Failed to sell To Consumer: %s", product.Product_ID))
+		return shim.Error(fmt.Sprintf("Failed to update product: %s", product.Product_ID))
 	}
 
 	fmt.Println("Success in updating Product %v ", product.Product_ID)
