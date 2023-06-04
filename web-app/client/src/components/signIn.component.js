@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class SignIn extends Component {
   constructor(props) {
@@ -76,10 +78,11 @@ export class SignIn extends Component {
       .post("http://localhost:8090/user/signin/" + this.state.role, signIn)
       .then((res) => {
         console.log(res.data.data.accessToken);
+        console.log(res.data.data);
         sessionStorage.setItem("jwtToken", res.data.data.accessToken);
         sessionStorage.setItem("role", this.state.role);
         sessionStorage.setItem("usertype", this.state.userType);
-        sessionStorage.setItem("userId", res.data.data.userId);
+        sessionStorage.setItem("userId", res.data.data.id);
         //sessionStorage.setItem('userId', user.producerId || user.manufacturerId || user.distributorId || user.retailerId || user.consumerId);
 
         if (this.state.usertype === "admin") {
@@ -88,13 +91,22 @@ export class SignIn extends Component {
         else {
           window.location = "/products"
         }
+      })
+      .catch((error) => {
+          console.log(error);
+          toast.error("Incorrect credentials, please try again.", {
+            position: toast.POSITION.TOP_CENTER
+        });
       });
   }
 
   render() {
     return (
       <div>
+      <div style={{textAlign: "center"}}>
+        <h3><strong>Welcome to SupplyChain!</strong></h3>
         <h3>Sign In</h3>
+        </div>
         <br />
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
@@ -147,6 +159,7 @@ export class SignIn extends Component {
             <input type="submit" value="Sign In" className="btn btn-primary" />
           </div>
         </form>
+        <ToastContainer autoClose={2000} theme="dark" />
       </div>
     );
   }
