@@ -136,7 +136,7 @@ export class SignIn extends Component {
             </select>
           </div>
           <div className="form-group">
-            <label>Name: </label>
+            <label>UserID: </label>
             <input
               type="text"
               required
