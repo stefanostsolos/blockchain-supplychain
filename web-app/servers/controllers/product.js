@@ -1,5 +1,8 @@
 const productModel = require('../models/product.js');
 const apiResponse = require('../utils/apiResponse.js');
+const path = require('path');
+const fs = require('fs');
+const uploadDir = path.resolve(__dirname, '../uploads');
 
 exports.createProduct = async (req, res) => {
     const { id, name, price, loggedUserType } = req.body;
@@ -20,6 +23,55 @@ exports.createProduct = async (req, res) => {
     const modelRes = await productModel.createProduct({ name, id, price });
     console.log('done')
     return apiResponse.send(res, modelRes);
+};
+
+exports.upload = async (req, res) => {
+    const id = req.body.id;
+    console.log(id);
+    if (!id) {
+        return apiResponse.badRequest(res, 'User ID is required');
+    }
+    try {
+        console.log(id);
+        if (!req.file) {
+            return apiResponse.badRequest(res, "No file uploaded!");
+        } else {
+            let productFile = req.file;
+
+            // Use the mv() method to place the file in upload directory
+            //const productFilePath = path.join(uploadDir, productFile.originalname);
+            //productFile.mv(productFilePath);
+            const productFilePath = req.file.path;
+
+
+            // Read JSON data
+            let products;
+            try {
+                parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
+                products = parsedFileContent.data;
+            } catch (err) {
+                console.log(err);
+                console.error(err);
+                return apiResponse.error(res, "An error occurred while reading the uploaded file!");
+            }
+
+            let createProductResponse;
+            for (let product of products) {
+                const { PRODUCT_ID: product_name, UNIT_COST: product_price } = product;
+                const productData = { name: product_name, id, price: product_price };
+                console.log(productData);
+                createProductResponse = await productModel.createProduct(productData);
+                if (createProductResponse.error) {
+                    return apiResponse.createModelRes(400, createProductResponse.error);
+                }
+            }
+
+            return apiResponse.send(res, createProductResponse);
+        }
+    } catch (err) {
+        console.log(err);
+        return apiResponse.error(res, "An error occurred!");
+    }
 };
 
 exports.updateProduct = async (req, res) => {

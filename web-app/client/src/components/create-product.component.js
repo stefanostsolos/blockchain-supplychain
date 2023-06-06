@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export class CreateProduct extends Component {
   constructor(props) {
@@ -49,6 +51,9 @@ export class CreateProduct extends Component {
       })
       .catch((error) => {
       console.log(error)
+      toast.error("User type is not producer. You cannot create a product.", {
+            position: toast.POSITION.TOP_CENTER
+        })
       });
       
   }
@@ -86,6 +91,7 @@ export class CreateProduct extends Component {
             />
           </div>
         </form>
+      <ToastContainer autoClose={2000} theme="dark" />  
       </div>
     );
   }

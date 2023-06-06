@@ -29,3 +29,10 @@ exports.notFound = res => {
         data: {},
     });
 };
+
+exports.error = function (res, message) {
+  return res.status(500).json({
+    success: false,
+    message: message
+  });
+};

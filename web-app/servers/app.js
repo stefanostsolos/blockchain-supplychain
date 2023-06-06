@@ -4,9 +4,21 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
+const multer = require('multer');
 // const apiResponse = require('./utils/apiResponse.js');
 const network = require('./fabric/network.js');
 const router = require('./routes/index.js');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+
+const upload = multer({ storage: storage })
+
 
 async function main() {
 
