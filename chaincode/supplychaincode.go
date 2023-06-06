@@ -341,6 +341,9 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	productCounter := getCounter(APIstub, "ProductCounterNO")
 	productCounter++
+	
+	// Convert productCounter to a string with leading zeros.
+        productCounterStr := fmt.Sprintf("%03d", productCounter)  // Use "%03d" if you expect up to 999 products.
 
 	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
@@ -354,7 +357,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + strconv.Itoa(productCounter), Order_ID: "", Name: args[0], Consumer_ID: "", Producer_ID: args[1], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Price: i1}
+	var comAsset = Product{Product_ID: "Product" + productCounterStr, Order_ID: "", Name: args[0], Consumer_ID: "", Producer_ID: args[1], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Price: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -372,7 +375,6 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	incrementCounter(APIstub, "ProductCounterNO")
 
 	fmt.Println("Success in creating Product Asset %v", comAsset)
-
 	return shim.Success(comAssetAsBytes)
 }
 
