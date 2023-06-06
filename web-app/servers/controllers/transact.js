@@ -3,7 +3,7 @@ const apiResponse = require('../utils/apiResponse.js');
 
 exports.transactProduct = async (req, res) => {
     // find who initiates this event by decoding the token and getting the user type
-    const { id, loggedUserType , productId , userId } = req.body;
+    const { id, loggedUserType, productId, userId } = req.body;
     console.log('1');
     if (!userId || !loggedUserType || !productId || !id) {
         console.log('controller transact')
@@ -14,17 +14,17 @@ exports.transactProduct = async (req, res) => {
     if(loggedUserType == 'producer')
     {
         // call send to Manufacturer
-        modelRes= await transactModel.sendToManufacturer({ productId , userId , id });
+        modelRes= await transactModel.sendToManufacturer({ productId, userId, id });
     }
     else if(loggedUserType == 'manufacturer')
     {
         // call send to Distributor
-        modelRes = await transactModel.sendToDistributor({ productId , userId , id });
+        modelRes = await transactModel.sendToDistributor({ productId, userId, id });
     }
     else if(loggedUserType == 'distributor')
     {
         // call send to Retailer
-        modelRes = await transactModel.sendToRetailer({ productId , userId , id  });
+        modelRes = await transactModel.sendToRetailer({ productId, userId, id  });
     } else {
         return apiResponse.badRequest(res);
     }
