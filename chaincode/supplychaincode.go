@@ -843,8 +843,21 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 	assetType := args[0]
 	assetCounter := getCounter(APIstub, assetType+"CounterNO")
 
-	startKey := assetType + "1"
-	endKey := assetType + strconv.Itoa(assetCounter+1)
+	var startKey string
+        var endKey string
+
+        // Check the asset type and form start and end keys accordingly.
+        if assetType == "Product" {
+	  // Pad with leading zeros for Product IDs.
+	  startKey = assetType + fmt.Sprintf("%03d", 1) // Use "%03d" if you expect up to 999 products.
+	  endKey = assetType + fmt.Sprintf("%03d", assetCounter+1)
+        } else if assetType == "User" {
+	  // No padding for User IDs.
+	  startKey = assetType + "1"
+	  endKey = assetType + strconv.Itoa(assetCounter+1)
+        } else {
+	   return shim.Error(fmt.Sprintf("Invalid asset type: %s", assetType))
+        }  
 
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 
