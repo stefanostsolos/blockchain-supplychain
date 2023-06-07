@@ -755,12 +755,12 @@ func (t *s_supplychain) sendToRetailer(APIstub shim.ChaincodeStubInterface, args
 		return shim.Error(fmt.Sprintf("Failed to send to retailer: %s", product.Product_ID))
 	}
 
-	fmt.Println("Sent product %v to retailer successfully", product.Product_ID)
+	fmt.Println("Success in sending Product %v ", product.Product_ID)
 	return shim.Success(updatedProductAsBytes)
 }
 
 // function to sell the product to consumer
-// Input params , product id  consumer id
+// Input params , product id , consumer id
 func (t *s_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
