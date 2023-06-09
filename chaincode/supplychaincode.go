@@ -33,6 +33,7 @@ type ProductDates struct {
 	SendToDistributorDate string `json:"SendToDistributorDate"`
 	SendToRetailerDate    string `json:"SendToRetailerDate"`
 	SellToConsumerDate    string `json:"SellToConsumerDate"`
+	ModifiedDate         string `json:"ModifiedDate"`
 	OrderedDate           string `json:"OrderedDate"`
 	DeliveredDate         string `json:"DeliveredDate"`
 }
@@ -275,7 +276,7 @@ func (t *s_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args []s
 	userCounter := getCounter(APIstub, "UserCounterNO")
 	userCounter++
 
-	var comAsset = User{Name: args[0], User_ID: "User" + strconv.Itoa(userCounter), Email: args[1], User_Type: args[2], Address: args[3], Password: args[4]}
+	var comAsset = User{Name: args[0], User_ID: fmt.Sprintf("User%03d", userCounter), Email: args[1], User_Type: args[2], Address: args[3], Password: args[4]}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -440,7 +441,15 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	// Updating the product values withe the new values
 	product.Name = args[2] // product name from UI for the update
 	product.Price = i1     // product value from UI for the update
+	
+	//To get the transaction TimeStamp from the Channel Header
+	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
+	if errTx != nil {
+		return shim.Error("Returning error in transaction timestamp")
+	}
 
+	product.Date.ModifiedDate = txTimeAsPtr
+	
 	updatedProductAsBytes, errMarshal := json.Marshal(product)
 	if errMarshal != nil {
 		return shim.Error(fmt.Sprintf("Marshal Error: %s", errMarshal))
@@ -846,19 +855,9 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 	var startKey string
         var endKey string
 
-        // Check the asset type and form start and end keys accordingly.
-        if assetType == "Product" {
-	  // Pad with leading zeros for Product IDs.
-	  startKey = assetType + fmt.Sprintf("%03d", 1) // Use "%03d" if you expect up to 999 products.
-	  endKey = assetType + fmt.Sprintf("%03d", assetCounter+1)
-        } else if assetType == "User" {
-	  // No padding for User IDs.
-	  startKey = assetType + "1"
-	  endKey = assetType + strconv.Itoa(assetCounter+1)
-        } else {
-	   return shim.Error(fmt.Sprintf("Invalid asset type: %s", assetType))
-        }  
-
+	startKey = assetType + fmt.Sprintf("%03d", 1) // Use "%03d" if you expect up to 999 products.
+	endKey = assetType + fmt.Sprintf("%03d", assetCounter+1)
+        
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
 
 	if err != nil {

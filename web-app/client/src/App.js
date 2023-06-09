@@ -12,6 +12,7 @@ import EditProduct from "./components/edit-product.component";
 import UsersList from "./components/users-list.component";
 import ProductsList from "./components/products-list.component";
 import OrdersList from "./components/orders-list.component";
+import ProductHistory from "./components/product-history.component";
 
 function App() {
   const role = sessionStorage.getItem("role");
@@ -31,9 +32,10 @@ function App() {
           <Route path="/createUser" element={<CreateUser />} />
           <Route path="/createProduct" element={<CreateProduct />} />
           <Route path="/createOrder" element={<CreateOrder />} />
-          <Route path="/edit/:id" element={<EditProduct /> } />
+          <Route path="/edit/:id" element={<EditProduct />} />
           <Route path="/users" element={<UsersList />} />
           <Route path="/orders" element={<OrdersList />} />
+          <Route path="/history/:id" element={<ProductHistory />} />
         </Routes>
       </div>
       </div>

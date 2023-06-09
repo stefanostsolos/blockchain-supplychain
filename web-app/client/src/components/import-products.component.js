@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class ImportProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedFile: null,
+      isHovered: false,
     };
   }
 
@@ -16,36 +19,35 @@ class ImportProducts extends Component {
   };
 
   onClickHandler = async () => {
-    const headers = {
-      "x-access-token": sessionStorage.getItem("jwtToken"),
-    };
-    const data = new FormData();
-    data.append('file', this.state.selectedFile);
-    data.append('id', sessionStorage.getItem("userId"));
-    try {
-      console.log('upload 1');
-      const response = await axios.post('http://localhost:8090/product/upload', data, { headers: headers });
-      console.log('upload 2');
-      if (response.data.success) {
-        console.log("upload success");
-        /*
-        const products = JSON.parse(response.data.fileContent);
-        for (const item of products) {
-          const product = {
-            name: item['PRODUCT_ID'],
-            id: sessionStorage.getItem("userId"),
-            price: String(item['UNIT_COST']),
-          };
-          try {
-            await axios.post("http://localhost:8090/product", product, { headers: headers });
-          } catch (error) {
-            console.error('Error while creating a product:', error);
-          }
-        } */
+      const headers = {
+        "x-access-token": sessionStorage.getItem("jwtToken"),
+      };
+      const data = new FormData();
+      data.append('file', this.state.selectedFile);
+      data.append('id', sessionStorage.getItem("userId"));
+      try {
+        toast.info("Uploading products...", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: false
+        });
+        console.log('upload 1');
+        const response = await axios.post('http://localhost:8090/product/upload', data, { headers: headers });
+        console.log('upload 2');
+        if (response.data.message === "Success") {
+          console.log("upload success");
+          toast.dismiss();
+          //toast.success("Products imported successfully!");
+          //window.location = "/products";
+          toast.success("Products imported successfully!", {
+            position: toast.POSITION.TOP_CENTER,
+            onClose: () => {
+                window.location = "/products";
+            }
+        });
+        }
+      } catch (error) {
+        console.error('Error during upload:', error);
       }
-    } catch (error) {
-      console.error('Error during upload:', error);
-    }
   };
 
   render() {
@@ -68,6 +70,7 @@ class ImportProducts extends Component {
         border: 'none',
         padding: '10px 10px',
         }} onClick={this.onClickHandler}>Upload</button>
+        <ToastContainer autoClose={2000} theme="dark" />  
       </div>
     );
   }
