@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 
 export class Navbar extends Component {
   render() {
+    const userid = sessionStorage.getItem("userId");
     const role = sessionStorage.getItem("role");
     console.log(role);
     return (
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <div className="collapse navbar-collapse justify-content-center" style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="nav-link" style={{ color: 'rgba(255,255,255,.5)', paddingLeft: '15px', paddingRight: '15px'}}>Welcome {userid} - ({role})</div>
           <div className="navbar-brand">SupplyChain</div>
           <ul className="navbar-nav ml-auto">
             <li className="navbar-item">
@@ -26,6 +28,16 @@ export class Navbar extends Component {
               </Link>
             </li>
             <li className="navbar-item">
+              <Link to="/importShipments" className="nav-link">
+                Import Shipments
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/importShipmentItems" className="nav-link">
+                Import Shipment Items
+              </Link>
+            </li>
+            <li className="navbar-item">
               <Link to="/users" className="nav-link">
                 Users
               </Link>
@@ -35,26 +47,11 @@ export class Navbar extends Component {
                 Products
               </Link>
             </li>
-            {/*<li className="navbar-item">
-              <Link to="/updateUser" className="nav-link">
-                Edit User
-              </Link>
-            </li> 
             <li className="navbar-item">
-              <Link to="/updateProduct" className="nav-link">
-                Edit Product
-              </Link>
-            </li> */}
-            {/* <li className="navbar-item">
-              <Link to="/createOrder" className="nav-link">
-                Create Order
+              <Link to="/shipments" className="nav-link">
+                Shipments
               </Link>
             </li>
-            <li className="navbar-item">
-              <Link to="/orders" className="nav-link">
-                Orders
-              </Link>
-            </li> */}
             <li className="navbar-item">
               <Link to="/" className="nav-link">
                 Logout

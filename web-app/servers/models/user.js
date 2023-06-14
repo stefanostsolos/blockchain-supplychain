@@ -2,7 +2,6 @@ const network = require('../fabric/network.js');
 const apiResponse = require('../utils/apiResponse.js');
 const authenticateUtil = require('../utils/authenticate.js');
 
-
 exports.signup = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
     const { id, userType, address, name, email, password } = information;
 
@@ -11,7 +10,6 @@ exports.signup = async (isProducer, isManufacturer, isDistributor, isRetailer, i
     
     let contractRes;
     contractRes = await network.invoke(networkObj, 'createUser', name, email, userType, address, password);
-    console.log('5');
     const walletRes = await network.registerUser(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, contractRes.UserID);
 
     const error = walletRes.error || networkObj.error || contractRes.error;

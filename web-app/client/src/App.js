@@ -13,6 +13,9 @@ import UsersList from "./components/users-list.component";
 import ProductsList from "./components/products-list.component";
 import OrdersList from "./components/orders-list.component";
 import ProductHistory from "./components/product-history.component";
+import ImportShipments from "./components/import-shipments.component";
+import ImportShipmentItems from "./components/import-shipment-items.component";
+import ShipmentsList from "./components/shipments-list.component";
 
 function App() {
   const role = sessionStorage.getItem("role");
@@ -36,6 +39,9 @@ function App() {
           <Route path="/users" element={<UsersList />} />
           <Route path="/orders" element={<OrdersList />} />
           <Route path="/history/:id" element={<ProductHistory />} />
+          <Route path="/importShipments" element={<ImportShipments />} />
+          <Route path="/importShipmentItems" element={<ImportShipmentItems />} />
+          <Route path="/shipments" element={<ShipmentsList />} />
         </Routes>
       </div>
       </div>

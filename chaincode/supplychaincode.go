@@ -27,6 +27,17 @@ type User struct {
 	Password  string `json:"Password"`
 }
 
+type Shipment struct {
+	Shipment_ID string `json:"ShipmentID"`
+	Shipment_Name string `json:"ShipmentName"`
+	Shipment_Type_ID string `json:"ShipmentTypeID"`
+	Status_ID string `json:"StatusID"`
+	Estimated_Ship_Cost float64 `json:"EstimatedShipCost"`
+	Party_ID_To string `json:"PartyIDTo"`
+	Party_ID_From string `json:"PartyIDFrom"`
+	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
+}
+
 type ProductDates struct {
 	ProductionDate       string `json:"ProductionDate"`
 	SendToManufacturerDate  string `json:"SendToManufacturerDate"`
@@ -39,7 +50,11 @@ type ProductDates struct {
 }
 
 type Product struct {
+        Shipment_ID string `json:"ShipmentID"`
+        Shipment_Name string `json:"ShipmentName"`
 	Product_ID      string       `json:"ProductID"`
+	Initial_Product_ID string `json:"InitialProductID"`
+	Product_Type string `json:"ProductType"`
 	Order_ID        string       `json:"OrderID"`
 	Name            string       `json:"Name"`
 	Consumer_ID     string       `json:"ConsumerID"`
@@ -50,6 +65,9 @@ type Product struct {
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Price           float64      `json:"Price"`
+	Quantity float64 `json:"Quantity"`
+	PreviousVersionID string `json:"PreviousVersionID"`
+	NextVersionID string `json:"NextVersionID"`
 }
 
 // =================================================================================== // Main // ===================================================================================
@@ -115,6 +133,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "createUser" {
 		//create a new user
 		return t.createUser(stub, args)
+	} else if function == "createShipment" {
+		//create a new shipment
+		return t.createShipment(stub, args)
 	} else if function == "createProduct" {
 		//create a new product
 		return t.createProduct(stub, args)
@@ -145,6 +166,15 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "queryAll" {
 		// query all assests of a type
 		return t.queryAll(stub, args)
+	} else if function == "getProductHistory" {
+		// query history of product
+		return t.getProductHistory(stub, args)
+	} else if function == "getFullProductHistory" {
+		// query full history of product
+		return t.getFullProductHistory(stub, args)
+	} else if function == "queryShipmentByName" {
+		// get shipment id from shipment name
+		return t.queryShipmentByName(stub, args)
 	}
 	fmt.Println("invoke could not find func: " + function)
 	//error
@@ -299,26 +329,114 @@ func (t *s_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args []s
 
 }
 
-func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 3
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments, expected 3 arguments")
+	//To check number of arguments are 7
+	if len(args) != 7 {
+		return shim.Error("Incorrect number of arguments, expected 7 arguments")
 	}
-
+	
 	if len(args[0]) == 0 {
-		return shim.Error("Name must be provided to create a product")
+		return shim.Error("Shipment name must be provided to create a shipment")
 	}
-
+	
 	if len(args[1]) == 0 {
-		return shim.Error("Producer_ID must be provided")
+		return shim.Error("Shipment_Type_ID must be provided to create a shipment")
 	}
 
 	if len(args[2]) == 0 {
-		return shim.Error("Price must be non-empty")
+		return shim.Error("Status_ID must be provided")
 	}
+	
+	//if len(args[3]) == 0 {
+	//	return shim.Error("Estimated_Ship_Cost must be provided")
+	//}
+	
+	//if len(args[4]) == 0 {
+	//	return shim.Error("Party_ID_To must be non-empty")
+	//}
+	
+	//if len(args[5]) == 0 {
+	//	return shim.Error("Party_ID_From must be non-empty")
+	//}
+	
+	if len(args[6]) == 0 {
+		return shim.Error("Last_Updated_Stamp must be non-empty")
+	}
+	
+	var i1 float64
+	
+	//Estimated_Ship_Cost conversion - Error handling
+	if len(args[3]) != 0 {
+		i1Temp, errShipCost := strconv.ParseFloat(args[3], 64)
+		if errShipCost != nil {
+			return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errShipCost))
+		}
+		i1 = i1Temp
+	}
+	shipmentCounter := getCounter(APIstub, "ShipmentCounterNO")
+	shipmentCounter++
+	
+	// Convert shipmentCounter to a string with leading zeros.
+        shipmentCounterStr := fmt.Sprintf("%03d", shipmentCounter)  // Use "%03d" if you expect up to 999 shipments.
+	
+	var comAsset = Shipment{Shipment_ID: "Shipment" + shipmentCounterStr, Shipment_Name: args[0], Shipment_Type_ID: args[1], Status_ID: args[2], Estimated_Ship_Cost: i1, Party_ID_To: args[4], Party_ID_From: args[5], Last_Updated_Stamp: args[6] }
+
+	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
+
+	if errMarshal != nil {
+		return shim.Error(fmt.Sprintf("Marshal Error in Shipment: %s", errMarshal))
+	}
+
+	errPut := APIstub.PutState(comAsset.Shipment_ID, comAssetAsBytes)
+
+	if errPut != nil {
+		return shim.Error(fmt.Sprintf("Failed to create Shipment Asset: %s", comAsset.Shipment_ID))
+	}
+
+	//To Increment the Shipment Counter
+	incrementCounter(APIstub, "ShipmentCounterNO")
+
+	fmt.Println("Success in creating Shipment Asset %v", comAsset)
+	return shim.Success(comAssetAsBytes)
+}
+
+func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	//To check number of arguments are 7
+	if len(args) != 7 {
+		return shim.Error("Incorrect number of arguments, expected 7 arguments")
+	}
+	//if len(args[0]) == 0 {
+	//	return shim.Error("Shipment_ID must be provided to create a product")
+	//}
+	
+	//if len(args[1]) == 0 {
+	//	return shim.Error("Shipment_Name must be provided to create a product")
+	//}
+	
+	if len(args[2]) == 0 {
+		return shim.Error("Name must be provided to create a product")
+	}
+
+	if len(args[3]) == 0 {
+		return shim.Error("Producer_ID must be provided")
+	}
+	
+	if len(args[4]) == 0 {
+		return shim.Error("Price must be provided")
+	}
+	
+	if len(args[5]) == 0 {
+		return shim.Error("Quantity must be non-empty")
+	}
+	
+	if len(args[6]) == 0 {
+		return shim.Error("ProductType must be non-empty")
+	}
+	
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
-	userBytes, _ := APIstub.GetState(args[1])
+	userBytes, _ := APIstub.GetState(args[3])
 
 	if userBytes == nil {
 		return shim.Error("Cannot find user")
@@ -333,9 +451,15 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	if user.User_Type != "producer" {
 		return shim.Error("User type must be producer")
 	}
+	
+	//Quantity conversion - Error handling
+	i1, errQuantity := strconv.ParseFloat(args[5], 64)
+	if errQuantity != nil {
+		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
+	}
 
 	//Price conversion - Error handling
-	i1, errPrice := strconv.ParseFloat(args[2], 64)
+	i2, errPrice := strconv.ParseFloat(args[4], 64)
 	if errPrice != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
 	}
@@ -358,7 +482,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + productCounterStr, Order_ID: "", Name: args[0], Consumer_ID: "", Producer_ID: args[1], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Price: i1}
+	var comAsset = Product{Shipment_ID: args[0], Shipment_Name: args[1], Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type: args[6], PreviousVersionID: "", NextVersionID: "", Order_ID: "", Name: args[2], Consumer_ID: "", Producer_ID: args[3], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1, Price: i2}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -423,14 +547,14 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 
 	// get product details from the stub ie. Chaincode stub in network using the product id passed
-	productBytes, _ := APIstub.GetState(args[0])
-	if productBytes == nil {
+	oldProductBytes, _ := APIstub.GetState(args[0])
+	if oldProductBytes == nil {
 		return shim.Error("Cannot find Product")
 	}
-	product := Product{}
+	oldProduct := Product{}
 
 	// unmarshalling product the data from API
-	json.Unmarshal(productBytes, &product)
+	json.Unmarshal(oldProductBytes, &oldProduct)
 
 	//Price conversion - Error handling
 	i1, errPrice := strconv.ParseFloat(args[3], 64)
@@ -438,10 +562,33 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
 	}
 
-	// Updating the product values withe the new values
+        // Generate a new unique ID for the updated product
+	productCounter := getCounter(APIstub, "ProductCounterNO")
+	productCounter++
+	productCounterStr := fmt.Sprintf("%03d", productCounter)  // Use "%03d" if you expect up to 999 products.
+	newProductID := "Product" + productCounterStr
+
+	// Before updating, save the old product with the new product's ID as its NextVersionID
+	oldProduct.NextVersionID = newProductID
+	oldProduct.Status = "Modified"
+	oldProductAsBytes, errMarshal := json.Marshal(oldProduct)
+	if errMarshal != nil {
+	    return shim.Error(fmt.Sprintf("Marshal Error: %s", errMarshal))
+	}
+
+	errPut := APIstub.PutState(oldProduct.Product_ID, oldProductAsBytes)
+	if errPut != nil {
+	    return shim.Error(fmt.Sprintf("Failed to update old product: %s", oldProduct.Product_ID))
+	}
+
+	// Updating the product values with the new values
+	product := oldProduct  // Create a copy of the old product
+	product.Product_ID = newProductID // Assign the already generated ID to the new product
 	product.Name = args[2] // product name from UI for the update
 	product.Price = i1     // product value from UI for the update
-	
+	product.NextVersionID = "" // Reset NextVersionID as it is not yet known
+	product.Status = "Available"
+
 	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
 	if errTx != nil {
@@ -450,19 +597,60 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	product.Date.ModifiedDate = txTimeAsPtr
 	
+	// Add reference to the previous version of the product
+	product.PreviousVersionID = oldProduct.Product_ID
+	
 	updatedProductAsBytes, errMarshal := json.Marshal(product)
 	if errMarshal != nil {
 		return shim.Error(fmt.Sprintf("Marshal Error: %s", errMarshal))
 	}
 
-	errPut := APIstub.PutState(product.Product_ID, updatedProductAsBytes)
+	errPut = APIstub.PutState(product.Product_ID, updatedProductAsBytes)
 	if errPut != nil {
 		return shim.Error(fmt.Sprintf("Failed to update product: %s", product.Product_ID))
 	}
 
+	incrementCounter(APIstub, "ProductCounterNO")
+	
 	fmt.Println("Success in updating Product %v ", product.Product_ID)
 	return shim.Success(updatedProductAsBytes)
 }
+
+func (t *s_supplychain) getFullProductHistory(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments, expected 1 argument")
+	}
+
+	initialProductID := args[0]
+	history := []Product{}
+
+	for initialProductID != "" {
+		productBytes, err := APIstub.GetState(initialProductID)
+		if err != nil || productBytes == nil {
+			return shim.Error("Cannot find product")
+		}
+
+		var product Product
+		err = json.Unmarshal(productBytes, &product)
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Failed to unmarshal product: %s", err))
+		}
+
+		// Add the product to the history
+		history = append(history, product)
+
+		// Move to the next version
+		initialProductID = product.NextVersionID
+	}
+
+	historyBytes, err := json.Marshal(history)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to marshal product history: %s", err))
+	}
+
+	return shim.Success(historyBytes)
+}
+
 
 func (t *s_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// parameter length check
@@ -908,3 +1096,81 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 
 	return shim.Success(buffer.Bytes())
 }
+
+func (t *s_supplychain) getProductHistory(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments, expected 1 argument")
+	}
+
+	productID := args[0]
+	history := []Product{}
+
+	for productID != "" {
+		productBytes, err := APIstub.GetState(productID)
+		if err != nil || productBytes == nil {
+			return shim.Error("Cannot find product")
+		}
+
+		var product Product
+		err = json.Unmarshal(productBytes, &product)
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Failed to unmarshal product: %s", err))
+		}
+
+		// Add the product to the history
+		history = append(history, product)
+
+		// Move to the previous version
+		productID = product.PreviousVersionID
+	}
+
+	historyBytes, err := json.Marshal(history)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to marshal product history: %s", err))
+	}
+
+	return shim.Success(historyBytes)
+}
+
+func (t *s_supplychain) queryShipmentByName(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+    if len(args) != 1 {
+        return shim.Error("Incorrect number of arguments. Expecting 1")
+    }
+
+    shipmentName := args[0]
+
+    startKey := "Shipment000"
+    endKey := "Shipment{"
+
+    resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+    if err != nil {
+        return shim.Error(err.Error())
+    }
+    defer resultsIterator.Close()
+
+    for resultsIterator.HasNext() {
+        queryResponse, err := resultsIterator.Next()
+        if err != nil {
+            return shim.Error(err.Error())
+        }
+        
+        shipment := Shipment{}
+	err = json.Unmarshal(queryResponse.Value, &shipment)
+	if err != nil {
+	    return shim.Error("Failed to unmarshal shipment: " + err.Error())
+	}
+	fmt.Printf("Unmarshalled Shipment: %v\n", shipment)
+
+	if shipment.Shipment_Name == shipmentName {
+	    return shim.Success([]byte(`{"shipmentId": "` + queryResponse.Key + `"}`))
+	}
+    }
+
+    jsonResp := "{\"Error\":\"Shipment not found\"}"
+    return shim.Error(jsonResp)
+}
+
+
+
+

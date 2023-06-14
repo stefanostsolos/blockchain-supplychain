@@ -7,14 +7,24 @@ export class CreateProduct extends Component {
   constructor(props) {
     super(props);
 
+    this.onChangeShipmentName = this.onChangeShipmentName.bind(this);
     this.onChangeProductName = this.onChangeProductName.bind(this);
     this.onChangePrice = this.onChangePrice.bind(this);
+    this.onChangeQuantity = this.onChangeQuantity.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
+      shipment_name: "",
       product_name: "",
       price: 0,
+      quantity: 1,
     };
+  }
+
+  onChangeShipmentName(e) {
+    this.setState({
+      shipment_name: e.target.value,
+    });
   }
 
   onChangeProductName(e) {
@@ -28,13 +38,22 @@ export class CreateProduct extends Component {
       price: e.target.value,
     });
   }
+  
+  onChangeQuantity(e) {
+    this.setState({
+      quantity: e.target.value,
+    });
+  }
 
   onSubmit(e) {
     e.preventDefault();
 
     const product = {
+      shipmentname: this.state.shipment_name,
       name: this.state.product_name,
       price: this.state.price,
+      quantity: this.state.quantity,
+      producttype: "InventoryItem",
     };
 
     const headers = {
@@ -64,6 +83,16 @@ export class CreateProduct extends Component {
         <h3>Create New Product</h3>
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
+            <label>ShipmentName: </label>
+            <input
+              type="text"
+              //required
+              className="form-control"
+              value={this.state.shipment_name}
+              onChange={this.onChangeShipmentName}
+            />
+          </div>
+          <div className="form-group">
             <label>ProductName: </label>
             <input
               type="text"
@@ -81,6 +110,16 @@ export class CreateProduct extends Component {
               className="form-control"
               value={this.state.price}
               onChange={this.onChangePrice}
+            />
+          </div>
+          <div className="form-group">
+            <label>Quantity: </label>
+            <input
+              type="number"
+              required
+              className="form-control"
+              value={this.state.quantity}
+              onChange={this.onChangeQuantity}
             />
           </div>
           <div className="form-group">

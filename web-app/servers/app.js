@@ -19,9 +19,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-
 async function main() {
-
     await network.enrollAdmin(true, false, false, false, false);
     await network.enrollAdmin(false, true, false, false, false);
     await network.enrollAdmin(false, false, true, false, false);
