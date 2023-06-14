@@ -1170,7 +1170,3 @@ func (t *s_supplychain) queryShipmentByName(APIstub shim.ChaincodeStubInterface,
     jsonResp := "{\"Error\":\"Shipment not found\"}"
     return shim.Error(jsonResp)
 }
-
-
-
-
