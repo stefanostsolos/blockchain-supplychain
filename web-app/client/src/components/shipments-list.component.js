@@ -41,7 +41,6 @@ const ShipmentsList = () => {
   }
 };
 
-
   return (
     <div className="container">
       <h3>Shipments</h3>
