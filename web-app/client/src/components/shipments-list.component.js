@@ -49,8 +49,12 @@ const ShipmentsList = () => {
         <thead className="thead-light">
           <tr>
             <th>Shipment ID</th>
+            <th>Shipment Name</th>
+            <th>Shipment Type ID</th>
+            <th>Shipment Cost</th>
             <th>Party ID To</th>
             <th>Party ID From</th>
+            <th>Last Updated Timestamp</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -58,12 +62,14 @@ const ShipmentsList = () => {
           {shipments.map((shipment) => (
             <tr key={shipment.ShipmentID} onClick={() => fetchShipmentItems(shipment.ShipmentID)}>
               <td>{shipment.ShipmentID}</td>
+              <td>{shipment.ShipmentName}</td>
+              <td>{shipment.ShipmentTypeID}</td>
+              <td>{shipment.EstimatedShipCost}</td>
               <td>{shipment.PartyIDTo}</td>
               <td>{shipment.PartyIDFrom}</td>
+              <td>{shipment.LastUpdatedStamp}</td>
               <td>
-                {/* Similar to the Product example, you can add actions here */}
-                <Link to={"/shipmentHistory/" + shipment.ShipmentID} style={{ marginRight: '10px' }}>History</Link>
-                {/* The /edit route may not apply to shipments depending on your app's functionality */}
+                <button style={{ borderRadius: '20px', backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 10px', }} onClick={() => fetchShipmentItems(shipment.ShipmentID)}>Details</button>
               </td>
             </tr>
           ))}
@@ -73,6 +79,7 @@ const ShipmentsList = () => {
       <table className="table" style={{ color: '#ffffff' }}>
         <thead className="thead-light">
           <tr>
+            <th>Shipment Name</th>
             <th>Product ID</th>
             <th>Name</th>
             <th>Quantity</th>
@@ -81,8 +88,9 @@ const ShipmentsList = () => {
         </thead>
         <tbody>
           {selectedShipmentItems.map((item) => (
-            <tr key={item.Product_ID}>
-              <td>{item.Product_ID}</td>
+            <tr key={item.ProductID}>
+              <td>{item.ShipmentName}</td>
+              <td>{item.ProductID}</td>
               <td>{item.Name}</td>
               <td>{item.Quantity}</td>
               <td>
@@ -94,7 +102,6 @@ const ShipmentsList = () => {
       </table>
     </div>
   );
-
 
 }
 
