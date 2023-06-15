@@ -29,7 +29,7 @@ const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
-            <Link to={"/history/" + product.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>History</Link>
+            <Link to={"/history/" + product.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
             <Link to={"/edit/" + product.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
             <select onChange={(e) => {
               if(e.target.value !== "") {

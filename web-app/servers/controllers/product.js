@@ -4,6 +4,10 @@ const path = require('path');
 const fs = require('fs');
 const uploadDir = path.resolve(__dirname, '../uploads');
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 exports.importShipments = async (req, res) => {
     const id = req.body.id;
     console.log(id);
@@ -105,9 +109,6 @@ exports.upload = async (req, res) => {
         } else {
             let productFile = req.file;
 
-            // Use the mv() method to place the file in upload directory
-            //const productFilePath = path.join(uploadDir, productFile.originalname);
-            //productFile.mv(productFilePath);
             const productFilePath = req.file.path;
 
             // Read JSON data
@@ -122,11 +123,40 @@ exports.upload = async (req, res) => {
             }
 
             let createProductResponse;
+            let allProductsResponse = await productModel.getAllProducts(true, false, false, false, false, { id });
+
+            if (allProductsResponse.error) {
+                console.log(allProductsResponse.data);
+                return apiResponse.createModelRes(400, allProductsResponse.error);
+            }
+            console.log(allProductsResponse.data);
             for (let product of products) {
                 const { PRODUCT_ID: product_name, UNIT_COST: product_price } = product;
-                const productData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: 1.00, producttype: "InventoryItem" };
-                console.log(productData);
-                createProductResponse = await productModel.createProduct(productData);
+                //console.log(product_name);
+                //console.log(allProductsResponse.data);
+                let existingProducts = allProductsResponse.data.filter(prod => prod.Record.Name === product_name);
+
+                let productData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: 1.00, producttype: "InventoryItem" };
+
+                if (existingProduct) {
+                    existingProduct.Record.Quantity += 1.00;;
+                    existingProduct.Record.Price = product_price;
+                    
+                    let updateProductData = {
+                    product_id: existingProduct.Key, 
+                    loggedUserId: id, 
+                    name: existingProduct.Record.Name, 
+                    price: existingProduct.Record.Price, 
+                    quantity: existingProduct.Record.Quantity
+                    }
+                    await sleep(1000);
+                    createProductResponse = await productModel.updateProduct(true, false, false, false, updateProductData);
+                    await sleep(1000);
+                } else {
+                    //console.log(productData);
+                    createProductResponse = await productModel.createProduct(productData);
+                }
+
                 if (createProductResponse.error) {
                     return apiResponse.createModelRes(400, createProductResponse.error);
                 }

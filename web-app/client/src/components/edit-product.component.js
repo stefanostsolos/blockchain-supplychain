@@ -17,6 +17,7 @@ class EditProduct extends Component {
     // method binding
     this.onChangeProductName = this.onChangeProductName.bind(this);
     this.onChangePrice = this.onChangePrice.bind(this);
+    this.onChangeQuantity = this.onChangeQuantity.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
@@ -39,6 +40,7 @@ class EditProduct extends Component {
       consumer_id: "",
       status: "",
       price: 0,
+      quantity: 1,
       previousID: "",
       role: sessionStorage.getItem('role'),
       loggedUserId: sessionStorage.getItem('userId'),
@@ -59,6 +61,7 @@ class EditProduct extends Component {
           price: response.data.data.Price,
           initialProductName: response.data.data.Name,
           initialPrice: response.data.data.Price,
+          initialQuantity: response.data.data.Quantity,
           initialProductID: response.data.data.InitialProductID,
         }, () => {
           // Fetch product history inside the callback function of setState, this will ensure that the state has been updated before this code runs
@@ -103,6 +106,7 @@ class EditProduct extends Component {
       loggedUserId: sessionStorage.getItem('userId'),
       name: this.state.product_name,
       price: this.state.price,
+      quantity: this.state.quantity,
     };
     console.log(product.product_id);
     console.log(product);
@@ -138,6 +142,12 @@ class EditProduct extends Component {
       price: Number(e.target.value),
     });
   }
+  
+  onChangeQuantity(e) {
+    this.setState({
+      quantity: Number(e.target.value),
+    });
+  }
 
   render() {
     return (
@@ -164,11 +174,20 @@ class EditProduct extends Component {
                     />
                 </div>
                 <div className="form-group">
+                    <label>Quantity: </label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={this.state.quantity}
+                        onChange={this.onChangeQuantity}
+                    />
+                </div>
+                <div className="form-group">
                     <input
                         type="submit"
                         value="Update Product"
                         className="btn btn-primary"
-                        disabled={this.state.product_name === this.state.initialProductName && this.state.price === this.state.initialPrice}
+                        disabled={this.state.product_name === this.state.initialProductName && this.state.price === this.state.initialPrice && this.state.quantity === this.state.initialQuantity}
                     />
                 </div>
             </form>
@@ -187,6 +206,7 @@ class EditProduct extends Component {
                         <p className="card-text">ProductID: {historyItem.ProductID}</p>
                         <p className="card-text">Name: {historyItem.Name}</p>
                         <p className="card-text">Price: {historyItem.Price}</p>
+                        <p className="card-text">Quantity: {historyItem.Quantity}</p>
                         <p className="card-text">Status: {historyItem.Status}</p>
                         <p className="card-text">{index === 0 ? 'Production Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.Date.ModifiedDate}</p>
                     </div>

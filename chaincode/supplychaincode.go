@@ -504,12 +504,12 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 }
 
 // function to update the product name and price
-// Input params : product id , user id , product name , product price
+// Input params : product id , user id , product name , product price, product quantity
 func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments, expected 4 arguments")
+	if len(args) != 5 {
+		return shim.Error("Incorrect number of arguments, expected 5 arguments")
 	}
 
 	// parameter null check
@@ -528,6 +528,10 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	if len(args[3]) == 0 {
 		return shim.Error("Product Price must be provided")
 	}
+	
+	if len(args[4]) == 0 {
+		return shim.Error("Product Quantity must be provided")
+	}
 
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
 	userBytes, _ := APIstub.GetState(args[1])
@@ -538,7 +542,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	user := User{}
 
-	// unmarshalling product the data from API
+	// unmarshalling user data from API
 	json.Unmarshal(userBytes, &user)
 
 	// User type check for the function
@@ -560,6 +564,12 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	i1, errPrice := strconv.ParseFloat(args[3], 64)
 	if errPrice != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
+	}
+	
+	//Quantity conversion - Error handling
+	i2, errQuantity := strconv.ParseFloat(args[4], 64)
+	if errQuantity != nil {
+		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
 	}
 
         // Generate a new unique ID for the updated product
@@ -586,6 +596,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	product.Product_ID = newProductID // Assign the already generated ID to the new product
 	product.Name = args[2] // product name from UI for the update
 	product.Price = i1     // product value from UI for the update
+	product.Quantity = i2     // product value from UI for the update
 	product.NextVersionID = "" // Reset NextVersionID as it is not yet known
 	product.Status = "Available"
 
