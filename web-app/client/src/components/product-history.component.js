@@ -21,9 +21,10 @@ const ProductHistory = () => {
 
   return (
     <div>
-      <h3>Product History</h3>
+      <h3>Product Details</h3>
       <p><strong>ProductID:</strong> {product.ProductID || ""}</p>
       <p><strong>ProductName:</strong> {product.Name || ""}</p>
+      <p><strong>ProductType:</strong> {product.ProductType || ""}</p>
       <p><strong>ProducerID:</strong> {product.ProducerID || ""}</p>
       <p><strong>ProductionDate:</strong> {product.Date?.ProductionDate || ""}</p>
       <p><strong>SendToManufacturerDate:</strong> {product.Date?.SendToManufacturerDate || ""}</p>

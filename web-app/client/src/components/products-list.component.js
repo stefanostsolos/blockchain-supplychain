@@ -26,6 +26,7 @@ const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
       <td>{product.Date.ProductionDate.substring(0, 10)}</td>
       <td>{product.Status}</td>
       <td>{product.Price}</td>
+      <td>{product.Quantity}</td>
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
@@ -130,6 +131,7 @@ const ProductsList = () => {
             <th>ProductionDate</th>
             <th>Status</th>
             <th>Price</th>
+            <th>Quantity</th>
             <th>Actions</th>
           </tr>
         </thead>

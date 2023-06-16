@@ -98,72 +98,68 @@ exports.createProduct = async (req, res) => {
 
 exports.upload = async (req, res) => {
     const id = req.body.id;
-    console.log(id);
     if (!id) {
         return apiResponse.badRequest(res, 'User ID is required');
     }
+
     try {
-        console.log(id);
         if (!req.file) {
             return apiResponse.badRequest(res, "No file uploaded!");
-        } else {
-            let productFile = req.file;
+        }
 
-            const productFilePath = req.file.path;
+        const productFilePath = req.file.path;
+        let products;
 
-            // Read JSON data
-            let products;
-            try {
-                parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
-                products = parsedFileContent.data;
-            } catch (err) {
-                console.log(err);
-                console.error(err);
-                return apiResponse.error(res, "An error occurred while reading the uploaded file!");
-            }
+        try {
+            parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
+            products = parsedFileContent.data;
+        } catch (err) {
+            return apiResponse.error(res, "An error occurred while reading the uploaded file!");
+        }
 
-            let createProductResponse;
-            let allProductsResponse = await productModel.getAllProducts(true, false, false, false, false, { id });
+        let allProductsResponse = await productModel.getAllProducts(true, false, false, false, false, { id });
 
-            if (allProductsResponse.error) {
-                console.log(allProductsResponse.data);
-                return apiResponse.createModelRes(400, allProductsResponse.error);
-            }
-            console.log(allProductsResponse.data);
-            for (let product of products) {
-                const { PRODUCT_ID: product_name, UNIT_COST: product_price } = product;
-                //console.log(product_name);
-                //console.log(allProductsResponse.data);
-                let existingProducts = allProductsResponse.data.filter(prod => prod.Record.Name === product_name);
+        if (allProductsResponse.error) {
+            return apiResponse.createModelRes(400, allProductsResponse.error);
+        }
 
-                let productData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: 1.00, producttype: "InventoryItem" };
+        let nameCountMap = {};
+        let createProductResponse;
 
-                if (existingProduct) {
-                    existingProduct.Record.Quantity += 1.00;;
-                    existingProduct.Record.Price = product_price;
-                    
-                    let updateProductData = {
+        for (let product of products) {
+            const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = product;
+            nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
+            const productCount = nameCountMap[product_name];
+
+            const productsWithName = allProductsResponse.data.filter(prod => prod.Record.Name === product_name && prod.Record.Status === 'Available');
+
+            if (productCount <= productsWithName.length) {
+                const existingProduct = productsWithName[productCount - 1];
+                existingProduct.Record.Quantity += product_quantity;
+                existingProduct.Record.Price = product_price;
+
+                let updateProductData = {
                     product_id: existingProduct.Key, 
                     loggedUserId: id, 
                     name: existingProduct.Record.Name, 
                     price: existingProduct.Record.Price, 
                     quantity: existingProduct.Record.Quantity
-                    }
-                    await sleep(1000);
-                    createProductResponse = await productModel.updateProduct(true, false, false, false, updateProductData);
-                    await sleep(1000);
-                } else {
-                    //console.log(productData);
-                    createProductResponse = await productModel.createProduct(productData);
                 }
 
+                createProductResponse = await productModel.updateProduct(true, false, false, false, updateProductData);
+                if (createProductResponse.error) {
+                    return apiResponse.createModelRes(400, createProductResponse.error);
+                }
+            } else {
+                let productData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: product_quantity, producttype: "InventoryItem" };
+                createProductResponse = await productModel.createProduct(productData);
                 if (createProductResponse.error) {
                     return apiResponse.createModelRes(400, createProductResponse.error);
                 }
             }
-
-            return apiResponse.send(res, createProductResponse);
         }
+
+        return apiResponse.send(res, { status: 200, message: 'Products uploaded successfully' });
     } catch (err) {
         console.log(err);
         return apiResponse.error(res, "An error occurred!");
@@ -235,7 +231,7 @@ exports.importShipmentItems = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
-    const { product_id, loggedUserId, name, price } = req.body;
+    const { product_id, loggedUserId, name, price, quantity } = req.body;
     const { role } = req.params;
     console.log(req.body);
     console.log('controller update 1');
@@ -252,13 +248,13 @@ exports.updateProduct = async (req, res) => {
 
     let modelRes
     if (role === 'producer') {
-        modelRes = await productModel.updateProduct(true, false, false, false, { product_id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(true, false, false, false, { product_id, loggedUserId, name, price, quantity });
     } else if (role === 'manufacturer') {
-        modelRes = await productModel.updateProduct(false, true, false, false, { product_id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, true, false, false, { product_id, loggedUserId, name, price, quantity });
     } else if (role === 'distributor') {
-        modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, price, quantity });
     } else if (role === 'retailer') {
-        modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, price });
+        modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, price, quantity });
     } else {
         return apiResponse.badRequest(res);
     }

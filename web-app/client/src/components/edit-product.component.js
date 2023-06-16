@@ -59,6 +59,7 @@ class EditProduct extends Component {
         this.setState({
           product_name: response.data.data.Name,
           price: response.data.data.Price,
+          quantity: response.data.data.Quantity,
           initialProductName: response.data.data.Name,
           initialPrice: response.data.data.Price,
           initialQuantity: response.data.data.Quantity,
