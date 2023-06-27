@@ -17,7 +17,7 @@ exports.importShipments = async (req, res) => {
     try {
         console.log(id);
         if (!req.file) {
-            return apiResponse.badRequest(res, "No file uploaded!");
+            return apiResponse.badRequest(res, "No file was uploaded!");
         } else {
             let productFile = req.file;
 
@@ -96,6 +96,27 @@ exports.createProduct = async (req, res) => {
     return apiResponse.send(res, modelRes);
 };
 
+exports.createInventoryItem = async (req, res) => {
+    const { id, name, price, quantity, producttype, loggedUserType } = req.body;
+    console.log('controller createInventoryItem 1');
+
+    if (!name || !id || !price || !quantity || !producttype || !loggedUserType) {
+        console.log('controller createInventoryItem error')
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller createInventoryItem 2');
+
+    if (loggedUserType !== 'producer' ) {
+        console.log('not producer usertype')
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller createInventoryItem 3');
+
+    const modelRes = await productModel.createInventoryItem({ shipmentid: "", shipmentname: "", name, id, price, quantity, producttype });
+    console.log('done')
+    return apiResponse.send(res, modelRes);
+};
+
 exports.upload = async (req, res) => {
     const id = req.body.id;
     if (!id) {
@@ -104,7 +125,7 @@ exports.upload = async (req, res) => {
 
     try {
         if (!req.file) {
-            return apiResponse.badRequest(res, "No file uploaded!");
+            return apiResponse.badRequest(res, "No file was uploaded!");
         }
 
         const productFilePath = req.file.path;
@@ -159,7 +180,77 @@ exports.upload = async (req, res) => {
             }
         }
 
-        return apiResponse.send(res, { status: 200, message: 'Products uploaded successfully' });
+        return apiResponse.send(res, { status: 200, message: 'Products were imported successfully' });
+    } catch (err) {
+        console.log(err);
+        return apiResponse.error(res, "An error occurred!");
+    }
+};
+
+exports.importInventoryItems = async (req, res) => {
+    const id = req.body.id;
+    if (!id) {
+        return apiResponse.badRequest(res, 'User ID is required');
+    }
+
+    try {
+        if (!req.file) {
+            return apiResponse.badRequest(res, "No file was uploaded!");
+        }
+
+        const inventoryitemFilePath = req.file.path;
+        let inventoryitems;
+
+        try {
+            parsedFileContent  = JSON.parse(fs.readFileSync(inventoryitemFilePath, 'utf8'));
+            inventoryitems = parsedFileContent.data;
+        } catch (err) {
+            return apiResponse.error(res, "An error occurred while reading the uploaded file!");
+        }
+
+        let allInventoryItemsResponse = await productModel.getAllInventoryItems(true, false, false, false, false, { id });
+
+        if (allInventoryItemsResponse.error) {
+            return apiResponse.createModelRes(400, allInventoryItemsResponse.error);
+        }
+
+        let nameCountMap = {};
+        let createInventoryItemResponse;
+
+        for (let inventoryitem of inventoryitems) {
+            const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = inventoryitem;
+            nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
+            const inventoryitemCount = nameCountMap[product_name];
+
+            const inventoryitemsWithName = allInventoryItemsResponse.data.filter(prod => prod.Record.Name === product_name && prod.Record.Status === 'Available');
+
+            if (inventoryitemCount <= inventoryitemsWithName.length) {
+                const existingInventoryItem = inventoryitemsWithName[inventoryitemCount - 1];
+                existingInventoryItem.Record.Quantity = product_quantity;
+                existingInventoryItem.Record.Price = product_price;
+
+                let updateInventoryItemData = {
+                    product_id: existingInventoryItem.Key, 
+                    loggedUserId: id, 
+                    name: existingInventoryItem.Record.Name, 
+                    price: existingInventoryItem.Record.Price, 
+                    quantity: existingInventoryItem.Record.Quantity
+                }
+
+                createInventoryItemResponse = await productModel.updateInventoryItem(true, false, false, false, updateInventoryItemData);
+                if (createInventoryItemResponse.error) {
+                    return apiResponse.createModelRes(400, createInventoryItemResponse.error);
+                }
+            } else {
+                let inventoryitemData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: product_quantity, producttype: "InventoryItem" };
+                createInventoryItemResponse = await productModel.createInventoryItem(inventoryitemData);
+                if (createInventoryItemResponse.error) {
+                    return apiResponse.createModelRes(400, createInventoryItemResponse.error);
+                }
+            }
+        }
+
+        return apiResponse.send(res, { status: 200, message: 'Inventory Items were imported successfully' });
     } catch (err) {
         console.log(err);
         return apiResponse.error(res, "An error occurred!");
@@ -175,17 +266,11 @@ exports.importShipmentItems = async (req, res) => {
     try {
         console.log(id);
         if (!req.file) {
-            return apiResponse.badRequest(res, "No file uploaded!");
+            return apiResponse.badRequest(res, "No file was uploaded!");
         } else {
-            let productFile = req.file;
-
-            // Use the mv() method to place the file in upload directory
-            //const productFilePath = path.join(uploadDir, productFile.originalname);
-            //productFile.mv(productFilePath);
             const productFilePath = req.file.path;
 
-            // Read JSON data
-            let products;
+            let shipmentitems;
             try {
                 parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
                 products = parsedFileContent.data;
@@ -196,8 +281,8 @@ exports.importShipmentItems = async (req, res) => {
             }
 
             let createShipmentItemResponse;
-            for (let product of products) {
-                const { SHIPMENT_ID: shipment_name, PRODUCT_ID: product_id, QUANTITY: itemquantity } = product;
+            for (let shipmentitem of shipmentitems) {
+                const { SHIPMENT_ID: shipment_name, PRODUCT_ID: product_id, QUANTITY: itemquantity } = shipmentitem;
                 /// Get shipment_id by shipment_name
                 const shipmentResponse = await productModel.getShipmentByName(true, false, false, false, false, shipment_name, id);
                 console.log("Shipment response: ", shipmentResponse);
@@ -214,9 +299,9 @@ exports.importShipmentItems = async (req, res) => {
                   continue;
                 }
                 
-                const productData = { shipmentid, shipmentname: shipment_name, name: product_id, id, price: 0, quantity: itemquantity, producttype: "ShipmentItem" };
+                const shipmentitemData = { shipmentid, shipmentname: shipment_name, name: product_id, id, price: 0, quantity: itemquantity, producttype: "ShipmentItem" };
                 console.log(productData);
-                createShipmentItemResponse = await productModel.createProduct(productData);
+                createShipmentItemResponse = await productModel.createShipmentItem(shipmentitemData);
                 if (createShipmentItemResponse.error) {
                     return apiResponse.createModelRes(400, createShipmentItemResponse.error);
                 }
@@ -255,6 +340,42 @@ exports.updateProduct = async (req, res) => {
         modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, price, quantity });
     } else if (role === 'retailer') {
         modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, price, quantity });
+    } else {
+        return apiResponse.badRequest(res);
+    }
+     if (modelRes.status === 200) {
+        // Update product_id with new ID
+        req.body.product_id = modelRes.data.product_id;
+    }
+
+    return apiResponse.send(res, modelRes);
+};
+
+exports.updateInventoryItem = async (req, res) => {
+    const { product_id, loggedUserId, name, price, quantity } = req.body;
+    const { role } = req.params;
+    console.log(req.body);
+    console.log('controller update inventory item 1');
+
+    if (!name || !product_id || !price || !role || !loggedUserId) {
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller update 2');
+
+    if (role === 'consumer' ) {
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller update inventory item 3');
+
+    let modelRes
+    if (role === 'producer') {
+        modelRes = await productModel.updateInventoryItem(true, false, false, false, { product_id, loggedUserId, name, price, quantity });
+    } else if (role === 'manufacturer') {
+        modelRes = await productModel.updateInventoryItem(false, true, false, false, { product_id, loggedUserId, name, price, quantity });
+    } else if (role === 'distributor') {
+        modelRes = await productModel.updateInventoryItem(false, false, true, false, { product_id, loggedUserId, name, price, quantity });
+    } else if (role === 'retailer') {
+        modelRes = await productModel.updateInventoryItem(false, false, false, true, { product_id, loggedUserId, name, price, quantity });
     } else {
         return apiResponse.badRequest(res);
     }

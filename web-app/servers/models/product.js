@@ -35,6 +35,40 @@ exports.createProduct = async information => {
     return apiResponse.createModelRes(200, 'Success', contractRes);
 };
 
+exports.createInventoryItem = async information => {
+    const { shipmentid, shipmentname, name, id, price, quantity, producttype } = information;
+    console.log('model createInventoryItem')
+
+    const networkObj = await network.connect(true, false, false, false, false, id);
+    const contractRes = await network.invoke(networkObj, 'createInventoryItem', shipmentid, shipmentname, name, id, price, quantity, producttype);
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log('model error')
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+    console.log('success')
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
+exports.createShipmentItem = async information => {
+    const { shipmentid, shipmentname, name, id, price, quantity, producttype } = information;
+    console.log('model createShipmentItem')
+
+    const networkObj = await network.connect(true, false, false, false, false, id);
+    const contractRes = await network.invoke(networkObj, 'createShipmentItem', shipmentid, shipmentname, name, id, price, quantity, producttype);
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log('model error')
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+    console.log('success')
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
 exports.updateProduct = async (isProducer, isManufacturer, isDistributor, isRetailer, information) => {
     const { product_id, loggedUserId, name, price, quantity } = information;
     console.log('model update product')
@@ -42,6 +76,23 @@ exports.updateProduct = async (isProducer, isManufacturer, isDistributor, isReta
     console.log(loggedUserId);
     const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
     const contractRes = await network.invoke(networkObj, 'updateProduct', product_id, loggedUserId, name, price, quantity);
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
+exports.updateInventoryItem = async (isProducer, isManufacturer, isDistributor, isRetailer, information) => {
+    const { product_id, loggedUserId, name, price, quantity } = information;
+    console.log('model updateInventoryItem')
+    console.log(product_id);
+    console.log(loggedUserId);
+    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
+    const contractRes = await network.invoke(networkObj, 'updateInventoryItem', product_id, loggedUserId, name, price, quantity);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -92,6 +143,23 @@ exports.getAllProducts = async (isProducer, isManufacturer, isDistributor, isRet
     const error = networkObj.error || contractRes.error;
     if (error) {
         console.log('model getAllProducts error')
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
+exports.getAllInventoryItems = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
+    const { id } = information;
+    console.log(id)
+
+    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, id);
+    const contractRes = await network.invoke(networkObj, 'queryAll', 'InventoryItem');
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log('model getAllInventoryItems error')
         const status = networkObj.status || contractRes.status;
         return apiResponse.createModelRes(status, error);
     }

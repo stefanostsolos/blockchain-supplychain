@@ -185,9 +185,18 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "createProduct" {
 		//create a new product
 		return t.createProduct(stub, args)
+	} else if function == "createInventoryItem" {
+		//create a new inventory item
+		return t.createInventoryItem(stub, args)
+	} else if function == "createShipmentItem" {
+		//create a new shipment item
+		return t.createShipmentItem(stub, args)
 	} else if function == "updateProduct" {
 		// update a product
 		return t.updateProduct(stub, args)
+	} else if function == "updateInventoryItem" {
+		// update an inventory item
+		return t.updateInventoryItem(stub, args)
 	} else if function == "orderProduct" {
 		// order a product
 		return t.orderProduct(stub, args)
