@@ -22,6 +22,7 @@ class EditProduct extends Component {
 
     this.state = {
       product_name: "",
+      initialProductName: "",
       productHistory: [],
       date: {
         productionDate: new Date(),
@@ -40,6 +41,7 @@ class EditProduct extends Component {
       consumer_id: "",
       status: "",
       price: 0,
+      initialPrice: 0,
       quantity: 1,
       previousID: "",
       role: sessionStorage.getItem('role'),
@@ -149,6 +151,14 @@ class EditProduct extends Component {
       quantity: Number(e.target.value),
     });
   }
+  
+  compareHistoryItems(previousItem, currentItem) {
+    return {
+        Name: previousItem.Name !== currentItem.Name,
+        Price: previousItem.Price !== currentItem.Price,
+        Quantity: previousItem.Quantity !== currentItem.Quantity,
+    };
+}
 
   render() {
     return (
@@ -156,29 +166,29 @@ class EditProduct extends Component {
             <h3>Update Product</h3>
             <form onSubmit={this.onSubmit} style={{ maxWidth: "300px" }}>
                 <div className="form-group">
-                    <label>ProductName: </label>
+                    <label className={this.state.product_name !== this.state.initialProductName ? "text-success" : ""}>ProductName: </label>
                     <input
                         type="text"
                         required
-                        className="form-control"
+                        className={`form-control ${this.state.product_name !== this.state.initialProductName ? "text-success" : ""}`}
                         value={this.state.product_name}
                         onChange={this.onChangeProductName}
                     />
                 </div>
                 <div className="form-group">
-                    <label>Price: </label>
+                    <label className={this.state.price !== this.state.initialPrice ? "text-success" : ""}>Price: </label>
                     <input
                         type="text"
-                        className="form-control"
+                        className={`form-control ${this.state.price !== this.state.initialPrice ? "text-success" : ""}`}
                         value={this.state.price}
                         onChange={this.onChangePrice}
                     />
                 </div>
                 <div className="form-group">
-                    <label>Quantity: </label>
+                    <label className={this.state.quantity !== this.state.initialQuantity ? "text-success" : ""}>Quantity: </label>
                     <input
                         type="text"
-                        className="form-control"
+                        className={`form-control ${this.state.quantity !== this.state.initialQuantity ? "text-success" : ""}`}
                         value={this.state.quantity}
                         onChange={this.onChangeQuantity}
                     />
@@ -196,27 +206,31 @@ class EditProduct extends Component {
 
             <h3>Product History</h3>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", width: "100%" }}>
-            {this.state.productHistory.map((historyItem, index) => (
-                <div 
-                    className="card bg-dark text-white m-2" 
-                    key={index}
-                    style={index === this.state.productHistory.length - 1 ? { borderColor: "green", borderWidth: "2px" } : {}}
-                >
-                    <div className="card-body">
-                        <h5 className="card-title">Version {index + 1}</h5>
-                        <p className="card-text">ProductID: {historyItem.ProductID}</p>
-                        <p className="card-text">Name: {historyItem.Name}</p>
-                        <p className="card-text">Price: {historyItem.Price}</p>
-                        <p className="card-text">Quantity: {historyItem.Quantity}</p>
-                        <p className="card-text">Status: {historyItem.Status}</p>
-                        <p className="card-text">{index === 0 ? 'Production Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.Date.ModifiedDate}</p>
+            {this.state.productHistory.map((historyItem, index) => {
+                const changes = index > 0 ? this.compareHistoryItems(this.state.productHistory[index - 1], historyItem) : {};
+                return (
+                    <div 
+                        className="card bg-dark text-white m-2" 
+                        key={index}
+                        style={index === this.state.productHistory.length - 1 ? { borderColor: "green", borderWidth: "2px" } : {}}
+                    >
+                        <div className="card-body">
+                            <h5 className="card-title">{index === this.state.productHistory.length - 1 ? 'Latest Version' : `Version ${index + 1}`}</h5>
+                            <p className="card-text">ProductID: {historyItem.ProductID}</p>
+                            <p className={`card-text ${changes.Name ? "text-success" : ""}`}>Name: {historyItem.Name}</p>
+                            <p className={`card-text ${changes.Price ? "text-success" : ""}`}>Price: {historyItem.Price}</p>
+                            <p className={`card-text ${changes.Quantity ? "text-success" : ""}`}>Quantity: {historyItem.Quantity}</p>
+                            <p className="card-text">Status: {historyItem.Status}</p>
+                            <p className="card-text">{index === 0 ? 'Production Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.Date.ModifiedDate}</p>
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
             </div>
         </div>
     );
 }
+
 }
 
 export default EditProductWrapper;

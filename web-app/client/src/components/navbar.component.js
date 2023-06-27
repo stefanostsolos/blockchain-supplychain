@@ -28,6 +28,11 @@ export class Navbar extends Component {
               </Link>
             </li>
             <li className="navbar-item">
+              <Link to="/importInventoryItems" className="nav-link">
+                Import Inventory Items
+              </Link>
+            </li>
+            <li className="navbar-item">
               <Link to="/importShipments" className="nav-link">
                 Import Shipments
               </Link>

@@ -41,7 +41,7 @@ export class SignIn extends Component {
       this.setState({
         role: "retailer",
       });
-    }else if (e.target.value === "consumer") {
+    } else if (e.target.value === "consumer") {
       this.setState({
         role: "consumer",
       });

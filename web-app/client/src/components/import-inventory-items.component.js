@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-class ImportProducts extends Component {
+class ImportInventoryItems extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,7 +36,7 @@ class ImportProducts extends Component {
         if (response.data.message === "Success") {
           console.log("upload success");
           toast.dismiss();
-          toast.success("Products imported successfully!", {
+          toast.success("Inventory Items imported successfully!", {
             position: toast.POSITION.TOP_CENTER,
             onClose: () => {
                 window.location = "/products";
@@ -74,4 +74,4 @@ class ImportProducts extends Component {
   }
 }
 
-export default ImportProducts;
+export default ImportInventoryItems;

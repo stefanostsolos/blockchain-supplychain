@@ -135,7 +135,7 @@ exports.upload = async (req, res) => {
 
             if (productCount <= productsWithName.length) {
                 const existingProduct = productsWithName[productCount - 1];
-                existingProduct.Record.Quantity += product_quantity;
+                existingProduct.Record.Quantity = product_quantity;
                 existingProduct.Record.Price = product_price;
 
                 let updateProductData = {
