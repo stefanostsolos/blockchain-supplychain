@@ -468,7 +468,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 
 	if len(args[1]) == 0 {
-		return shim.Error("Internal Name must be provided to create a product")
+		return shim.Error("Internal_Name must be provided to create a product")
 	}
 	
 	if len(args[2]) == 0 {
@@ -476,7 +476,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 	
 	if len(args[3]) == 0 {
-		return shim.Error("ProductType must be non-empty")
+		return shim.Error("Product_Type must be non-empty")
 	}
 
 	if len(args[4]) == 0 {
@@ -501,15 +501,9 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 	
 	//Quantity conversion - Error handling
-	i1, errQuantity := strconv.ParseFloat(args[5], 64)
+	i1, errQuantity := strconv.ParseFloat(args[2], 64)
 	if errQuantity != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
-	}
-
-	//Price conversion - Error handling
-	i2, errPrice := strconv.ParseFloat(args[4], 64)
-	if errPrice != nil {
-		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
 	}
 
 	productCounter := getCounter(APIstub, "ProductCounterNO")
@@ -530,7 +524,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = Product{Shipment_ID: args[0], Shipment_Name: args[1], Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type: args[6], PreviousVersionID: "", NextVersionID: "", Order_ID: "", Name: args[2], Consumer_ID: "", Producer_ID: args[3], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1, Price: i2}
+	var comAsset = Product{Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type: args[3], PreviousVersionID: "", NextVersionID: "", Order_ID: "", Name: args[0], Initial_Name: args[1], Consumer_ID: "", Producer_ID: args[4], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -553,9 +547,9 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 7
+	//To check number of arguments are 6
 	if len(args) != 6 {
-		return shim.Error("Incorrect number of arguments, expected 7 arguments")
+		return shim.Error("Incorrect number of arguments, expected 6 arguments")
 	}
 	
 	if len(args[0]) == 0 {
@@ -623,7 +617,7 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = ShipmentItem{Shipment_ID: "ShipmentItem" + shipmentItemCounterStr Shipment_Name: args[0], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
+	var comAsset = ShipmentItem{Shipment_ID: "ShipmentItem" + shipmentItemCounterStr, Shipment_Name: args[0], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -806,15 +800,9 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	// unmarshalling product the data from API
 	json.Unmarshal(oldProductBytes, &oldProduct)
-
-	//Price conversion - Error handling
-	i1, errPrice := strconv.ParseFloat(args[3], 64)
-	if errPrice != nil {
-		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
-	}
 	
 	//Quantity conversion - Error handling
-	i2, errQuantity := strconv.ParseFloat(args[4], 64)
+	i1, errQuantity := strconv.ParseFloat(args[4], 64)
 	if errQuantity != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
 	}

@@ -98,10 +98,10 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.createInventoryItem = async (req, res) => {
-    const { id, name, price, quantity, producttype, loggedUserType } = req.body;
+    const { numid, itemtype, productname, ownerparty, facilityid, quantity, unitcost, loggedUserType } = req.body;
     console.log('controller createInventoryItem 1');
 
-    if (!name || !id || !price || !quantity || !producttype || !loggedUserType) {
+    if (!numid || !itemtype || !productname || !ownerparty || !facilityid || !quantity || !unitcost || !loggedUserType) {
         console.log('controller createInventoryItem error')
         return apiResponse.badRequest(res);
     }
@@ -113,7 +113,7 @@ exports.createInventoryItem = async (req, res) => {
     }
     console.log('controller createInventoryItem 3');
 
-    const modelRes = await productModel.createInventoryItem({ shipmentid: "", shipmentname: "", name, id, price, quantity, producttype });
+    const modelRes = await productModel.createInventoryItem({ numid, itemtype, productname, ownerparty, facilityid, quantity, unitcost });
     console.log('done')
     return apiResponse.send(res, modelRes);
 };
@@ -149,7 +149,7 @@ exports.upload = async (req, res) => {
         let createProductResponse;
 
         for (let product of products) {
-            const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = product;
+            const { PRODUCT_ID: product_name, PRODUCT_TYPE_ID: product_type, INTERNAL_NAME: internal_name, QUANTITY_INCLUDED: product_quantity } = product;
             nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
             const productCount = nameCountMap[product_name];
 
@@ -164,7 +164,8 @@ exports.upload = async (req, res) => {
                     product_id: existingProduct.Key,
                     loggedUserId: id,
                     name: existingProduct.Record.Name,
-                    price: existingProduct.Record.Price,
+                    internalname: existingProduct.Record.InternalName,
+                    type: existingProduct.Record.ProductType,
                     quantity: existingProduct.Record.Quantity
                 }
 
@@ -173,7 +174,7 @@ exports.upload = async (req, res) => {
                     return apiResponse.createModelRes(400, createProductResponse.error);
                 }
             } else {
-                let productData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: product_quantity, producttype: "InventoryItem" };
+                let productData = { name: product_name, internalname: internal_name, type: product_type, id, quantity: product_quantity };
                 createProductResponse = await productModel.createProduct(productData);
                 if (createProductResponse.error) {
                     return apiResponse.createModelRes(400, createProductResponse.error);
