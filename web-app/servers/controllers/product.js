@@ -2,6 +2,7 @@ const productModel = require('../models/product.js');
 const apiResponse = require('../utils/apiResponse.js');
 const path = require('path');
 const fs = require('fs');
+const { deepStrictEqual } = require('assert');
 const uploadDir = path.resolve(__dirname, '../uploads');
 
 function sleep(ms) {
@@ -27,7 +28,7 @@ exports.importShipments = async (req, res) => {
             // Read JSON data
             let shipments;
             try {
-                parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
+                parsedFileContent = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
                 shipments = parsedFileContent.data;
             } catch (err) {
                 console.log(err);
@@ -58,13 +59,13 @@ exports.createShipment = async (req, res) => {
     const { shipmentname, shipmenttypeid, statusid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp, id } = req.body;
     console.log('controller createShipment 1');
 
-    if (!shipmentname || !shipmenttypeid || !statusid || !estimatedshipcost || !partyidto || !partyidfrom || !lastupdatedstamp || !id ) {
+    if (!shipmentname || !shipmenttypeid || !statusid || !estimatedshipcost || !partyidto || !partyidfrom || !lastupdatedstamp || !id) {
         console.log('controller createShipment error')
         return apiResponse.badRequest(res);
     }
     console.log('controller createShipment 2');
 
-    if (loggedUserType !== 'producer' ) {
+    if (loggedUserType !== 'producer') {
         console.log('not producer usertype')
         return apiResponse.badRequest(res);
     }
@@ -76,22 +77,22 @@ exports.createShipment = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
-    const { id, name, price, quantity, producttype, loggedUserType } = req.body;
+    const { id, name, internalname, description, quantity, producttype, loggedUserType } = req.body;
     console.log('controller createProduct 1');
 
-    if (!name || !id || !price || !quantity || !producttype || !loggedUserType) {
+    if (!id || !name || !internalname || !description || !quantity || !producttype || !loggedUserType) {
         console.log('controller createProduct error')
         return apiResponse.badRequest(res);
     }
     console.log('controller createProduct 2');
 
-    if (loggedUserType !== 'producer' ) {
+    if (loggedUserType !== 'producer') {
         console.log('not producer usertype')
         return apiResponse.badRequest(res);
     }
     console.log('controller createProduct 3');
 
-    const modelRes = await productModel.createProduct({ shipmentid: "", shipmentname: "", name, id, price, quantity, producttype });
+    const modelRes = await productModel.createProduct({ id, name, internalname, description, quantity, producttype });
     console.log('done')
     return apiResponse.send(res, modelRes);
 };
@@ -106,7 +107,7 @@ exports.createInventoryItem = async (req, res) => {
     }
     console.log('controller createInventoryItem 2');
 
-    if (loggedUserType !== 'producer' ) {
+    if (loggedUserType !== 'producer') {
         console.log('not producer usertype')
         return apiResponse.badRequest(res);
     }
@@ -132,7 +133,7 @@ exports.upload = async (req, res) => {
         let products;
 
         try {
-            parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
+            parsedFileContent = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
             products = parsedFileContent.data;
         } catch (err) {
             return apiResponse.error(res, "An error occurred while reading the uploaded file!");
@@ -160,10 +161,10 @@ exports.upload = async (req, res) => {
                 existingProduct.Record.Price = product_price;
 
                 let updateProductData = {
-                    product_id: existingProduct.Key, 
-                    loggedUserId: id, 
-                    name: existingProduct.Record.Name, 
-                    price: existingProduct.Record.Price, 
+                    product_id: existingProduct.Key,
+                    loggedUserId: id,
+                    name: existingProduct.Record.Name,
+                    price: existingProduct.Record.Price,
                     quantity: existingProduct.Record.Quantity
                 }
 
@@ -202,7 +203,7 @@ exports.importInventoryItems = async (req, res) => {
         let inventoryitems;
 
         try {
-            parsedFileContent  = JSON.parse(fs.readFileSync(inventoryitemFilePath, 'utf8'));
+            parsedFileContent = JSON.parse(fs.readFileSync(inventoryitemFilePath, 'utf8'));
             inventoryitems = parsedFileContent.data;
         } catch (err) {
             return apiResponse.error(res, "An error occurred while reading the uploaded file!");
@@ -230,10 +231,10 @@ exports.importInventoryItems = async (req, res) => {
                 existingInventoryItem.Record.Price = product_price;
 
                 let updateInventoryItemData = {
-                    product_id: existingInventoryItem.Key, 
-                    loggedUserId: id, 
-                    name: existingInventoryItem.Record.Name, 
-                    price: existingInventoryItem.Record.Price, 
+                    product_id: existingInventoryItem.Key,
+                    loggedUserId: id,
+                    name: existingInventoryItem.Record.Name,
+                    price: existingInventoryItem.Record.Price,
                     quantity: existingInventoryItem.Record.Quantity
                 }
 
@@ -272,7 +273,7 @@ exports.importShipmentItems = async (req, res) => {
 
             let shipmentitems;
             try {
-                parsedFileContent  = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
+                parsedFileContent = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
                 products = parsedFileContent.data;
             } catch (err) {
                 console.log(err);
@@ -295,10 +296,10 @@ exports.importShipmentItems = async (req, res) => {
                 const shipmentid = shipmentResponse.data.shipmentId;
                 console.log("Shipment ID: ", shipmentid);
                 if (!shipmentid) {
-                  console.error(`Shipment with name ${shipment_name} not found.`);
-                  continue;
+                    console.error(`Shipment with name ${shipment_name} not found.`);
+                    continue;
                 }
-                
+
                 const shipmentitemData = { shipmentid, shipmentname: shipment_name, name: product_id, id, price: 0, quantity: itemquantity, producttype: "ShipmentItem" };
                 console.log(productData);
                 createShipmentItemResponse = await productModel.createShipmentItem(shipmentitemData);
@@ -326,7 +327,7 @@ exports.updateProduct = async (req, res) => {
     }
     console.log('controller update 2');
 
-    if (role === 'consumer' ) {
+    if (role === 'consumer') {
         return apiResponse.badRequest(res);
     }
     console.log('controller update 3');
@@ -343,7 +344,7 @@ exports.updateProduct = async (req, res) => {
     } else {
         return apiResponse.badRequest(res);
     }
-     if (modelRes.status === 200) {
+    if (modelRes.status === 200) {
         // Update product_id with new ID
         req.body.product_id = modelRes.data.product_id;
     }
@@ -362,7 +363,7 @@ exports.updateInventoryItem = async (req, res) => {
     }
     console.log('controller update 2');
 
-    if (role === 'consumer' ) {
+    if (role === 'consumer') {
         return apiResponse.badRequest(res);
     }
     console.log('controller update inventory item 3');
@@ -379,7 +380,7 @@ exports.updateInventoryItem = async (req, res) => {
     } else {
         return apiResponse.badRequest(res);
     }
-     if (modelRes.status === 200) {
+    if (modelRes.status === 200) {
         // Update product_id with new ID
         req.body.product_id = modelRes.data.product_id;
     }
@@ -395,7 +396,7 @@ exports.getFullProductHistory = async (req, res) => {
 
     const { loggedUserId, initialProductID } = req.body;
     const { role, productId } = req.params;
-    
+
     if (!productId || !loggedUserId || !role || !initialProductID) {
         if (!productId) console.log('product_id missing');
         else if (!loggedUserId) console.log('loggedUserId missing');
@@ -427,7 +428,7 @@ exports.getProductbyId = async (req, res) => {
 
     console.log('1');
 
-    if (!productId || !id || !role ) {
+    if (!productId || !id || !role) {
         return apiResponse.badRequest(res);
     }
     console.log('2');
@@ -456,7 +457,7 @@ exports.getAllProducts = async (req, res) => {
     const { role } = req.params
     console.log('controller getAllProducts 1');
 
-    if (!id || !role ) {
+    if (!id || !role) {
         console.log(id);
         console.log('controller bad request')
         return apiResponse.badRequest(res);
@@ -494,7 +495,7 @@ exports.getAllShipments = async (req, res) => {
     }
     console.log('controller getAllShipments 2');
     let modelRes;
-    modelRes = await productModel.getAllShipments({id: id});
+    modelRes = await productModel.getAllShipments({ id: id });
 
     return apiResponse.send(res, modelRes);
 };

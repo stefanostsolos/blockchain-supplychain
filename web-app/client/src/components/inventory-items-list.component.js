@@ -4,36 +4,39 @@ import axios from "axios";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getProducts }) => {
+const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getInventoryItems }) => {
   const deliverTo = (inventoryitem, entity) => {
     const headers = {
       "x-access-token": sessionStorage.getItem("jwtToken"),
     };
     const endpoint = role === "retailer" ? "/consumer" : "/";
     const body = role === "retailer"
-      ? { productId: inventoryitem.ProductID, id: loggedUserId }
-      : { productId: inventoryitem.ProductID, userId: entity.Record.UserID, id: loggedUserId }
+      ? { inventoryitemId: inventoryitem.InventoryItemID, id: loggedUserId }
+      : { inventoryitemId: inventoryitem.InventoryItemID, userId: entity.Record.UserID, id: loggedUserId }
     axios.post(`http://localhost:8090/transact${endpoint}`, body, { headers })
-      .then(response => { console.log(response); toast.success("Product delivered successfully!"); getProducts(); })
+      .then(response => { console.log(response); toast.success("Inventory Items delivered successfully!"); getInventoryItems(); })
       .catch(error => console.log(error));
   }
 
   return (
     <tr>
-      <td>{inventoryitem.ProductID}</td>
+      <td>{inventoryitem.InventoryItemID}</td>
+      <td>{inventoryitem.InventoryItemTypeID}</td>
       <td>{inventoryitem.Name}</td>
       <td>{inventoryitem.ProducerID}</td>
       <td>{inventoryitem.Date.ProductionDate.substring(0, 10)}</td>
       <td>{inventoryitem.Status}</td>
+      <td>{inventoryitem.OwnerPartyID}</td>
+      <td>{inventoryitem.FacilityID}</td>
       <td>{inventoryitem.Price}</td>
       <td>{inventoryitem.Quantity}</td>
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
-            <Link to={"/history/" + inventoryitem.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
-            <Link to={"/edit/" + inventoryitem.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
+            <Link to={"/history/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
+            <Link to={"/edit/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
             <select onChange={(e) => {
-              if(e.target.value !== "") {
+              if (e.target.value !== "") {
                 const selectedEntity = entities.find(entity => entity.Record.UserID === e.target.value);
                 if (selectedEntity) {
                   deliverTo(inventoryitem, selectedEntity);
@@ -63,47 +66,47 @@ const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getProduct
 
 const InventoryItemsList = () => {
   const [role, setRole] = useState(sessionStorage.getItem('role'));
-  const [inventoryitems, setProducts] = useState([]);
+  const [inventoryitems, setInventoryItems] = useState([]);
   const [entities, setEntities] = useState([]);
 
-  const getProducts = () => {
+  const getInventoryItems = () => {
     const headers = {
       "x-access-token": sessionStorage.getItem("jwtToken"),
     };
     axios
       .get("http://localhost:8090/product/list/" + role, { headers })
       .then((response) => {
-        let filteredProducts = [];
+        let filteredInventoryItems = [];
         const loggedUserId = sessionStorage.getItem("userId");
 
         if (role === "consumer") {
-        filteredProducts = response.data.data.filter(inventoryitem => 
-          inventoryitem.Record.RetailerID && inventoryitem.Record.Status === 'Available' && !inventoryitem.Record.ConsumerID
-        );
+          filteredInventoryItems = response.data.data.filter(inventoryitem =>
+            inventoryitem.Record.RetailerID && inventoryitem.Record.Status === 'Available' && !inventoryitem.Record.ConsumerID
+          );
         } else if (role === "producer") {
-        filteredProducts = response.data.data.filter(inventoryitem => 
-          inventoryitem.Record.ProducerID === loggedUserId && !inventoryitem.Record.ManufacturerID
-        );
+          filteredInventoryItems = response.data.data.filter(inventoryitem =>
+            inventoryitem.Record.ProducerID === loggedUserId && !inventoryitem.Record.ManufacturerID
+          );
         } else if (role === "manufacturer") {
-        filteredProducts = response.data.data.filter(inventoryitem => 
-          inventoryitem.Record.ManufacturerID === loggedUserId && !inventoryitem.Record.DistributorID
-        );
+          filteredInventoryItems = response.data.data.filter(inventoryitem =>
+            inventoryitem.Record.ManufacturerID === loggedUserId && !inventoryitem.Record.DistributorID
+          );
         } else if (role === "distributor") {
-        filteredProducts = response.data.data.filter(inventoryitem => 
-          inventoryitem.Record.DistributorID === loggedUserId && !inventoryitem.Record.RetailerID
-        );
+          filteredInventoryItems = response.data.data.filter(inventoryitem =>
+            inventoryitem.Record.DistributorID === loggedUserId && !inventoryitem.Record.RetailerID
+          );
         } else if (role === "retailer") {
-        filteredProducts = response.data.data.filter(inventoryitem => 
-          inventoryitem.Record.RetailerID === loggedUserId && !inventoryitem.Record.ConsumerID
-        );
+          filteredInventoryItems = response.data.data.filter(inventoryitem =>
+            inventoryitem.Record.RetailerID === loggedUserId && !inventoryitem.Record.ConsumerID
+          );
         }
-        setProducts(filteredProducts);
+        setInventoryItems(filteredInventoryItems);
       })
       .catch((error) => console.log(error.response));
   }
 
   useEffect(() => {
-    getProducts();
+    getInventoryItems();
 
     axios
       .get("http://localhost:8090/user/all/producer")
@@ -125,11 +128,14 @@ const InventoryItemsList = () => {
       <table className="table" style={{ color: '#ffffff' }}>
         <thead className="thead-light">
           <tr>
-            <th>ProductID</th>
+            <th>InventoryItemID</th>
+            <th>InventoryItemTypeID</th>
             <th>ProductName</th>
             <th>ProducerID</th>
             <th>ProductionDate</th>
             <th>Status</th>
+            <th>OwnerPartyID</th>
+            <th>FacilityID</th>
             <th>Price</th>
             <th>Quantity</th>
             <th>Actions</th>
@@ -138,10 +144,10 @@ const InventoryItemsList = () => {
         <tbody>
           {inventoryitems.map((inventoryitem, index) => (
             <InventoryItem
-            inventoryitem={inventoryitem.Record}
+              inventoryitem={inventoryitem.Record}
               role={role}
               entities={entities}
-              getProducts={getProducts}
+              getInventoryItems={getInventoryItems}
               key={index}
             />
           ))}

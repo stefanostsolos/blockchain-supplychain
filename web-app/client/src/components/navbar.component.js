@@ -53,6 +53,11 @@ export class Navbar extends Component {
               </Link>
             </li>
             <li className="navbar-item">
+              <Link to="/inventoryitems" className="nav-link">
+                Inventory Items
+              </Link>
+            </li>
+            <li className="navbar-item">
               <Link to="/shipments" className="nav-link">
                 Shipments
               </Link>

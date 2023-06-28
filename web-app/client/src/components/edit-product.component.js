@@ -230,7 +230,6 @@ class EditProduct extends Component {
         </div>
     );
 }
-
 }
 
 export default EditProductWrapper;

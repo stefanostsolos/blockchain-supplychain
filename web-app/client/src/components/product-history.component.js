@@ -24,6 +24,7 @@ const ProductHistory = () => {
       <h3>Product Details</h3>
       <p><strong>ProductID:</strong> {product.ProductID || ""}</p>
       <p><strong>ProductName:</strong> {product.Name || ""}</p>
+      <p><strong>InternalName:</strong> {product.InternalName || ""}</p>
       <p><strong>ProductType:</strong> {product.ProductType || ""}</p>
       <p><strong>ProducerID:</strong> {product.ProducerID || ""}</p>
       <p><strong>ProductionDate:</strong> {product.Date?.ProductionDate || ""}</p>
@@ -35,6 +36,7 @@ const ProductHistory = () => {
       <p><strong>DeliveredDate:</strong> {product.Date?.DeliveredDate || ""}</p>
       <p><strong>ModifiedDate:</strong> {product.Date?.ModifiedDate || ""}</p>
       <p><strong>Status:</strong> {product.Status || ""}</p>
+      <p><strong>Quantity:</strong> {product.Quantity || ""}</p>
       <p><strong>Price:</strong> {product.Price || ""}</p>
     </div>
   );

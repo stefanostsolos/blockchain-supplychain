@@ -5,23 +5,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
-  const deliverTo = (product, entity) => {
-    const headers = {
-      "x-access-token": sessionStorage.getItem("jwtToken"),
-    };
-    const endpoint = role === "retailer" ? "/consumer" : "/";
-    const body = role === "retailer"
-      ? { productId: product.ProductID, id: loggedUserId }
-      : { productId: product.ProductID, userId: entity.Record.UserID, id: loggedUserId }
-    axios.post(`http://localhost:8090/transact${endpoint}`, body, { headers })
-      .then(response => { console.log(response); toast.success("Product delivered successfully!"); getProducts(); })
-      .catch(error => console.log(error));
-  }
 
   return (
     <tr>
       <td>{product.ProductID}</td>
       <td>{product.Name}</td>
+      <td>{product.InternalName}</td>
       <td>{product.ProducerID}</td>
       <td>{product.Date.ProductionDate.substring(0, 10)}</td>
       <td>{product.Status}</td>
@@ -32,28 +21,6 @@ const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
           <>
             <Link to={"/history/" + product.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
             <Link to={"/edit/" + product.ProductID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
-            <select onChange={(e) => {
-              if(e.target.value !== "") {
-                const selectedEntity = entities.find(entity => entity.Record.UserID === e.target.value);
-                if (selectedEntity) {
-                  deliverTo(product, selectedEntity);
-                } else {
-                  console.error(`Entity with user_id ${e.target.value} not found.`);
-                }
-              }
-            }}>
-              <option value="">Deliver to</option>
-              {entities && entities.map((entity, index) => (
-                <option key={index} value={entity.Record.UserID}>
-                  {entity.Record.UserID}
-                </option>
-              ))}
-            </select>
-          </>
-        }
-        {role === "consumer" &&
-          <>
-            <button onClick={() => deliverTo(product, { user_id: product.RetailerID })}>Order</button>
           </>
         }
       </td>
@@ -127,6 +94,7 @@ const ProductsList = () => {
           <tr>
             <th>ProductID</th>
             <th>ProductName</th>
+            <th>InternalName</th>
             <th>ProducerID</th>
             <th>ProductionDate</th>
             <th>Status</th>

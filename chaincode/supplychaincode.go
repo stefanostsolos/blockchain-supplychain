@@ -101,7 +101,7 @@ type Product struct {
 	Product_Type_ID string `json:"ProductTypeID"`
 	//Order_ID        string       `json:"OrderID"`
 	Internal_Name string `json:"InternalName"`
-	Long_Description string `json:"LongDescription"`
+	Description string `json:"Description"`
 	Consumer_ID     string       `json:"ConsumerID"`
 	Manufacturer_ID string       `json:"ManufacturerID"`
 	Retailer_ID     string       `json:"RetailerID"`
@@ -458,36 +458,29 @@ func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args
 
 func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 7
-	if len(args) != 7 {
-		return shim.Error("Incorrect number of arguments, expected 7 arguments")
+	//To check number of arguments are 5
+	if len(args) != 5 {
+		return shim.Error("Incorrect number of arguments, expected 5 arguments")
 	}
-	//if len(args[0]) == 0 {
-	//	return shim.Error("Shipment_ID must be provided to create a product")
-	//}
 	
-	//if len(args[1]) == 0 {
-	//	return shim.Error("Shipment_Name must be provided to create a product")
-	//}
-	
-	if len(args[2]) == 0 {
+	if len(args[0]) == 0 {
 		return shim.Error("Name must be provided to create a product")
 	}
 
-	if len(args[3]) == 0 {
-		return shim.Error("Producer_ID must be provided")
+	if len(args[1]) == 0 {
+		return shim.Error("Internal Name must be provided to create a product")
 	}
 	
-	if len(args[4]) == 0 {
-		return shim.Error("Price must be provided")
-	}
-	
-	if len(args[5]) == 0 {
+	if len(args[2]) == 0 {
 		return shim.Error("Quantity must be non-empty")
 	}
 	
-	if len(args[6]) == 0 {
+	if len(args[3]) == 0 {
 		return shim.Error("ProductType must be non-empty")
+	}
+
+	if len(args[4]) == 0 {
+		return shim.Error("Producer_ID must be provided")
 	}
 	
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
