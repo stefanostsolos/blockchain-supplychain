@@ -67,8 +67,8 @@ type InventoryItem struct {
 	Created_Stamp string `json:"CreatedStamp"`
 	Status string `json:"Status"`
 	//ModifiedDate         string `json:"ModifiedDate"` -> LastUpdatedStamp
-        //Shipment_ID string `json:"ShipmentID"`
-        //Shipment_Name string `json:"ShipmentName"`
+    //Shipment_ID string `json:"ShipmentID"`
+    //Shipment_Name string `json:"ShipmentName"`
 	Product_ID      string       `json:"ProductID"`
 	Initial_Product_ID string `json:"InitialProductID"`
 	//Order_ID        string       `json:"OrderID"`
@@ -87,14 +87,14 @@ type ProductDates struct {
 	SendToDistributorDate string `json:"SendToDistributorDate"`
 	SendToRetailerDate    string `json:"SendToRetailerDate"`
 	SellToConsumerDate    string `json:"SellToConsumerDate"`
-	ModifiedDate         string `json:"ModifiedDate"`
+	Last_Updated_Stamp         string `json:"LastUpdatedStamp"`
 	OrderedDate           string `json:"OrderedDate"`
 	DeliveredDate         string `json:"DeliveredDate"`
 }
 
 type Product struct {
-        //Shipment_ID string `json:"ShipmentID"`
-        //Shipment_Name string `json:"ShipmentName"`
+    //Shipment_ID string `json:"ShipmentID"`
+    //Shipment_Name string `json:"ShipmentName"`
 	Product_ID      string       `json:"ProductID"`
 	Initial_Product_ID string `json:"InitialProductID"`
 	Product_Name_ID string `json:"ProductNameID"`
@@ -640,7 +640,7 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 
 func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 8
+	//To check number of arguments is 8
 	if len(args) != 8 {
 		return shim.Error("Incorrect number of arguments, expected 8 arguments")
 	}
@@ -841,7 +841,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	product.Date.ModifiedDate = txTimeAsPtr
+	product.Date.Last_Updated_Stamp = txTimeAsPtr
 	
 	// Add reference to the previous version of the product
 	product.PreviousVersionID = oldProduct.Product_ID
@@ -976,7 +976,7 @@ func (t *s_supplychain) updateInventoryItem(APIstub shim.ChaincodeStubInterface,
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	inventoryitem.Date.ModifiedDate = txTimeAsPtr
+	inventoryitem.Date.Last_Updated_Stamp = txTimeAsPtr
 	
 	// Add reference to the previous version of the product
 	inventoryitem.PreviousVersionID = oldInventoryItem.Inventory_Item_ID

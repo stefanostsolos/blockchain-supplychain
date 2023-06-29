@@ -36,11 +36,11 @@ exports.createProduct = async information => {
 };
 
 exports.createInventoryItem = async information => {
-    const { shipmentid, shipmentname, name, id, price, quantity, producttype } = information;
+    const { inventoryitem, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id } = information;
     console.log('model createInventoryItem')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createInventoryItem', shipmentid, shipmentname, name, id, price, quantity, producttype);
+    const contractRes = await network.invoke(networkObj, 'createInventoryItem', inventoryitem, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -53,11 +53,11 @@ exports.createInventoryItem = async information => {
 };
 
 exports.createShipmentItem = async information => {
-    const { shipmentid, shipmentname, name, id, price, quantity, producttype } = information;
+    const { shipmentname, name, quantity, lastupdatedstamp, createdstamp, id } = information;
     console.log('model createShipmentItem')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createShipmentItem', shipmentid, shipmentname, name, id, price, quantity, producttype);
+    const contractRes = await network.invoke(networkObj, 'createShipmentItem', shipmentname, name, quantity, lastupdatedstamp, createdstamp, id);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -87,12 +87,12 @@ exports.updateProduct = async (isProducer, isManufacturer, isDistributor, isReta
 };
 
 exports.updateInventoryItem = async (isProducer, isManufacturer, isDistributor, isRetailer, information) => {
-    const { product_id, loggedUserId, name, price, quantity } = information;
+    const { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, price, loggedUserId } = information;
     console.log('model updateInventoryItem')
-    console.log(product_id);
+    console.log(inventoryitemid);
     console.log(loggedUserId);
     const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
-    const contractRes = await network.invoke(networkObj, 'updateInventoryItem', product_id, loggedUserId, name, price, quantity);
+    const contractRes = await network.invoke(networkObj, 'updateInventoryItem', inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, price, loggedUserId);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
