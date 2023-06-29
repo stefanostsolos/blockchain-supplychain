@@ -227,6 +227,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "getFullProductHistory" {
 		// query full history of product
 		return t.getFullProductHistory(stub, args)
+	} else if function == "getFullInventoryItemHistory" {
+		// query full history of inventory item
+		return t.getFullInventoryItemHistory(stub, args)
 	} else if function == "queryShipmentByName" {
 		// get shipment id from shipment name
 		return t.queryShipmentByName(stub, args)
@@ -1032,6 +1035,40 @@ func (t *s_supplychain) getFullProductHistory(APIstub shim.ChaincodeStubInterfac
 	return shim.Success(historyBytes)
 }
 
+func (t *s_supplychain) getFullInventoryItemHistory(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments, expected 1 argument")
+	}
+
+	initialInventoryItemID := args[0]
+	history := []InventoryItem{}
+
+	for initialInventoryItemID != "" {
+		itemBytes, err := APIstub.GetState(initialInventoryItemID)
+		if err != nil || itemBytes == nil {
+			return shim.Error("Cannot find inventory item")
+		}
+
+		var item InventoryItem
+		err = json.Unmarshal(itemBytes, &item)
+		if err != nil {
+			return shim.Error(fmt.Sprintf("Failed to unmarshal inventory item: %s", err))
+		}
+
+		// Add the product to the history
+		history = append(history, item)
+
+		// Move to the next version
+		initialInventoryItemID = item.NextVersionID
+	}
+
+	historyBytes, err := json.Marshal(history)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to marshal inventory item history: %s", err))
+	}
+
+	return shim.Success(historyBytes)
+}
 
 func (t *s_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// parameter length check

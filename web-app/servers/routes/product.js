@@ -26,6 +26,7 @@ productRouter.post('/upload', upload.single('file'), controller.upload);
 productRouter.post('/inventory/items/upload/all/item', upload.single('file'), controller.importInventoryItems);
 productRouter.post('/shipments/items/upload/all/item/up', upload.single('file'), controller.importShipmentItems);
 productRouter.post('/history/:role/:productId', controller.getFullProductHistory);
+productRouter.post('/history/of/all/inventory/items/:role/:inventoryitemId', controller.getFullInventoryItemHistory);
 productRouter.post('/shipments/upload', upload.single('file'), controller.importShipments);
 productRouter.post('/shipments/shipment/item/upload', upload.single('file'), controller.importShipmentItems);
 productRouter.get('/shipments/show/all', controller.getAllShipments);

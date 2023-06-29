@@ -6,7 +6,7 @@ exports.createShipment = async information => {
     console.log('model createShipment')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createShipment', shipmentname, shipmenttypeid, statusid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp );
+    const contractRes = await network.invoke(networkObj, 'createShipment', shipmentname, shipmenttypeid, statusid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -103,19 +103,34 @@ exports.updateInventoryItem = async (isProducer, isManufacturer, isDistributor, 
     return apiResponse.createModelRes(200, 'Success', contractRes);
 };
 
-// New getFullProductHistory function that fetches all product histories
+// getFullProductHistory function that fetches all product histories
 exports.getFullProductHistory = async (isProducer, isManufacturer, isDistributor, isRetailer, loggedUserId, initialProductID) => {
-  const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
-  const contractRes = await network.invoke(networkObj, 'getFullProductHistory', initialProductID);
+    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
+    const contractRes = await network.invoke(networkObj, 'getFullProductHistory', initialProductID);
 
-  const error = networkObj.error || contractRes.error;
-  if (error) {
-    console.log(error);
-    const status = networkObj.status || contractRes.status;
-    return apiResponse.createModelRes(status, error);
-  }
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log(error);
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
 
-  return apiResponse.createModelRes(200, 'Success', contractRes);
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
+// getFullInventoryItemHistory function that fetches all inventory items histories
+exports.getFullInventoryItemHistory = async (isProducer, isManufacturer, isDistributor, isRetailer, loggedUserId, initialInventoryItemID) => {
+    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
+    const contractRes = await network.invoke(networkObj, 'getFullInventoryItemHistory', initialInventoryItemID);
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log(error);
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+
+    return apiResponse.createModelRes(200, 'Success', contractRes);
 };
 
 exports.getProductById = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
@@ -205,7 +220,7 @@ exports.getAllShipmentItems = async (information) => {
 exports.createOrder = async information => {
     const { productID, userId, userType, name } = information;
 
-    const networkObj = await network.connect(false, false, false, false, true, id);   
+    const networkObj = await network.connect(false, false, false, false, true, id);
     const contractRes = await network.invoke(networkObj, 'orderProduct', productID, userId);
 
     const error = networkObj.error || contractRes.error;
@@ -218,10 +233,10 @@ exports.createOrder = async information => {
 };
 
 exports.isDelivered = async information => {
-    const { productId , id } = information;
+    const { productId, id } = information;
 
     const networkObj = await network.connect(false, false, false, false, true, id);
-    const contractRes = await network.invoke(networkObj, 'deliveredProduct', productId );
+    const contractRes = await network.invoke(networkObj, 'deliveredProduct', productId);
 
     const error = networkObj.error || contractRes.error;
     if (error) {

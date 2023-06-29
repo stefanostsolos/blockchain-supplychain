@@ -10,11 +10,13 @@ import ImportInventoryItems from "./components/import-inventory-items.component"
 import CreateOrder from "./components/create-order.component";
 //import EditUser from "./components/edit-user.component";
 import EditProduct from "./components/edit-product.component";
+import EditInventoryItem from "./components/edit-item.component";
 import UsersList from "./components/users-list.component";
 import ProductsList from "./components/products-list.component";
 import InventoryItemsList from "./components/inventory-items-list.component";
 import OrdersList from "./components/orders-list.component";
 import ProductHistory from "./components/product-history.component";
+import InventoryItemHistory from "./components/inventory-item-history.component"
 import ImportShipments from "./components/import-shipments.component";
 import ImportShipmentItems from "./components/import-shipment-items.component";
 import ShipmentsList from "./components/shipments-list.component";
@@ -40,9 +42,11 @@ function App() {
           <Route path="/createProduct" element={<CreateProduct />} />
           <Route path="/createOrder" element={<CreateOrder />} />
           <Route path="/edit/:id" element={<EditProduct />} />
+          <Route path="/edititem/:id" element={<EditInventoryItem />} />
           <Route path="/users" element={<UsersList />} />
           <Route path="/orders" element={<OrdersList />} />
           <Route path="/history/:id" element={<ProductHistory />} />
+          <Route path="/itemhistory/:id" element={<InventoryItemHistory />} />
           <Route path="/importShipments" element={<ImportShipments />} />
           <Route path="/importShipmentItems" element={<ImportShipmentItems />} />
           <Route path="/shipments" element={<ShipmentsList />} />
