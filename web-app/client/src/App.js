@@ -12,6 +12,7 @@ import CreateOrder from "./components/create-order.component";
 import EditProduct from "./components/edit-product.component";
 import UsersList from "./components/users-list.component";
 import ProductsList from "./components/products-list.component";
+import InventoryItemsList from "./components/inventory-items-list.component";
 import OrdersList from "./components/orders-list.component";
 import ProductHistory from "./components/product-history.component";
 import ImportShipments from "./components/import-shipments.component";
@@ -32,6 +33,7 @@ function App() {
         <Routes>
           <Route path="/" element={<SignIn />} />
           <Route path="/products" element={<ProductsList />} />
+          <Route path="/inventoryitems" element={<InventoryItemsList />} />
           <Route path="/importProducts" element={<ImportProducts />} />
           <Route path="/importInventoryItems" element={<ImportInventoryItems />} />
           <Route path="/createUser" element={<CreateUser />} />
