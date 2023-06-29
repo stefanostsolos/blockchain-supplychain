@@ -642,7 +642,7 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 
 	//To check number of arguments are 8
 	if len(args) != 8 {
-		return shim.Error("Incorrect number of arguments, expected 7 arguments")
+		return shim.Error("Incorrect number of arguments, expected 8 arguments")
 	}
 	if len(args[0]) == 0 {
 		return shim.Error("Inventory_Item_Num_ID must be provided to create a product")
@@ -700,9 +700,9 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 	}
 
 	//Price conversion - Error handling
-	i2, errPrice := strconv.ParseFloat(args[7], 64)
+	i2, errPrice := strconv.ParseFloat(args[6], 64)
 	if errPrice != nil {
-		return shim.Error(fmt.Sprintf("Failed to Convert Price: %s", errPrice))
+		return shim.Error(fmt.Sprintf("Failed to Convert Unit Cost: %s", errPrice))
 	}
 
 	inventoryitemCounter := getCounter(APIstub, "InventoryItemCounterNO")

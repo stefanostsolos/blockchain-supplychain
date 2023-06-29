@@ -158,7 +158,8 @@ exports.upload = async (req, res) => {
             if (productCount <= productsWithName.length) {
                 const existingProduct = productsWithName[productCount - 1];
                 existingProduct.Record.Quantity = product_quantity;
-                existingProduct.Record.Price = product_price;
+                existingProduct.Record.ProductType = product_type;
+                existingProduct.Record.InternalName = internal_name;
 
                 let updateProductData = {
                     product_id: existingProduct.Key,
@@ -220,7 +221,8 @@ exports.importInventoryItems = async (req, res) => {
         let createInventoryItemResponse;
 
         for (let inventoryitem of inventoryitems) {
-            const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = inventoryitem;
+            //const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = inventoryitem;
+            const { INVENTORY_ITEM_ID: inventory_item_id, INVENTORY_ITEM_TYPE_ID: inventory_item_type_id, PRODUCT_ID: product_name, OWNER_PARTY_ID: owner_party_id, FACILITY_ID: facility_id, QUANTITY_ON_HAND_TOTAL: product_quantity, UNIT_COST: product_price } = inventoryitem;
             nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
             const inventoryitemCount = nameCountMap[product_name];
 
@@ -230,6 +232,10 @@ exports.importInventoryItems = async (req, res) => {
                 const existingInventoryItem = inventoryitemsWithName[inventoryitemCount - 1];
                 existingInventoryItem.Record.Quantity = product_quantity;
                 existingInventoryItem.Record.Price = product_price;
+                existingInventoryItem.Record.OwnerPartyId = owner_party_id;
+                existingInventoryItem.Record.FacilityId = facility_id;
+                existingInventoryItem.Record.InventoryItemId = inventory_item_id;
+                existingInventoryItem.Record.InventoryItemType = inventory_item_type_id;
 
                 let updateInventoryItemData = {
                     product_id: existingInventoryItem.Key,
@@ -244,7 +250,7 @@ exports.importInventoryItems = async (req, res) => {
                     return apiResponse.createModelRes(400, createInventoryItemResponse.error);
                 }
             } else {
-                let inventoryitemData = { shipmentid: "", shipmentname: "", name: product_name, id, price: product_price, quantity: product_quantity, producttype: "InventoryItem" };
+                let inventoryitemData = { name: product_name, id, price: product_price, quantity: product_quantity, producttype: "InventoryItem" };
                 createInventoryItemResponse = await productModel.createInventoryItem(inventoryitemData);
                 if (createInventoryItemResponse.error) {
                     return apiResponse.createModelRes(400, createInventoryItemResponse.error);

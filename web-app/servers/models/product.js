@@ -19,11 +19,11 @@ exports.createShipment = async information => {
 };
 
 exports.createProduct = async information => {
-    const { shipmentid, shipmentname, name, id, price, quantity, producttype } = information;
+    const { name, internalname, type, id, quantity } = information;
     console.log('model createProduct')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createProduct', shipmentid, shipmentname, name, id, price, quantity, producttype);
+    const contractRes = await network.invoke(networkObj, 'createProduct', name, internalname, type, id, quantity);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
