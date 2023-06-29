@@ -150,11 +150,11 @@ exports.getAllProducts = async (isProducer, isManufacturer, isDistributor, isRet
     return apiResponse.createModelRes(200, 'Success', contractRes);
 };
 
-exports.getAllInventoryItems = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
+exports.getAllInventoryItems = async (information) => {
     const { id } = information;
     console.log(id)
 
-    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, id);
+    const networkObj = await network.connect(true, false, false, false, false, id);
     const contractRes = await network.invoke(networkObj, 'queryAll', 'InventoryItem');
 
     const error = networkObj.error || contractRes.error;

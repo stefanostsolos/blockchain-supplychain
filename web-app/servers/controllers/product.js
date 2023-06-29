@@ -38,7 +38,7 @@ exports.importShipments = async (req, res) => {
 
             let createShipmentsResponse;
             for (let shipment of shipments) {
-                const { SHIPMENT_ID: shipment_name, SHIPMENT_TYPE_ID: shipment_type_id, PRODUCT_ID: product_id, STATUS_ID: status_id, ESTIMATED_SHIP_COST: estimated_ship_cost, PARTY_ID_TO: party_id_to, PARTY_ID_FROM: party_id_from, LAST_UPDATED_STAMP: last_updated_stamp } = shipment;
+                const { SHIPMENT_ID: shipment_name, SHIPMENT_TYPE_ID: shipment_type_id, STATUS_ID: status_id, ESTIMATED_SHIP_COST: estimated_ship_cost, PARTY_ID_TO: party_id_to, PARTY_ID_FROM: party_id_from, LAST_UPDATED_STAMP: last_updated_stamp } = shipment;
                 const shipmentData = { shipmentname: shipment_name, shipmenttypeid: shipment_type_id, statusid: status_id, estimatedshipcost: estimated_ship_cost, partyidto: party_id_to, partyidfrom: party_id_from, lastupdatedstamp: last_updated_stamp, id };
                 console.log(shipmentData);
                 createShipmentsResponse = await productModel.createShipment(shipmentData);
@@ -211,7 +211,7 @@ exports.importInventoryItems = async (req, res) => {
             return apiResponse.error(res, "An error occurred while reading the uploaded file!");
         }
 
-        let allInventoryItemsResponse = await productModel.getAllInventoryItems(true, false, false, false, false, { id });
+        let allInventoryItemsResponse = await productModel.getAllInventoryItems({ id });
 
         if (allInventoryItemsResponse.error) {
             return apiResponse.createModelRes(400, allInventoryItemsResponse.error);
@@ -503,6 +503,24 @@ exports.getAllShipments = async (req, res) => {
     console.log('controller getAllShipments 2');
     let modelRes;
     modelRes = await productModel.getAllShipments({ id: id });
+
+    return apiResponse.send(res, modelRes);
+};
+
+exports.getAllInventoryItems = async (req, res) => {
+    console.log('getAllInventoryItems')
+    const { id } = req.body;
+    console.log(id)
+    console.log('controller getAllInventoryItems 1');
+
+    if (!id) {
+        console.log(id);
+        console.log('controller bad request')
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller getAllInventoryItems 2');
+    let modelRes;
+    modelRes = await productModel.getAllInventoryItems({ id: id });
 
     return apiResponse.send(res, modelRes);
 };

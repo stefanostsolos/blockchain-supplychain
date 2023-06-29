@@ -1424,7 +1424,7 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 	var startKey string
         var endKey string
 
-	startKey = assetType + fmt.Sprintf("%03d", 1) // Use "%03d" if you expect up to 999 products.
+	startKey = assetType + fmt.Sprintf("%03d", 1) // Use "%03d" if you expect up to 999 assets.
 	endKey = assetType + fmt.Sprintf("%03d", assetCounter+1)
         
 	resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
@@ -1446,7 +1446,6 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 	for resultsIterator.HasNext() {
 
 		queryResponse, err := resultsIterator.Next()
-		// respValue := string(queryResponse.Value)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -1468,7 +1467,6 @@ func (t *s_supplychain) queryAll(APIstub shim.ChaincodeStubInterface, args []str
 		buffer.WriteString(string(queryResponse.Value))
 		buffer.WriteString("}")
 		bArrayMemberAlreadyWritten = true
-
 	}
 
 	buffer.WriteString("]")
