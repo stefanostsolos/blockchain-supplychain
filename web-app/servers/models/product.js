@@ -185,6 +185,23 @@ exports.getAllShipments = async (information) => {
     return apiResponse.createModelRes(200, 'Success', contractRes);
 };
 
+exports.getAllShipmentItems = async (information) => {
+    const { id } = information;
+    console.log(id)
+
+    const networkObj = await network.connect(true, false, false, false, false, id);
+    const contractRes = await network.invoke(networkObj, 'queryAll', 'ShipmentItem');
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        console.log('model getAllShipmentItems error')
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
 exports.createOrder = async information => {
     const { productID, userId, userType, name } = information;
 

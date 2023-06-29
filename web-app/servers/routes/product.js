@@ -23,10 +23,13 @@ productRouter.get('/list/:role', controller.getAllProducts);
 productRouter.put('/:productId/:role', controller.updateProduct);
 productRouter.get('/:productId/:role', controller.getProductbyId);
 productRouter.post('/upload', upload.single('file'), controller.upload);
+productRouter.post('/inventory/items/upload/all/item', upload.single('file'), controller.importInventoryItems);
+productRouter.post('/shipments/items/upload/all/item/up', upload.single('file'), controller.importShipmentItems);
 productRouter.post('/history/:role/:productId', controller.getFullProductHistory);
 productRouter.post('/shipments/upload', upload.single('file'), controller.importShipments);
 productRouter.post('/shipments/shipment/item/upload', upload.single('file'), controller.importShipmentItems);
 productRouter.get('/shipments/show/all', controller.getAllShipments);
+productRouter.get('/list/show/inventory/items', controller.getAllInventoryItems);
 // productRouter.post('/order', controller.createOrder);
 // productRouter.post('/delivered', controller.isDelivered);
 

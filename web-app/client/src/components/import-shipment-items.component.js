@@ -31,7 +31,7 @@ class ImportShipmentItems extends Component {
           autoClose: false
         });
         console.log('upload 1');
-        const response = await axios.post('http://localhost:8090/product/shipments/shipment/item/upload', data, { headers: headers });
+        const response = await axios.post('http://localhost:8090/product/shipments/items/upload/all/item/up', data, { headers: headers });
         console.log('upload 2');
         if (response.data.message === "Success") {
           console.log("upload success");

@@ -74,7 +74,7 @@ const InventoryItemsList = () => {
       "x-access-token": sessionStorage.getItem("jwtToken"),
     };
     axios
-      .get("http://localhost:8090/product/list/" + role, { headers })
+      .get("http://localhost:8090/product/list/show/inventory/items" + role, { headers })
       .then((response) => {
         let filteredInventoryItems = [];
         const loggedUserId = sessionStorage.getItem("userId");

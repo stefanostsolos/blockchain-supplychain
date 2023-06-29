@@ -26,12 +26,12 @@ class ImportInventoryItems extends Component {
       data.append('file', this.state.selectedFile);
       data.append('id', sessionStorage.getItem("userId"));
       try {
-        toast.info("Uploading products...", {
+        toast.info("Uploading inventory items...", {
           position: toast.POSITION.TOP_CENTER,
           autoClose: false
         });
         console.log('upload 1');
-        const response = await axios.post('http://localhost:8090/product/upload', data, { headers: headers });
+        const response = await axios.post('http://localhost:8090/product/inventory/items/upload/all/item', data, { headers: headers });
         console.log('upload 2');
         if (response.data.message === "Success") {
           console.log("upload success");
@@ -39,7 +39,7 @@ class ImportInventoryItems extends Component {
           toast.success("Inventory Items imported successfully!", {
             position: toast.POSITION.TOP_CENTER,
             onClose: () => {
-                window.location = "/products";
+                window.location = "/inventoryitems";
             }
         });
         }
