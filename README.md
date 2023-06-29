@@ -1,5 +1,5 @@
 # Blockchain Supplychain, NTUA ECE Diploma
-
+This project showcases an application of blockchain technology, built on the Hyperledger Fabric platform, aimed at redefining how we view supply chain management in the ERP (Enterprise Resource Planning) landscape. The solution offers a decentralized, transparent and efficient system to manage various stages of a supply chain process. 
 ## Stakeholders
 1) Producer
 2) Manufacturer (Owner)
