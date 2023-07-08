@@ -429,6 +429,40 @@ exports.getFullProductHistory = async (req, res) => {
     return apiResponse.send(res, modelRes);
 };
 
+exports.getFullInventoryItemHistory = async (req, res) => {
+    //const { role, id } = req.params;
+    //const { loggedUserId } = req.body;
+    console.log(req.body);
+    console.log(req.params);
+
+    const { loggedUserId, initialInventoryItemID } = req.body;
+    const { role, inventoryitemId } = req.params;
+
+    if (!inventoryitemId || !loggedUserId || !role || !initialInventoryItemID) {
+        if (!inventoryitemId) console.log('inventoryitemId missing');
+        else if (!loggedUserId) console.log('loggedUserId missing');
+        else if (!role) console.log('role missing');
+        else console.log(initialInventoryItemID);
+        console.log('Missing Parameters');
+        return apiResponse.badRequest(res);
+    }
+
+    let modelRes;
+    if (role === 'producer') {
+        modelRes = await productModel.getFullInventoryItemHistory(true, false, false, false, loggedUserId, initialInventoryItemID);
+    } else if (role === 'manufacturer') {
+        modelRes = await productModel.getFullInventoryItemHistory(false, true, false, false, loggedUserId, initialInventoryItemID);
+    } else if (role === 'distributor') {
+        modelRes = await productModel.getFullInventoryItemHistory(false, false, true, false, loggedUserId, initialInventoryItemID);
+    } else if (role === 'retailer') {
+        modelRes = await productModel.getFullInventoryItemHistory(false, false, false, true, loggedUserId, initialInventoryItemID);
+    } else {
+        console.log('Unsupported role');
+        return apiResponse.badRequest(res);
+    }
+    return apiResponse.send(res, modelRes);
+};
+
 exports.getProductbyId = async (req, res) => {
     const { id } = req.body;
     const { productId, role } = req.params
