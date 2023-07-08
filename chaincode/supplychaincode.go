@@ -40,7 +40,7 @@ type Shipment struct {
 }
 
 type ShipmentItem struct {
-	Shipment_ID string `json:"ShipmentID"`
+	Shipment_Item_ID string `json:"ShipmentItemID"`
 	Shipment_Name string `json:"ShipmentName"`
 	Product_Name_ID string `json:"ProductNameID"`
 	Quantity float64 `json:"Quantity"`
@@ -69,8 +69,8 @@ type InventoryItem struct {
 	//ModifiedDate         string `json:"ModifiedDate"` -> LastUpdatedStamp
     //Shipment_ID string `json:"ShipmentID"`
     //Shipment_Name string `json:"ShipmentName"`
-	Product_ID      string       `json:"ProductID"`
-	Initial_Product_ID string `json:"InitialProductID"`
+	//Product_ID      string       `json:"ProductID"`
+	//Initial_Product_ID string `json:"InitialProductID"`
 	//Order_ID        string       `json:"OrderID"`
 	Consumer_ID     string       `json:"ConsumerID"`
 	Manufacturer_ID string       `json:"ManufacturerID"`
@@ -110,8 +110,8 @@ type Product struct {
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
-	Price           float64      `json:"Price"`
-	Quantity_Included float64 `json:"QuantityIncluded"`
+	//Price           float64      `json:"Price"`
+	Quantity float64 `json:"Quantity"`
 	PreviousVersionID string `json:"PreviousVersionID"`
 	NextVersionID string `json:"NextVersionID"`
 }
@@ -479,7 +479,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 	
 	if len(args[3]) == 0 {
-		return shim.Error("Product_Type must be non-empty")
+		return shim.Error("Product_Type_ID must be non-empty")
 	}
 
 	if len(args[4]) == 0 {
@@ -527,7 +527,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type: args[3], PreviousVersionID: "", NextVersionID: "", Order_ID: "", Name: args[0], Initial_Name: args[1], Consumer_ID: "", Producer_ID: args[4], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1}
+	var comAsset = Product{Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type_ID: args[3], PreviousVersionID: "", NextVersionID: "", Product_Name_ID: args[0], Internal_Name: args[1], Consumer_ID: "", Producer_ID: args[4], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -620,7 +620,7 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = ShipmentItem{Shipment_ID: "ShipmentItem" + shipmentItemCounterStr, Shipment_Name: args[0], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
+	var comAsset = ShipmentItem{Shipment_Item_ID: "ShipmentItem" + shipmentItemCounterStr, Shipment_Name: args[0], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -643,9 +643,9 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 
 func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments is 8
-	if len(args) != 8 {
-		return shim.Error("Incorrect number of arguments, expected 8 arguments")
+	//To check number of arguments is 10
+	if len(args) != 10 {
+		return shim.Error("Incorrect number of arguments, expected 10 arguments")
 	}
 	if len(args[0]) == 0 {
 		return shim.Error("Inventory_Item_Num_ID must be provided to create a product")
@@ -677,6 +677,14 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 	
 	if len(args[7]) == 0 {
 		return shim.Error("Producer_ID must be provided")
+	}
+
+	if len(args[8]) == 0 {
+		return shim.Error("Last_Updated_Stamp must be provided")
+	}
+	
+	if len(args[9]) == 0 {
+		return shim.Error("Created_Stamp must be non-empty")
 	}
 	
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
@@ -712,7 +720,7 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 	inventoryitemCounter++
 	
 	// Convert productCounter to a string with leading zeros.
-        inventoryitemCounterStr := fmt.Sprintf("%03d", inventoryitemCounter)  // Use "%03d" if you expect up to 999 products.
+    inventoryitemCounterStr := fmt.Sprintf("%03d", inventoryitemCounter)  // Use "%03d" if you expect up to 999 products.
 
 	//To get the transaction TimeStamp from the Channel Header
 	txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
@@ -726,7 +734,7 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 
 	dates.ProductionDate = txTimeAsPtr
 	
-	var comAsset = InventoryItem{Inventory_Item_ID: "InventoryItem" + inventoryitemCounterStr, Initial_Inventory_Item_ID: "InventoryItem" + inventoryitemCounterStr, Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Inventory_Item_Num_ID: args[0], Inventory_Item_Type_ID: args[1], Product_Name_ID: args[2], Owner_Party_ID: args[3], Facility_ID: args[4], PreviousVersionID: "", NextVersionID: "", Consumer_ID: "", Producer_ID: args[7], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Date: dates, Status: "Available", Quantity_On_Hand_Total: i1, Unit_Cost: i2}
+	var comAsset = InventoryItem{Inventory_Item_ID: "InventoryItem" + inventoryitemCounterStr, Initial_Inventory_Item_ID: "InventoryItem" + inventoryitemCounterStr, Inventory_Item_Num_ID: args[0], Inventory_Item_Type_ID: args[1], Product_Name_ID: args[2], Owner_Party_ID: args[3], Facility_ID: args[4], PreviousVersionID: "", NextVersionID: "", Consumer_ID: "", Producer_ID: args[7], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Last_Updated_Stamp: args[8], Created_Stamp: args[9], Quantity_On_Hand_Total: i1, Unit_Cost: i2}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -734,10 +742,10 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 		return shim.Error(fmt.Sprintf("Marshal Error in Inventory Item: %s", errMarshal))
 	}
 
-	errPut := APIstub.PutState(comAsset.Product_ID, comAssetAsBytes)
+	errPut := APIstub.PutState(comAsset.Inventory_Item_ID, comAssetAsBytes)
 
 	if errPut != nil {
-		return shim.Error(fmt.Sprintf("Failed to create Inventory Item Asset: %s", comAsset.Product_ID))
+		return shim.Error(fmt.Sprintf("Failed to create Inventory Item Asset: %s", comAsset.Inventory_Item_ID))
 	}
 
 	//To Increment the Inventory Item Counter
@@ -770,10 +778,6 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 
 	if len(args[3]) == 0 {
-		return shim.Error("Product Price must be provided")
-	}
-	
-	if len(args[4]) == 0 {
 		return shim.Error("Product Quantity must be provided")
 	}
 
@@ -805,7 +809,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	json.Unmarshal(oldProductBytes, &oldProduct)
 	
 	//Quantity conversion - Error handling
-	i1, errQuantity := strconv.ParseFloat(args[4], 64)
+	i1, errQuantity := strconv.ParseFloat(args[3], 64)
 	if errQuantity != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
 	}
@@ -832,9 +836,9 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	// Updating the product values with the new values
 	product := oldProduct  // Create a copy of the old product
 	product.Product_ID = newProductID // Assign the already generated ID to the new product
-	product.Name = args[2] // product name from UI for the update
-	product.Price = i1     // product value from UI for the update
-	product.Quantity = i2     // product value from UI for the update
+	product.Product_Name_ID = args[2] // product name from UI for the update
+	//product.Price = i1     // product value from UI for the update
+	product.Quantity = i1     // product value from UI for the update
 	product.NextVersionID = "" // Reset NextVersionID as it is not yet known
 	product.Status = "Available"
 
@@ -968,7 +972,7 @@ func (t *s_supplychain) updateInventoryItem(APIstub shim.ChaincodeStubInterface,
 	inventoryitem.Product_Name_ID = args[2] // product name from UI for the update
 	inventoryitem.Owner_Party_ID = args[3] // inventory item owner party id from UI for the update
 	inventoryitem.Facility_ID = args[4] // inventory item facility id from UI for the update
-	inventoryitem.Price = i1     // inventory item value from UI for the update
+	inventoryitem.Unit_Cost = i1     // inventory item value from UI for the update
 	//inventoryitem.Quantity = i2     // inventory item value from UI for the update
 	inventoryitem.NextVersionID = "" // Reset NextVersionID as it is not yet known
 	inventoryitem.Status = "Available"
@@ -979,7 +983,7 @@ func (t *s_supplychain) updateInventoryItem(APIstub shim.ChaincodeStubInterface,
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	inventoryitem.Date.Last_Updated_Stamp = txTimeAsPtr
+	inventoryitem.Last_Updated_Stamp = txTimeAsPtr
 	
 	// Add reference to the previous version of the product
 	inventoryitem.PreviousVersionID = oldInventoryItem.Inventory_Item_ID
@@ -1119,7 +1123,7 @@ func (t *s_supplychain) orderProduct(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	product.Order_ID = "Order" + strconv.Itoa(orderCounter)
+	//product.Order_ID = "Order" + strconv.Itoa(orderCounter)
 	product.Consumer_ID = user.User_ID
 	product.Status = "Ordered"
 	product.Date.OrderedDate = txTimeAsPtr
@@ -1401,9 +1405,9 @@ func (t *s_supplychain) sellToConsumer(APIstub shim.ChaincodeStubInterface, args
 	json.Unmarshal(productBytes, &product)
 
 	// check if the product is ordered or not
-	if product.Order_ID == "" {
-		return shim.Error("Product has not been ordered yet")
-	}
+	//if product.Order_ID == "" {
+	//	return shim.Error("Product has not been ordered yet")
+	//}
 
 	// check if the product is sold to consumer already
 	if product.Consumer_ID == "" {
