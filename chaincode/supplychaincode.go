@@ -474,9 +474,9 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error("Internal_Name must be provided to create a product")
 	}
 	
-	if len(args[2]) == 0 {
-		return shim.Error("Quantity must be non-empty")
-	}
+	//if len(args[2]) == 0 {
+	//	return shim.Error("Quantity must be non-empty")
+	//}
 	
 	if len(args[3]) == 0 {
 		return shim.Error("Product_Type_ID must be non-empty")
@@ -487,7 +487,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 	
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
-	userBytes, _ := APIstub.GetState(args[3])
+	userBytes, _ := APIstub.GetState(args[4])
 
 	if userBytes == nil {
 		return shim.Error("Cannot find user")
@@ -503,10 +503,16 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error("User type must be producer")
 	}
 	
-	//Quantity conversion - Error handling
-	i1, errQuantity := strconv.ParseFloat(args[2], 64)
-	if errQuantity != nil {
-		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
+	//Quantity conversion - Error handling\
+	var i1 float64
+	if args[2] == "" {
+		i1 = 0
+	} else {
+		var errQuantity error
+		i1, errQuantity = strconv.ParseFloat(args[2], 64)
+		if errQuantity != nil {
+			return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
+		}
 	}
 
 	productCounter := getCounter(APIstub, "ProductCounterNO")

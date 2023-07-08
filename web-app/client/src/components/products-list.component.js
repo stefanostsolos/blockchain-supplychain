@@ -9,12 +9,11 @@ const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
   return (
     <tr>
       <td>{product.ProductID}</td>
-      <td>{product.Name}</td>
+      <td>{product.ProductNameID}</td>
       <td>{product.InternalName}</td>
       <td>{product.ProducerID}</td>
       <td>{product.Date.ProductionDate.substring(0, 10)}</td>
       <td>{product.Status}</td>
-      <td>{product.Price}</td>
       <td>{product.Quantity}</td>
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
@@ -93,12 +92,11 @@ const ProductsList = () => {
         <thead className="thead-light">
           <tr>
             <th>ProductID</th>
-            <th>ProductName</th>
             <th>InternalName</th>
+            <th>ProductName</th>
             <th>ProducerID</th>
             <th>ProductionDate</th>
             <th>Status</th>
-            <th>Price</th>
             <th>Quantity</th>
             <th>Actions</th>
           </tr>

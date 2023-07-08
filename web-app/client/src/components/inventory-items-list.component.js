@@ -22,14 +22,16 @@ const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getInvento
     <tr>
       <td>{inventoryitem.InventoryItemID}</td>
       <td>{inventoryitem.InventoryItemTypeID}</td>
-      <td>{inventoryitem.Name}</td>
+      <td>{inventoryitem.InventoryItemNumID}</td>
+      <td>{inventoryitem.ProductNameID}</td>
       <td>{inventoryitem.ProducerID}</td>
-      <td>{inventoryitem.Date.ProductionDate.substring(0, 10)}</td>
       <td>{inventoryitem.Status}</td>
       <td>{inventoryitem.OwnerPartyID}</td>
       <td>{inventoryitem.FacilityID}</td>
-      <td>{inventoryitem.Price}</td>
-      <td>{inventoryitem.Quantity}</td>
+      <td>{inventoryitem.UnitCost}</td>
+      <td>{inventoryitem.QuantityOnHandTotal}</td>
+      <td>{inventoryitem.LastUpdatedStamp}</td>
+      <td>{inventoryitem.CreatedStamp}</td>
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
@@ -74,7 +76,7 @@ const InventoryItemsList = () => {
       "x-access-token": sessionStorage.getItem("jwtToken"),
     };
     axios
-      .get("http://localhost:8090/product/list/show/inventory/items" + role, { headers })
+      .get("http://localhost:8090/product/list/show/inventory/" + role, { headers })
       .then((response) => {
         let filteredInventoryItems = [];
         const loggedUserId = sessionStorage.getItem("userId");
@@ -130,14 +132,16 @@ const InventoryItemsList = () => {
           <tr>
             <th>InventoryItemID</th>
             <th>InventoryItemTypeID</th>
-            <th>ProductName</th>
+            <th>InventoryItemNumID</th>
+            <th>ProductNameID</th>
             <th>ProducerID</th>
-            <th>ProductionDate</th>
             <th>Status</th>
             <th>OwnerPartyID</th>
             <th>FacilityID</th>
-            <th>Price</th>
-            <th>Quantity</th>
+            <th>UnitCost</th>
+            <th>QuantityOnHandTotal</th>
+            <th>LastUpdatedStamp</th>
+            <th>CreatedStamp</th>
             <th>Actions</th>
           </tr>
         </thead>

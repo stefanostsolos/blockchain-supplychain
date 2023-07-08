@@ -149,18 +149,19 @@ exports.upload = async (req, res) => {
         let createProductResponse;
 
         for (let product of products) {
+            console.log('11')
             const { PRODUCT_ID: product_name, PRODUCT_TYPE_ID: product_type, INTERNAL_NAME: internal_name, QUANTITY_INCLUDED: product_quantity } = product;
             nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
             const productCount = nameCountMap[product_name];
 
             const productsWithName = allProductsResponse.data.filter(prod => prod.Record.Name === product_name && prod.Record.Status === 'Available');
-
+            console.log('22')
             if (productCount <= productsWithName.length) {
                 const existingProduct = productsWithName[productCount - 1];
                 existingProduct.Record.Quantity = product_quantity;
                 existingProduct.Record.ProductType = product_type;
                 existingProduct.Record.InternalName = internal_name;
-
+                console.log('33')
                 let updateProductData = {
                     product_id: existingProduct.Key,
                     loggedUserId: id,
@@ -175,6 +176,7 @@ exports.upload = async (req, res) => {
                     return apiResponse.createModelRes(400, createProductResponse.error);
                 }
             } else {
+                console.log('44')
                 let productData = { name: product_name, internalname: internal_name, type: product_type, id, quantity: product_quantity };
                 createProductResponse = await productModel.createProduct(productData);
                 if (createProductResponse.error) {
@@ -221,8 +223,7 @@ exports.importInventoryItems = async (req, res) => {
         let createInventoryItemResponse;
 
         for (let inventoryitem of inventoryitems) {
-            //const { PRODUCT_ID: product_name, UNIT_COST: product_price, QUANTITY_ON_HAND_TOTAL: product_quantity } = inventoryitem;
-            const { INVENTORY_ITEM_ID: inventory_item_name, INVENTORY_ITEM_TYPE_ID: inventory_item_type_id, PRODUCT_ID: product_name, OWNER_PARTY_ID: owner_party_id, FACILITY_ID: facility_id, QUANTITY_ON_HAND_TOTAL: inventory_item_quantity, UNIT_COST: inventory_item_price } = inventoryitem;
+            const { INVENTORY_ITEM_ID: inventory_item_name, INVENTORY_ITEM_TYPE_ID: inventory_item_type_id, PRODUCT_ID: product_name, OWNER_PARTY_ID: owner_party_id, FACILITY_ID: facility_id, QUANTITY_ON_HAND_TOTAL: inventory_item_quantity, UNIT_COST: inventory_item_price, LAST_UPDATED_STAMP: last_updated_stamp, CREATED_STAMP: created_stamp } = inventoryitem;
             nameCountMap[inventory_item_name] = (nameCountMap[inventory_item_name] || 0) + 1;
             const inventoryitemCount = nameCountMap[inventory_item_name];
             const inventoryitemsWithName = allInventoryItemsResponse.data.filter(prod => prod.Record.InventoryItemId === inventory_item_name && prod.Record.Status === 'Available');
@@ -250,7 +251,7 @@ exports.importInventoryItems = async (req, res) => {
                     return apiResponse.createModelRes(400, createInventoryItemResponse.error);
                 }
             } else {
-                let inventoryitemData = { inventoryitemname: inventory_item_name, inventoryitemtypeid: inventory_item_type_id, productname: product_name, ownerpartyid: owner_party_id, facilityid: facility_id, quantity: inventory_item_quantity, price: inventory_item_price, id };
+                let inventoryitemData = { inventoryitemname: inventory_item_name, inventoryitemtypeid: inventory_item_type_id, productname: product_name, ownerpartyid: owner_party_id, facilityid: facility_id, quantity: inventory_item_quantity, price: inventory_item_price, id, lastupdatedstamp: last_updated_stamp, createdstamp: created_stamp };
                 createInventoryItemResponse = await productModel.createInventoryItem(inventoryitemData);
                 if (createInventoryItemResponse.error) {
                     return apiResponse.createModelRes(400, createInventoryItemResponse.error);
@@ -485,6 +486,34 @@ exports.getProductbyId = async (req, res) => {
         modelRes = await productModel.getProductById(false, false, false, true, false, { productId, id });
     } else if (role === 'consumer') {
         modelRes = await productModel.getProductById(false, false, false, false, true, { productId, id });
+    } else {
+        return apiResponse.badRequest(res);
+    }
+    return apiResponse.send(res, modelRes);
+};
+
+exports.getInventoryItembyId = async (req, res) => {
+    const { id } = req.body;
+    const { inventoryitemId, role } = req.params
+
+    console.log('1');
+
+    if (!inventoryitemId || !id || !role) {
+        return apiResponse.badRequest(res);
+    }
+    console.log('2');
+    console.log('3');
+    let modelRes;
+    if (role === 'producer') {
+        modelRes = await productModel.getInventoryItembyId(true, false, false, false, false, { inventoryitemId, id });
+    } else if (role === 'manufacturer') {
+        modelRes = await productModel.getInventoryItembyId(false, true, false, false, false, { inventoryitemId, id });
+    } else if (role === 'distributor') {
+        modelRes = await productModel.getInventoryItembyId(false, false, true, false, false, { inventoryitemId, id });
+    } else if (role === 'retailer') {
+        modelRes = await productModel.getInventoryItembyId(false, false, false, true, false, { inventoryitemId, id });
+    } else if (role === 'consumer') {
+        modelRes = await productModel.getInventoryItembyId(false, false, false, false, true, { inventoryitemId, id });
     } else {
         return apiResponse.badRequest(res);
     }

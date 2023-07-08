@@ -85,7 +85,7 @@ exports.connect = async (isProducer, isManufacturer, isDistributor, isRetailer, 
         });
         const network = await gateway.getNetwork(process.env.CHANNEL);
         const contract = await network.getContract(process.env.CONTRACT);
-        console.log('Connected to fabric network successly.');
+        console.log('Connected to fabric network successfully.');
 
         const networkObj = { gateway, network, contract };
 

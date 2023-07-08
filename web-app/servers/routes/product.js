@@ -22,6 +22,7 @@ productRouter.post('/', controller.createProduct);
 productRouter.get('/list/:role', controller.getAllProducts);
 productRouter.put('/:productId/:role', controller.updateProduct);
 productRouter.get('/:productId/:role', controller.getProductbyId);
+productRouter.get('/inventory/items/get/:inventoryitemId/:role', controller.getInventoryItembyId);
 productRouter.post('/upload', upload.single('file'), controller.upload);
 productRouter.post('/inventory/items/upload/all/item', upload.single('file'), controller.importInventoryItems);
 productRouter.post('/shipments/items/upload/all/item/up', upload.single('file'), controller.importShipmentItems);
@@ -30,7 +31,7 @@ productRouter.post('/history/of/all/inventory/items/:role/:inventoryitemId', con
 productRouter.post('/shipments/upload', upload.single('file'), controller.importShipments);
 productRouter.post('/shipments/shipment/item/upload', upload.single('file'), controller.importShipmentItems);
 productRouter.get('/shipments/show/all', controller.getAllShipments);
-productRouter.get('/list/show/inventory/items', controller.getAllInventoryItems);
+productRouter.get('/list/show/inventory/:role', controller.getAllInventoryItems);
 // productRouter.post('/order', controller.createOrder);
 // productRouter.post('/delivered', controller.isDelivered);
 

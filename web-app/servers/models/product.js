@@ -23,7 +23,7 @@ exports.createProduct = async information => {
     console.log('model createProduct')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createProduct', name, internalname, type, id, quantity);
+    const contractRes = await network.invoke(networkObj, 'createProduct', name, internalname, quantity, type, id);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -36,11 +36,11 @@ exports.createProduct = async information => {
 };
 
 exports.createInventoryItem = async information => {
-    const { inventoryitem, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id } = information;
+    const { inventoryitemname, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id, lastupdatedstamp, createdstamp } = information;
     console.log('model createInventoryItem')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createInventoryItem', inventoryitem, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id);
+    const contractRes = await network.invoke(networkObj, 'createInventoryItem', inventoryitemname, inventoryitemtypeid, productname, ownerpartyid, facilityid, quantity, price, id, lastupdatedstamp, createdstamp);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -138,6 +138,21 @@ exports.getProductById = async (isProducer, isManufacturer, isDistributor, isRet
 
     const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, id);
     const contractRes = await network.invoke(networkObj, 'queryAsset', productId);
+
+    const error = networkObj.error || contractRes.error;
+    if (error) {
+        const status = networkObj.status || contractRes.status;
+        return apiResponse.createModelRes(status, error);
+    }
+
+    return apiResponse.createModelRes(200, 'Success', contractRes);
+};
+
+exports.getInventoryItemById = async (isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, information) => {
+    const { inventoryitemId, id } = information;
+
+    const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, isConsumer, id);
+    const contractRes = await network.invoke(networkObj, 'queryAsset', inventoryitemId);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
