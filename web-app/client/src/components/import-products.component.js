@@ -19,34 +19,34 @@ class ImportProducts extends Component {
   };
 
   onClickHandler = async () => {
-      const headers = {
+    const headers = {
         "x-access-token": sessionStorage.getItem("jwtToken"),
-      };
-      const data = new FormData();
-      data.append('file', this.state.selectedFile);
-      data.append('id', sessionStorage.getItem("userId"));
-      try {
-        toast.info("Uploading products...", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: false
+    };
+    const data = new FormData();
+    data.append('file', this.state.selectedFile);
+    data.append('id', sessionStorage.getItem("userId"));
+    try {
+        const toastId = toast.info("Uploading products...", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: false
         });
         console.log('upload 1');
         const response = await axios.post('http://localhost:8090/product/upload', data, { headers: headers });
         console.log('upload 2');
         if (response.data.message === "Success") {
-          console.log("upload success");
-          toast.dismiss();
-          toast.success("Products imported successfully!", {
-            position: toast.POSITION.TOP_CENTER,
-            onClose: () => {
-                window.location = "/products";
-            }
-        });
+            console.log("upload success");
+            toast.dismiss(toastId);
+            toast.success("Products imported successfully!", {
+                position: toast.POSITION.TOP_CENTER,
+                onClose: () => {
+                    window.location = "/products";
+                }
+            });
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Error during upload:', error);
-      }
-  };
+    }
+};
 
   render() {
     return (

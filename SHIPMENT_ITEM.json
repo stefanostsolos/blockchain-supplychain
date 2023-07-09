@@ -1,0 +1,38 @@
+
+{
+    "data":[
+        {
+            "SHIPMENT_ID":"9999",
+            "SHIPMENT_ITEM_SEQ_ID":"00001",
+            "PRODUCT_ID":"GZ-2644",
+            "QUANTITY":5.0,
+            "SHIPMENT_CONTENT_DESCRIPTION":"",
+            "LAST_UPDATED_STAMP":"2023-06-24 20:01:03.977",
+            "LAST_UPDATED_TX_STAMP":"2023-06-24 20:00:59.252",
+            "CREATED_STAMP":"2023-06-24 20:01:03.977",
+            "CREATED_TX_STAMP":"2023-06-24 20:00:59.252"
+        },
+        {
+            "SHIPMENT_ID":"9997",
+            "SHIPMENT_ITEM_SEQ_ID":"00001",
+            "PRODUCT_ID":"GZ-2644",
+            "QUANTITY":2.0,
+            "SHIPMENT_CONTENT_DESCRIPTION":"",
+            "LAST_UPDATED_STAMP":"2023-06-24 20:01:04.03",
+            "LAST_UPDATED_TX_STAMP":"2023-06-24 20:00:59.252",
+            "CREATED_STAMP":"2023-06-24 20:01:04.03",
+            "CREATED_TX_STAMP":"2023-06-24 20:00:59.252"
+        },
+        {
+            "SHIPMENT_ID":"9996",
+            "SHIPMENT_ITEM_SEQ_ID":"00001",
+            "PRODUCT_ID":"WG-1111",
+            "QUANTITY":3.0,
+            "SHIPMENT_CONTENT_DESCRIPTION":"",
+            "LAST_UPDATED_STAMP":"2023-06-24 20:01:04.307",
+            "LAST_UPDATED_TX_STAMP":"2023-06-24 20:00:59.252",
+            "CREATED_STAMP":"2023-06-24 20:01:04.307",
+            "CREATED_TX_STAMP":"2023-06-24 20:00:59.252"
+        }
+    ]
+}

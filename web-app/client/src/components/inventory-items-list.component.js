@@ -21,8 +21,8 @@ const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getInvento
   return (
     <tr>
       <td>{inventoryitem.InventoryItemID}</td>
-      <td>{inventoryitem.InventoryItemTypeID}</td>
       <td>{inventoryitem.InventoryItemNumID}</td>
+      <td>{inventoryitem.InventoryItemTypeID}</td>
       <td>{inventoryitem.ProductNameID}</td>
       <td>{inventoryitem.ProducerID}</td>
       <td>{inventoryitem.Status}</td>
@@ -35,7 +35,7 @@ const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getInvento
       <td>
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
-            <Link to={"/history/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
+            <Link to={"/itemhistory/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
             <Link to={"/edit/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
             <select onChange={(e) => {
               if (e.target.value !== "") {
@@ -131,8 +131,8 @@ const InventoryItemsList = () => {
         <thead className="thead-light">
           <tr>
             <th>InventoryItemID</th>
-            <th>InventoryItemTypeID</th>
             <th>InventoryItemNumID</th>
+            <th>InventoryItemTypeID</th>
             <th>ProductNameID</th>
             <th>ProducerID</th>
             <th>Status</th>

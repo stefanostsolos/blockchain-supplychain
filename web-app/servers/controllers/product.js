@@ -282,7 +282,7 @@ exports.importShipmentItems = async (req, res) => {
             let shipmentitems;
             try {
                 parsedFileContent = JSON.parse(fs.readFileSync(productFilePath, 'utf8'));
-                products = parsedFileContent.data;
+                shipmentitems = parsedFileContent.data;
             } catch (err) {
                 console.log(err);
                 console.error(err);
