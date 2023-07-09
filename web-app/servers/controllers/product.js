@@ -309,7 +309,7 @@ exports.importShipmentItems = async (req, res) => {
                 }
 
                 const shipmentitemData = { shipmentname: shipment_name, name: product_id, quantity: itemquantity, lastupdatedstamp: last_updated_stamp, createdstamp: created_stamp, id };
-                console.log(productData);
+                console.log(shipmentitemData);
                 createShipmentItemResponse = await productModel.createShipmentItem(shipmentitemData);
                 if (createShipmentItemResponse.error) {
                     return apiResponse.createModelRes(400, createShipmentItemResponse.error);
@@ -502,7 +502,6 @@ exports.getInventoryItembyId = async (req, res) => {
         return apiResponse.badRequest(res);
     }
     console.log('2');
-    console.log('3');
     let modelRes;
     if (role === 'producer') {
         modelRes = await productModel.getInventoryItembyId(true, false, false, false, false, { inventoryitemId, id });
@@ -520,6 +519,24 @@ exports.getInventoryItembyId = async (req, res) => {
     return apiResponse.send(res, modelRes);
 };
 
+exports.getAllShipmentItems = async (req, res) => {
+    console.log('getAllShipmentItems')
+    const { id } = req.body;
+    console.log(id)
+    console.log('controller getAllShipmentItems 1');
+
+    if (!id) {
+        console.log(id);
+        console.log('controller bad request')
+        return apiResponse.badRequest(res);
+    }
+    console.log('controller getAllShipmentItems 2');
+    let modelRes;
+    modelRes = await productModel.getAllShipmentItems({ id: id });
+
+    return apiResponse.send(res, modelRes);
+};
+
 exports.getAllProducts = async (req, res) => {
     console.log('getAllProducts')
     const { id } = req.body;
@@ -533,7 +550,6 @@ exports.getAllProducts = async (req, res) => {
         return apiResponse.badRequest(res);
     }
     console.log('controller getAllProducts 2');
-    console.log('controller getAllProducts 3');
     let modelRes;
     if (role === 'producer') {
         modelRes = await productModel.getAllProducts(true, false, false, false, false, { id });

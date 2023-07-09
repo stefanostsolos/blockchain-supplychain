@@ -626,7 +626,7 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = ShipmentItem{Shipment_Item_ID: "ShipmentItem" + shipmentItemCounterStr, Shipment_Name: args[0], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
+	var comAsset = ShipmentItem{Shipment_Item_ID: "ShipmentItem" + shipmentItemCounterStr, Shipment_Name: args[0], Product_Name_ID: args[1], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Last_Updated_Stamp: args[3], Created_Stamp: args[4], Quantity: i1}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 

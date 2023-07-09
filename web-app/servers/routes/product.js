@@ -23,6 +23,7 @@ productRouter.get('/list/:role', controller.getAllProducts);
 productRouter.put('/:productId/:role', controller.updateProduct);
 productRouter.get('/:productId/:role', controller.getProductbyId);
 productRouter.get('/inventory/items/get/:inventoryitemId/:role', controller.getInventoryItembyId);
+productRouter.get('/shipment/items/get/all/shipmentitem/:role', controller.getAllShipmentItems);
 productRouter.post('/upload', upload.single('file'), controller.upload);
 productRouter.post('/inventory/items/upload/all/item', upload.single('file'), controller.importInventoryItems);
 productRouter.post('/shipments/items/upload/all/item/up', upload.single('file'), controller.importShipmentItems);

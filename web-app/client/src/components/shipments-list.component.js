@@ -4,41 +4,43 @@ import axios from 'axios';
 const ShipmentsList = () => {
   const [shipments, setShipments] = useState([]);
   const [selectedShipmentItems, setSelectedShipmentItems] = useState([]);
+  const shipmentitemrole = "producer"
 
   useEffect(() => {
     const headers = {
-        "x-access-token": sessionStorage.getItem("jwtToken"),
-      };
+      "x-access-token": sessionStorage.getItem("jwtToken"),
+    };
     const fetchShipments = async () => {
       try {
-        const response = await axios.get("http://localhost:8090/product/shipments/show/all", { headers: headers }) ;
+        const response = await axios.get("http://localhost:8090/product/shipments/show/all", { headers: headers });
         console.log(response.data.data);
         setShipments(response.data.data.map(item => item.Record));
       } catch (err) {
         console.log(err);
       }
     };
-    
+
     fetchShipments();
   }, []);
 
-  const fetchShipmentItems = async (shipmentId) => {
-  const headers = {
-        "x-access-token": sessionStorage.getItem("jwtToken"),
-      };
-  try {
-    const response = await axios.get(`http://localhost:8090/product/list/producer`, { headers: headers });
-    const shipmentItems = response.data.data
-      .map(item => item.Record)
-      .filter(
-        (product) =>
-          product.ProductType === 'ShipmentItem' && product.ShipmentID === shipmentId
-      );
-    setSelectedShipmentItems(shipmentItems);
-  } catch (err) {
-    console.log(err);
-  }
-};
+  const fetchShipmentItems = async (shipmentname) => {
+    const headers = {
+      "x-access-token": sessionStorage.getItem("jwtToken"),
+    };
+    try {
+      const response = await axios.get(`http://localhost:8090/product/shipment/items/get/all/shipmentitem/${shipmentitemrole}`, { headers: headers });
+      console.log(response.data.data);
+      const shipmentItems = response.data.data
+        .map(item => item.Record)
+        .filter(
+          (shipmentitem) => shipmentitem.ShipmentName === shipmentname
+        );
+      setSelectedShipmentItems(shipmentItems);
+      console.log(selectedShipmentItems);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="container">
@@ -58,7 +60,7 @@ const ShipmentsList = () => {
         </thead>
         <tbody>
           {shipments.map((shipment) => (
-            <tr key={shipment.ShipmentID} onClick={() => fetchShipmentItems(shipment.ShipmentID)}>
+            <tr key={shipment.ShipmentID}>
               <td>{shipment.ShipmentID}</td>
               <td>{shipment.ShipmentName}</td>
               <td>{shipment.ShipmentTypeID}</td>
@@ -67,7 +69,7 @@ const ShipmentsList = () => {
               <td>{shipment.PartyIDFrom}</td>
               <td>{shipment.LastUpdatedStamp}</td>
               <td>
-                <button style={{ borderRadius: '20px', backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 10px', }} onClick={() => fetchShipmentItems(shipment.ShipmentID)}>Details</button>
+                <button style={{ borderRadius: '20px', backgroundColor: '#333', color: '#fff', border: 'none', padding: '10px 10px', }} onClick={() => fetchShipmentItems(shipment.ShipmentName, shipmentitemrole)}>Details</button>
               </td>
             </tr>
           ))}
@@ -79,18 +81,20 @@ const ShipmentsList = () => {
           <tr>
             <th>Shipment Name</th>
             <th>Product ID</th>
-            <th>Name</th>
             <th>Quantity</th>
+            <th>LastUpdatedStamp</th>
+            <th>CreatedStamp</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {selectedShipmentItems.map((item) => (
-            <tr key={item.ProductID}>
+            <tr key={item.ShipmentName}>
               <td>{item.ShipmentName}</td>
               <td>{item.ProductID}</td>
-              <td>{item.Name}</td>
               <td>{item.Quantity}</td>
+              <td>{item.LastUpdatedStamp}</td>
+              <td>{item.CreatedStamp}</td>
               <td>
                 {/* Actions for each item can be added here */}
               </td>
@@ -100,7 +104,6 @@ const ShipmentsList = () => {
       </table>
     </div>
   );
-
 }
 
 export default ShipmentsList;
