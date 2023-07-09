@@ -29,7 +29,6 @@ const ShipmentsList = () => {
     };
     try {
       const response = await axios.get(`http://localhost:8090/product/shipment/items/get/all/shipmentitem/${shipmentitemrole}`, { headers: headers });
-      console.log(response.data.data);
       const shipmentItems = response.data.data
         .map(item => item.Record)
         .filter(
@@ -80,10 +79,10 @@ const ShipmentsList = () => {
         <thead className="thead-light">
           <tr>
             <th>Shipment Name</th>
-            <th>Product ID</th>
+            <th>Product Name ID</th>
             <th>Quantity</th>
-            <th>LastUpdatedStamp</th>
-            <th>CreatedStamp</th>
+            <th>Last Updated Timestamp</th>
+            <th>Created Stamp</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -91,7 +90,7 @@ const ShipmentsList = () => {
           {selectedShipmentItems.map((item) => (
             <tr key={item.ShipmentName}>
               <td>{item.ShipmentName}</td>
-              <td>{item.ProductID}</td>
+              <td>{item.ProductNameID}</td>
               <td>{item.Quantity}</td>
               <td>{item.LastUpdatedStamp}</td>
               <td>{item.CreatedStamp}</td>

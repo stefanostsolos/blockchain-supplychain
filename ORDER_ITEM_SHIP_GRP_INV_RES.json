@@ -1,0 +1,25 @@
+
+{
+    "data":[
+        {
+            "ORDER_ID":"DEMO10090",
+            "SHIP_GROUP_SEQ_ID":"00001",
+            "ORDER_ITEM_SEQ_ID":"00001",
+            "INVENTORY_ITEM_ID":"9001",
+            "RESERVE_ORDER_ENUM_ID":"INVRO_FIFO_REC",
+            "QUANTITY":2.0,
+            "QUANTITY_NOT_AVAILABLE":0.0,
+            "RESERVED_DATETIME":"2008-04-23 16:49:31.474",
+            "CREATED_DATETIME":"2008-04-23 16:49:31.474",
+            "PROMISED_DATETIME":"2008-05-08 16:49:27.392",
+            "CURRENT_PROMISED_DATE":"",
+            "PRIORITY":"2",
+            "SEQUENCE_ID":"",
+            "PICK_START_DATE":"",
+            "LAST_UPDATED_STAMP":"2023-06-24 20:01:03.835",
+            "LAST_UPDATED_TX_STAMP":"2023-06-24 20:00:59.252",
+            "CREATED_STAMP":"2023-06-24 20:01:03.835",
+            "CREATED_TX_STAMP":"2023-06-24 20:00:59.252"
+        }
+    ]
+}

@@ -27,11 +27,38 @@ type User struct {
 	Password  string `json:"Password"`
 }
 
+type Order struct {
+	Order_ID string `json:"OrderID"`
+	Order_Name_ID string `json:"OrderNameID"`
+	Order_Type_ID string `json:"OrderTypeID"`
+	Order_Name string `json:"OrderName"`
+	Order_Date string `json:"OrderDate"`
+	Order_Status_ID string `json:"OrderStatusID"`
+	Grand_Total float64 `json:"GrandTotal"`
+	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
+	Created_Stamp string `json:"CreatedStamp"`
+}
+
+type OrderItem struct {
+	Order_Item_ID string `json:"OrderItemID"`
+	Order_Name_ID string `json:"OrderNameID"`
+	Order_Item_Type_ID string `json:"OrderItemTypeID"`
+	Product_Name_ID string `json:"ProductNameID"`
+    Quantity float64 `json:"Quantity"`
+	Unit_Price float64 `json:"UnitPrice"`
+	Item_Description string `json:"ItemDescription"`
+	Status_ID string `json:"StatusID"`
+	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
+	Created_Stamp string `json:"CreatedStamp"`
+	Inventory_Item_Num_ID string `json:"InventoryItemNumID"`
+}
+
 type Shipment struct {
 	Shipment_ID string `json:"ShipmentID"`
 	Shipment_Name string `json:"ShipmentName"`
 	Shipment_Type_ID string `json:"ShipmentTypeID"`
 	Status_ID string `json:"StatusID"`
+	Primary_Order_ID string `json:"PrimaryOrderID"`
 	Estimated_Ship_Cost float64 `json:"EstimatedShipCost"`
 	Party_ID_To string `json:"PartyIDTo"`
 	Party_ID_From string `json:"PartyIDFrom"`
