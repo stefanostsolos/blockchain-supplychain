@@ -10,9 +10,11 @@ const Product = ({ product, role, entities, loggedUserId, getProducts }) => {
     <tr>
       <td>{product.ProductID}</td>
       <td>{product.ProductNameID}</td>
+      <td>{product.ProductTypeID}</td>
       <td>{product.InternalName}</td>
+      <td>{product.Description}</td>
       <td>{product.ProducerID}</td>
-      <td>{product.Date.ProductionDate.substring(0, 10)}</td>
+      <td>{product.LastUpdatedStamp}</td>
       <td>{product.Status}</td>
       <td>{product.Quantity}</td>
       <td>
@@ -92,10 +94,12 @@ const ProductsList = () => {
         <thead className="thead-light">
           <tr>
             <th>ProductID</th>
-            <th>InternalName</th>
             <th>ProductName</th>
-            <th>ProducerID</th>
-            <th>ProductionDate</th>
+            <th>ProductTypeID</th>
+            <th>InternalName</th>
+            <th>Description</th>
+            <th>OwnerID</th>
+            <th>LastUpdatedStamp</th>
             <th>Status</th>
             <th>Quantity</th>
             <th>Actions</th>

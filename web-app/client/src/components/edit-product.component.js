@@ -15,14 +15,18 @@ class EditProduct extends Component {
     super(props);
 
     // method binding
-    this.onChangeProductName = this.onChangeProductName.bind(this);
-    this.onChangePrice = this.onChangePrice.bind(this);
+    this.onChangeInternalName = this.onChangeInternalName.bind(this);
+    this.onChangeDescription = this.onChangeDescription.bind(this);
     this.onChangeQuantity = this.onChangeQuantity.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
       product_name: "",
+      internal_name: "",
+      description: "",
       initialProductName: "",
+      initialInternalName: "",
+      initialDescription: "",
       productHistory: [],
       date: {
         productionDate: new Date(),
@@ -40,12 +44,11 @@ class EditProduct extends Component {
       retailer_id: "",
       consumer_id: "",
       status: "",
-      price: 0,
-      initialPrice: 0,
       quantity: 1,
       previousID: "",
       role: sessionStorage.getItem('role'),
       loggedUserId: sessionStorage.getItem('userId'),
+      initialProductID: "",
     };
   }
 
@@ -59,11 +62,13 @@ class EditProduct extends Component {
         console.log(response.data.data);
         console.log(response.data.data.InitialProductID);
         this.setState({
-          product_name: response.data.data.Name,
-          price: response.data.data.Price,
+          product_name: response.data.data.ProductNameID,
+          internal_name: response.data.data.InternalName,
+          description: response.data.data.Description,
           quantity: response.data.data.Quantity,
-          initialProductName: response.data.data.Name,
-          initialPrice: response.data.data.Price,
+          initialProductName: response.data.data.ProductNameID,
+          initialInternalName: response.data.data.InternalName,
+          initialDescription: response.data.data.Description,
           initialQuantity: response.data.data.Quantity,
           initialProductID: response.data.data.InitialProductID,
         }, () => {
@@ -108,7 +113,8 @@ class EditProduct extends Component {
       product_id: this.props.id,
       loggedUserId: sessionStorage.getItem('userId'),
       name: this.state.product_name,
-      price: this.state.price,
+      internalname: this.state.internal_name,
+      description: this.state.description,
       quantity: this.state.quantity,
     };
     console.log(product.product_id);
@@ -134,18 +140,18 @@ class EditProduct extends Component {
       });
   }
 
-  onChangeProductName(e) {
+  onChangeInternalName(e) {
     this.setState({
-      product_name: e.target.value,
-    });
-  }
-
-  onChangePrice(e) {
-    this.setState({
-      price: Number(e.target.value),
+      internal_name: e.target.value,
     });
   }
   
+  onChangeDescription(e) {
+    this.setState({
+      description: e.target.value,
+    });
+  }
+
   onChangeQuantity(e) {
     this.setState({
       quantity: Number(e.target.value),
@@ -154,8 +160,8 @@ class EditProduct extends Component {
   
   compareHistoryItems(previousItem, currentItem) {
     return {
-        Name: previousItem.Name !== currentItem.Name,
-        Price: previousItem.Price !== currentItem.Price,
+        InternalName: previousItem.InternalName !== currentItem.InternalName,
+        Description: previousItem.Description !== currentItem.Description,
         Quantity: previousItem.Quantity !== currentItem.Quantity,
     };
 }
@@ -166,22 +172,23 @@ class EditProduct extends Component {
             <h3>Update Product</h3>
             <form onSubmit={this.onSubmit} style={{ maxWidth: "300px" }}>
                 <div className="form-group">
-                    <label className={this.state.product_name !== this.state.initialProductName ? "text-success" : ""}>ProductName: </label>
+                    <label className={this.state.internal_name !== this.state.initialInternalName ? "text-success" : ""}>InternalName: </label>
                     <input
                         type="text"
                         required
-                        className={`form-control ${this.state.product_name !== this.state.initialProductName ? "text-success" : ""}`}
-                        value={this.state.product_name}
-                        onChange={this.onChangeProductName}
+                        className={`form-control ${this.state.internal_name !== this.state.initialInternalName ? "text-success" : ""}`}
+                        value={this.state.internal_name}
+                        onChange={this.onChangeInternalName}
                     />
                 </div>
                 <div className="form-group">
-                    <label className={this.state.price !== this.state.initialPrice ? "text-success" : ""}>Price: </label>
+                    <label className={this.state.description !== this.state.initialDescription ? "text-success" : ""}>Description: </label>
                     <input
                         type="text"
-                        className={`form-control ${this.state.price !== this.state.initialPrice ? "text-success" : ""}`}
-                        value={this.state.price}
-                        onChange={this.onChangePrice}
+                        required
+                        className={`form-control ${this.state.description !== this.state.initialDescription ? "text-success" : ""}`}
+                        value={this.state.description}
+                        onChange={this.onChangeDescription}
                     />
                 </div>
                 <div className="form-group">
@@ -198,7 +205,7 @@ class EditProduct extends Component {
                         type="submit"
                         value="Update Product"
                         className="btn btn-primary"
-                        disabled={this.state.product_name === this.state.initialProductName && this.state.price === this.state.initialPrice && this.state.quantity === this.state.initialQuantity}
+                        disabled={this.state.internal_name === this.state.initialInternalName && this.state.description == this.state.initialDescription && this.state.quantity === this.state.initialQuantity}
                     />
                 </div>
             </form>
@@ -217,11 +224,12 @@ class EditProduct extends Component {
                         <div className="card-body">
                             <h5 className="card-title">{index === this.state.productHistory.length - 1 ? 'Latest Version' : `Version ${index + 1}`}</h5>
                             <p className="card-text">ProductID: {historyItem.ProductID}</p>
-                            <p className={`card-text ${changes.Name ? "text-success" : ""}`}>Name: {historyItem.Name}</p>
-                            <p className={`card-text ${changes.Price ? "text-success" : ""}`}>Price: {historyItem.Price}</p>
+                            <p className={`card-text ${changes.ProductName ? "text-success" : ""}`}>ProductName: {historyItem.ProductNameID}</p>
+                            <p className={`card-text ${changes.InternalName ? "text-success" : ""}`}>InternalName: {historyItem.InternalName}</p>
+                            <p className={`card-text ${changes.Description ? "text-success" : ""}`}>Description: {historyItem.Description}</p>
                             <p className={`card-text ${changes.Quantity ? "text-success" : ""}`}>Quantity: {historyItem.Quantity}</p>
                             <p className="card-text">Status: {historyItem.Status}</p>
-                            <p className="card-text">{index === 0 ? 'Production Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.Date.ModifiedDate}</p>
+                            <p className="card-text">{index === 0 ? 'Imported Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.LastUpdatedStamp}</p>
                         </div>
                     </div>
                 );

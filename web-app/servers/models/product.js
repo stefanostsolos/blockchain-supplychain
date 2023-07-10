@@ -19,11 +19,11 @@ exports.createShipment = async information => {
 };
 
 exports.createProduct = async information => {
-    const { name, internalname, type, id, quantity } = information;
+    const { name, internalname, description, type, id, quantity, lastupdatedstamp, createdstamp } = information;
     console.log('model createProduct')
 
     const networkObj = await network.connect(true, false, false, false, false, id);
-    const contractRes = await network.invoke(networkObj, 'createProduct', name, internalname, quantity, type, id);
+    const contractRes = await network.invoke(networkObj, 'createProduct', name, internalname, description, quantity, type, id, lastupdatedstamp, createdstamp);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -70,12 +70,12 @@ exports.createShipmentItem = async information => {
 };
 
 exports.updateProduct = async (isProducer, isManufacturer, isDistributor, isRetailer, information) => {
-    const { product_id, loggedUserId, name, price, quantity } = information;
+    const { product_id, loggedUserId, name, internalname, description, quantity } = information;
     console.log('model update product')
     console.log(product_id);
     console.log(loggedUserId);
     const networkObj = await network.connect(isProducer, isManufacturer, isDistributor, isRetailer, false, loggedUserId);
-    const contractRes = await network.invoke(networkObj, 'updateProduct', product_id, loggedUserId, name, price, quantity);
+    const contractRes = await network.invoke(networkObj, 'updateProduct', product_id, loggedUserId, name, internalname, description, quantity);
 
     const error = networkObj.error || contractRes.error;
     if (error) {
@@ -236,7 +236,7 @@ exports.createOrder = async information => {
     const { productID, userId, userType, name } = information;
 
     const networkObj = await network.connect(false, false, false, false, true, id);
-    const contractRes = await network.invoke(networkObj, 'orderProduct', productID, userId);
+    const contractRes = await network.invoke(networkObj, 'createOrder', productID, userId);
 
     const error = networkObj.error || contractRes.error;
     if (error) {

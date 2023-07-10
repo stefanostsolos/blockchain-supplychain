@@ -29,9 +29,6 @@ const InventoryItemHistory = () => {
       <p><strong>ProducerID:</strong> {inventoryitem.ProducerID || ""}</p>
       <p><strong>FacilityID:</strong> {inventoryitem.FacilityID || ""}</p>
       <p><strong>OwnerPartyId:</strong> {inventoryitem.OwnerPartyID || ""}</p>
-      <p><strong>ProductionDate:</strong> {inventoryitem.Date?.ProductionDate || ""}</p>
-      <p><strong>OrderedDate:</strong> {inventoryitem.Date?.OrderedDate || ""}</p>
-      <p><strong>DeliveredDate:</strong> {inventoryitem.Date?.DeliveredDate || ""}</p>
       <p><strong>ModifiedDate:</strong> {inventoryitem.LastUpdatedStamp || ""}</p>
       <p><strong>CreatedDate:</strong> {inventoryitem.CreatedStamp || ""}</p>      
       <p><strong>Status:</strong> {inventoryitem.Status || ""}</p>

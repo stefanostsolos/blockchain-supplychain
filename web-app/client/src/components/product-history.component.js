@@ -14,7 +14,6 @@ const ProductHistory = () => {
       .get(`http://localhost:8090/product/${id}/${sessionStorage.getItem('role')}`, { headers })
       .then(response => {
         setProduct(response.data.data);
-        //console.log(response.data.data);
       })
       .catch(error => console.log(error));
   }, [id]);
@@ -25,16 +24,11 @@ const ProductHistory = () => {
       <p><strong>ProductID:</strong> {product.ProductID || ""}</p>
       <p><strong>ProductName:</strong> {product.ProductNameID || ""}</p>
       <p><strong>InternalName:</strong> {product.InternalName || ""}</p>
-      <p><strong>ProductType:</strong> {product.ProductType || ""}</p>
-      <p><strong>ProducerID:</strong> {product.ProducerID || ""}</p>
-      <p><strong>ProductionDate:</strong> {product.Date?.ProductionDate || ""}</p>
-      <p><strong>SendToManufacturerDate:</strong> {product.Date?.SendToManufacturerDate || ""}</p>
-      <p><strong>SendToDistributorDate:</strong> {product.Date?.SendToDistributorDate || ""}</p>
-      <p><strong>SendToRetailerDate:</strong> {product.Date?.SendToRetailerDate || ""}</p>
-      <p><strong>SellToConsumerDate:</strong> {product.Date?.SellToConsumerDate || ""}</p>
-      <p><strong>OrderedDate:</strong> {product.Date?.OrderedDate || ""}</p>
-      <p><strong>DeliveredDate:</strong> {product.Date?.DeliveredDate || ""}</p>
-      <p><strong>ModifiedDate:</strong> {product.Date?.ModifiedDate || ""}</p>
+      <p><strong>Description:</strong> {product.Description || ""}</p>
+      <p><strong>ProductType:</strong> {product.ProductTypeID || ""}</p>
+      <p><strong>OwnerID:</strong> {product.ProducerID || ""}</p>
+      <p><strong>ImportedToWebAppDate:</strong> {product.Date?.ProductionDate || ""}</p>
+      <p><strong>LastUpdatedStamp:</strong> {product.LastUpdatedStamp || ""}</p>
       <p><strong>Status:</strong> {product.Status || ""}</p>
       <p><strong>Quantity:</strong> {product.Quantity || ""}</p>
     </div>

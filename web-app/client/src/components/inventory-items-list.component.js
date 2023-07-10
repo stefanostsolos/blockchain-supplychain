@@ -36,29 +36,7 @@ const InventoryItem = ({ inventoryitem, role, entities, loggedUserId, getInvento
         {(role === "producer" || role === "manufacturer" || role === "distributor" || role === "retailer") &&
           <>
             <Link to={"/itemhistory/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Details</Link>
-            <Link to={"/edit/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
-            <select onChange={(e) => {
-              if (e.target.value !== "") {
-                const selectedEntity = entities.find(entity => entity.Record.UserID === e.target.value);
-                if (selectedEntity) {
-                  deliverTo(inventoryitem, selectedEntity);
-                } else {
-                  console.error(`Entity with user_id ${e.target.value} not found.`);
-                }
-              }
-            }}>
-              <option value="">Deliver to</option>
-              {entities && entities.map((entity, index) => (
-                <option key={index} value={entity.Record.UserID}>
-                  {entity.Record.UserID}
-                </option>
-              ))}
-            </select>
-          </>
-        }
-        {role === "consumer" &&
-          <>
-            <button onClick={() => deliverTo(inventoryitem, { user_id: inventoryitem.RetailerID })}>Order</button>
+            <Link to={"/edititem/" + inventoryitem.InventoryItemID} style={{ color: '#ffffff', fontWeight: 'bold', marginRight: '10px' }}>Edit</Link>
           </>
         }
       </td>
@@ -134,7 +112,7 @@ const InventoryItemsList = () => {
             <th>InventoryItemNumID</th>
             <th>InventoryItemTypeID</th>
             <th>ProductNameID</th>
-            <th>ProducerID</th>
+            <th>OwnerID</th>
             <th>Status</th>
             <th>OwnerPartyID</th>
             <th>FacilityID</th>

@@ -93,7 +93,6 @@ type InventoryItem struct {
 	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
 	Created_Stamp string `json:"CreatedStamp"`
 	Status string `json:"Status"`
-	//ModifiedDate         string `json:"ModifiedDate"` -> LastUpdatedStamp
     //Shipment_ID string `json:"ShipmentID"`
     //Shipment_Name string `json:"ShipmentName"`
 	//Product_ID      string       `json:"ProductID"`
@@ -137,6 +136,7 @@ type Product struct {
 	Status          string       `json:"Status"`
 	Date            ProductDates `json:"Date"`
 	Last_Updated_Stamp string `json:"LastUpdatedStamp"`
+	Created_Stamp string `json:"CreatedStamp"`
 	//Price           float64      `json:"Price"`
 	Quantity float64 `json:"Quantity"`
 	PreviousVersionID string `json:"PreviousVersionID"`
@@ -488,9 +488,9 @@ func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args
 
 func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 5
-	if len(args) != 5 {
-		return shim.Error("Incorrect number of arguments, expected 5 arguments")
+	//To check number of arguments are 8
+	if len(args) != 8 {
+		return shim.Error("Incorrect number of arguments, expected 8 arguments")
 	}
 	
 	if len(args[0]) == 0 {
@@ -500,21 +500,33 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	if len(args[1]) == 0 {
 		return shim.Error("Internal_Name must be provided to create a product")
 	}
-	
+
 	//if len(args[2]) == 0 {
+	//	return shim.Error("Description must be provided")
+	//}
+	
+	//if len(args[3]) == 0 {
 	//	return shim.Error("Quantity must be non-empty")
 	//}
 	
-	if len(args[3]) == 0 {
+	if len(args[4]) == 0 {
 		return shim.Error("Product_Type_ID must be non-empty")
 	}
 
-	if len(args[4]) == 0 {
+	if len(args[5]) == 0 {
 		return shim.Error("Producer_ID must be provided")
+	}
+
+	if len(args[6]) == 0 {
+		return shim.Error("LastUpdatedStamp must be non-empty")
+	}
+
+	if len(args[7]) == 0 {
+		return shim.Error("CreatedStamp must be non-empty")
 	}
 	
 	// get user details from the stub ie. Chaincode stub in network using the user id passed
-	userBytes, _ := APIstub.GetState(args[4])
+	userBytes, _ := APIstub.GetState(args[5])
 
 	if userBytes == nil {
 		return shim.Error("Cannot find user")
@@ -532,11 +544,11 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 	
 	//Quantity conversion - Error handling\
 	var i1 float64
-	if args[2] == "" {
+	if args[3] == "" {
 		i1 = 0
 	} else {
 		var errQuantity error
-		i1, errQuantity = strconv.ParseFloat(args[2], 64)
+		i1, errQuantity = strconv.ParseFloat(args[3], 64)
 		if errQuantity != nil {
 			return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
 		}
@@ -560,7 +572,7 @@ func (t *s_supplychain) createProduct(APIstub shim.ChaincodeStubInterface, args 
 
 	dates.ProductionDate = txTimeAsPtr
 
-	var comAsset = Product{Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Product_Type_ID: args[3], PreviousVersionID: "", NextVersionID: "", Product_Name_ID: args[0], Internal_Name: args[1], Consumer_ID: "", Producer_ID: args[4], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1}
+	var comAsset = Product{Product_ID: "Product" + productCounterStr, Initial_Product_ID: "Product" + productCounterStr, Description: args[2], Product_Type_ID: args[4], PreviousVersionID: "", NextVersionID: "", Product_Name_ID: args[0], Internal_Name: args[1], Consumer_ID: "", Producer_ID: args[5], Manufacturer_ID: "", Retailer_ID: "", Distributor_ID: "", Status: "Available", Date: dates, Quantity: i1, Last_Updated_Stamp: args[6], Created_Stamp: args[7]}
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -793,8 +805,8 @@ func (t *s_supplychain) createInventoryItem(APIstub shim.ChaincodeStubInterface,
 func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// parameter length check
-	if len(args) != 5 {
-		return shim.Error("Incorrect number of arguments, expected 5 arguments")
+	if len(args) != 6 {
+		return shim.Error("Incorrect number of arguments, expected 6 arguments")
 	}
 
 	// parameter null check
@@ -811,6 +823,14 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	}
 
 	if len(args[3]) == 0 {
+		return shim.Error("Product Internal Name must be provided")
+	}
+
+	if len(args[4]) == 0 {
+		return shim.Error("Product Description must be provided")
+	}
+
+	if len(args[5]) == 0 {
 		return shim.Error("Product Quantity must be provided")
 	}
 
@@ -842,7 +862,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	json.Unmarshal(oldProductBytes, &oldProduct)
 	
 	//Quantity conversion - Error handling
-	i1, errQuantity := strconv.ParseFloat(args[3], 64)
+	i1, errQuantity := strconv.ParseFloat(args[5], 64)
 	if errQuantity != nil {
 		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
 	}
@@ -870,6 +890,8 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 	product := oldProduct  // Create a copy of the old product
 	product.Product_ID = newProductID // Assign the already generated ID to the new product
 	product.Product_Name_ID = args[2] // product name from UI for the update
+	product.Internal_Name = args[3]   // product value from UI for the update
+	product.Description = args[4]     // product value from UI for the update
 	//product.Price = i1     // product value from UI for the update
 	product.Quantity = i1     // product value from UI for the update
 	product.NextVersionID = "" // Reset NextVersionID as it is not yet known
@@ -881,7 +903,7 @@ func (t *s_supplychain) updateProduct(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error("Returning error in transaction timestamp")
 	}
 
-	product.Date.Last_Updated_Stamp = txTimeAsPtr
+	product.Last_Updated_Stamp = txTimeAsPtr
 	
 	// Add reference to the previous version of the product
 	product.PreviousVersionID = oldProduct.Product_ID

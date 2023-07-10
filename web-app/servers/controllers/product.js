@@ -150,7 +150,7 @@ exports.upload = async (req, res) => {
 
         for (let product of products) {
             console.log('11')
-            const { PRODUCT_ID: product_name, PRODUCT_TYPE_ID: product_type, INTERNAL_NAME: internal_name, QUANTITY_INCLUDED: product_quantity } = product;
+            const { PRODUCT_ID: product_name, PRODUCT_TYPE_ID: product_type, INTERNAL_NAME: internal_name, DESCRIPTION: product_description, QUANTITY_INCLUDED: product_quantity, LAST_UPDATED_STAMP: last_updated_stamp, CREATED_STAMP: created_stamp } = product;
             nameCountMap[product_name] = (nameCountMap[product_name] || 0) + 1;
             const productCount = nameCountMap[product_name];
 
@@ -161,12 +161,14 @@ exports.upload = async (req, res) => {
                 existingProduct.Record.Quantity = product_quantity;
                 existingProduct.Record.ProductType = product_type;
                 existingProduct.Record.InternalName = internal_name;
+                existingProduct.Record.Description = product_description;
                 console.log('33')
                 let updateProductData = {
                     product_id: existingProduct.Key,
                     loggedUserId: id,
                     name: existingProduct.Record.Name,
                     internalname: existingProduct.Record.InternalName,
+                    description: existingProduct.Record.Description,
                     type: existingProduct.Record.ProductType,
                     quantity: existingProduct.Record.Quantity
                 }
@@ -177,7 +179,7 @@ exports.upload = async (req, res) => {
                 }
             } else {
                 console.log('44')
-                let productData = { name: product_name, internalname: internal_name, type: product_type, id, quantity: product_quantity };
+                let productData = { name: product_name, internalname: internal_name, description: product_description, type: product_type, id, quantity: product_quantity, lastupdatedstamp: last_updated_stamp, createdstamp: created_stamp };
                 createProductResponse = await productModel.createProduct(productData);
                 if (createProductResponse.error) {
                     return apiResponse.createModelRes(400, createProductResponse.error);
@@ -325,12 +327,12 @@ exports.importShipmentItems = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
-    const { product_id, loggedUserId, name, price, quantity } = req.body;
+    const { product_id, loggedUserId, name, internalname, description, quantity } = req.body;
     const { role } = req.params;
     console.log(req.body);
     console.log('controller update 1');
 
-    if (!name || !product_id || !price || !role || !loggedUserId) {
+    if (!name || !product_id || !role || !internalname || !description || !loggedUserId) {
         return apiResponse.badRequest(res);
     }
     console.log('controller update 2');
@@ -342,13 +344,13 @@ exports.updateProduct = async (req, res) => {
 
     let modelRes
     if (role === 'producer') {
-        modelRes = await productModel.updateProduct(true, false, false, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateProduct(true, false, false, false, { product_id, loggedUserId, name, internalname, description, quantity });
     } else if (role === 'manufacturer') {
-        modelRes = await productModel.updateProduct(false, true, false, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateProduct(false, true, false, false, { product_id, loggedUserId, name, internalname, description, quantity });
     } else if (role === 'distributor') {
-        modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateProduct(false, false, true, false, { product_id, loggedUserId, name, internalname, description, quantity });
     } else if (role === 'retailer') {
-        modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateProduct(false, false, false, true, { product_id, loggedUserId, name, internalname, description, quantity });
     } else {
         return apiResponse.badRequest(res);
     }
@@ -504,15 +506,15 @@ exports.getInventoryItembyId = async (req, res) => {
     console.log('2');
     let modelRes;
     if (role === 'producer') {
-        modelRes = await productModel.getInventoryItembyId(true, false, false, false, false, { inventoryitemId, id });
+        modelRes = await productModel.getInventoryItemById(true, false, false, false, false, { inventoryitemId, id });
     } else if (role === 'manufacturer') {
-        modelRes = await productModel.getInventoryItembyId(false, true, false, false, false, { inventoryitemId, id });
+        modelRes = await productModel.getInventoryItemById(false, true, false, false, false, { inventoryitemId, id });
     } else if (role === 'distributor') {
-        modelRes = await productModel.getInventoryItembyId(false, false, true, false, false, { inventoryitemId, id });
+        modelRes = await productModel.getInventoryItemById(false, false, true, false, false, { inventoryitemId, id });
     } else if (role === 'retailer') {
-        modelRes = await productModel.getInventoryItembyId(false, false, false, true, false, { inventoryitemId, id });
+        modelRes = await productModel.getInventoryItemById(false, false, false, true, false, { inventoryitemId, id });
     } else if (role === 'consumer') {
-        modelRes = await productModel.getInventoryItembyId(false, false, false, false, true, { inventoryitemId, id });
+        modelRes = await productModel.getInventoryItemById(false, false, false, false, true, { inventoryitemId, id });
     } else {
         return apiResponse.badRequest(res);
     }

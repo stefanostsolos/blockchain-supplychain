@@ -83,7 +83,6 @@ const ShipmentsList = () => {
             <th>Quantity</th>
             <th>Last Updated Timestamp</th>
             <th>Created Stamp</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -94,9 +93,6 @@ const ShipmentsList = () => {
               <td>{item.Quantity}</td>
               <td>{item.LastUpdatedStamp}</td>
               <td>{item.CreatedStamp}</td>
-              <td>
-                {/* Actions for each item can be added here */}
-              </td>
             </tr>
           ))}
         </tbody>

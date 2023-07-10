@@ -9,14 +9,12 @@ export class CreateProduct extends Component {
 
     this.onChangeShipmentName = this.onChangeShipmentName.bind(this);
     this.onChangeProductName = this.onChangeProductName.bind(this);
-    this.onChangePrice = this.onChangePrice.bind(this);
     this.onChangeQuantity = this.onChangeQuantity.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
       shipment_name: "",
       product_name: "",
-      price: 0,
       quantity: 1,
     };
   }
@@ -30,12 +28,6 @@ export class CreateProduct extends Component {
   onChangeProductName(e) {
     this.setState({
       product_name: e.target.value,
-    });
-  }
-
-  onChangePrice(e) {
-    this.setState({
-      price: e.target.value,
     });
   }
   
@@ -100,16 +92,6 @@ export class CreateProduct extends Component {
               className="form-control"
               value={this.state.product_name}
               onChange={this.onChangeProductName}
-            />
-          </div>
-          <div className="form-group">
-            <label>Price: </label>
-            <input
-              type="number"
-              required
-              className="form-control"
-              value={this.state.price}
-              onChange={this.onChangePrice}
             />
           </div>
           <div className="form-group">
