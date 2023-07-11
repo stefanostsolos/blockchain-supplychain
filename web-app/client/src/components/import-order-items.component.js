@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-class ImportOrders extends Component {
+class ImportOrderItems extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,17 +26,17 @@ class ImportOrders extends Component {
     data.append('file', this.state.selectedFile);
     data.append('id', sessionStorage.getItem("userId"));
     try {
-        const toastId = toast.info("Uploading orders...", {
+        const toastId = toast.info("Uploading order items...", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: false
         });
         console.log('upload 1');
-        const response = await axios.post('http://localhost:8090/theorder/importOrders', data, { headers: headers });
+        const response = await axios.post('http://localhost:8090/theorder/import/OrderItems', data, { headers: headers });
         console.log('upload 2');
         if (response.data.message === "Success") {
             console.log("upload success");
             toast.dismiss(toastId);
-            toast.success("Orders imported successfully!", {
+            toast.success("Order items imported successfully!", {
                 position: toast.POSITION.TOP_CENTER,
                 onClose: () => {
                     window.location = "/orders";
@@ -74,4 +74,4 @@ class ImportOrders extends Component {
   }
 }
 
-export default ImportOrders;
+export default ImportOrderItems;

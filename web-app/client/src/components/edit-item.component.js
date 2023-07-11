@@ -18,20 +18,21 @@ class EditInventoryItem extends Component {
         this.onChangeProductName = this.onChangeProductName.bind(this);
         this.onChangeOwnerParty = this.onChangeOwnerParty.bind(this);
         this.onChangeFacilityID = this.onChangeFacilityID.bind(this);
-        this.onChangeQuantity = this.onChangeQuantity.bind(this);
+        //this.onChangeQuantity = this.onChangeQuantity.bind(this);
         this.onChangeUnitCost = this.onChangeUnitCost.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state = {
+            inventoryitemtypeid: "",
             product_name: "",
             owner_party: "",
             facility_id: "",
-            quantity: 1,
+            //quantity: 1,
             unitcost: 0,
             initialProductName: "",
             initialOwnerParty: "",
             initialFacilityID: "",
-            initialQuantity: 1,
+            //initialQuantity: 1,
             initialUnitCost: 0,
             itemHistory: [],
             date: {
@@ -63,17 +64,18 @@ class EditInventoryItem extends Component {
         axios.get("http://localhost:8090/product/inventory/items/get/" + this.props.id + "/" + this.state.role, { headers: headers })
             .then((response) => {
                 console.log(response.data.data);
-                console.log(response.data.data.InitialProductID);
+                console.log(response.data.data.InitialInventoryItemID);
                 this.setState({
+                    inventoryitemtypeid: response.data.data.InventoryItemTypeID,
                     product_name: response.data.data.ProductNameID,
                     owner_party: response.data.data.OwnerPartyID,
                     facility_id: response.data.data.FacilityID,
-                    quantity: response.data.data.QuantityOnHandTotal,
+                    //quantity: response.data.data.QuantityOnHandTotal,
                     unitcost: response.data.data.UnitCost,
                     initialProductName: response.data.data.ProductNameID,
                     initialOwnerParty: response.data.data.OwnerPartyID,
                     initialFacilityID: response.data.data.FacilityID,
-                    initialQuantity: response.data.data.Quantity,
+                    //initialQuantity: response.data.data.Quantity,
                     initialUnitCost: response.data.data.UnitCost,
                     initialInventoryItemID: response.data.data.InitialInventoryItemID,
                 }, () => {
@@ -115,15 +117,15 @@ class EditInventoryItem extends Component {
         console.log('Logged user id:', sessionStorage.getItem('userId'));
 
         const inventoryitem = {
-            inventory_item_id: this.props.id,
-            loggedUserId: sessionStorage.getItem('userId'),
-            name: this.state.product_name,
-            ownerparty: this.state.owner_party,
+            inventoryitemid: this.props.id,
+            inventoryitemtypeid: this.state.inventoryitemtypeid,
+            productname: this.state.product_name,
+            ownerpartyid: this.state.owner_party,
             facilityid: this.state.facility_id,
-            quantity: this.state.quantity,
             unitcost: this.state.unitcost,
+            loggedUserId: sessionStorage.getItem('userId'),
         };
-        console.log(inventoryitem.inventory_item_id);
+        console.log(inventoryitem.inventoryitemid);
         console.log(inventoryitem);
 
         const headers = {
@@ -164,11 +166,11 @@ class EditInventoryItem extends Component {
         });
     }
 
-    onChangeQuantity(e) {
-        this.setState({
-            quantity: Number(e.target.value),
-        });
-    }
+    //onChangeQuantity(e) {
+    //    this.setState({
+    //        quantity: Number(e.target.value),
+    //    });
+    // }
 
     onChangeUnitCost(e) {
         this.setState({
@@ -181,7 +183,7 @@ class EditInventoryItem extends Component {
             ProductName: previousItem.ProductName !== currentItem.ProductName,
             OwnerPartyID: previousItem.OwnerPartyID !== currentItem.OwnerPartyID,
             FacilityID: previousItem.FacilityID !== currentItem.FacilityID,
-            Quantity: previousItem.Quantity !== currentItem.Quantity,
+            //Quantity: previousItem.Quantity !== currentItem.Quantity,
             UnitCost: previousItem.UnitCost !== currentItem.UnitCost,
         };
     }
@@ -192,25 +194,36 @@ class EditInventoryItem extends Component {
                 <h3>Update Inventory Item</h3>
                 <form onSubmit={this.onSubmit} style={{ maxWidth: "300px" }}>
                     <div className="form-group">
-                        <label className={this.state.internal_name !== this.state.initialInternalName ? "text-success" : ""}>InternalName: </label>
+                        <label className={this.state.product_name !== this.state.initialProductName ? "text-success" : ""}>ProductName: </label>
                         <input
                             type="text"
                             required
-                            className={`form-control ${this.state.internal_name !== this.state.initialInternalName ? "text-success" : ""}`}
-                            value={this.state.internal_name}
-                            onChange={this.onChangeInternalName}
+                            className={`form-control ${this.state.product_name !== this.state.initialProductName ? "text-success" : ""}`}
+                            value={this.state.product_name}
+                            onChange={this.onChangeProductName}
                         />
                     </div>
                     <div className="form-group">
-                        <label className={this.state.description !== this.state.initialDescription ? "text-success" : ""}>Description: </label>
+                        <label className={this.state.owner_party !== this.state.initialOwnerParty ? "text-success" : ""}>OwnerPartyID: </label>
                         <input
                             type="text"
                             required
-                            className={`form-control ${this.state.description !== this.state.initialDescription ? "text-success" : ""}`}
-                            value={this.state.description}
-                            onChange={this.onChangeDescription}
+                            className={`form-control ${this.state.owner_party !== this.state.initialOwnerParty ? "text-success" : ""}`}
+                            value={this.state.owner_party}
+                            onChange={this.onChangeOwnerParty}
                         />
                     </div>
+                    <div className="form-group">
+                        <label className={this.state.facility_id !== this.state.initialFacilityID ? "text-success" : ""}>FacilityID: </label>
+                        <input
+                            type="text"
+                            required
+                            className={`form-control ${this.state.facility_id !== this.state.initialFacilityID ? "text-success" : ""}`}
+                            value={this.state.facility_id}
+                            onChange={this.onChangeFacilityID}
+                        />
+                    </div>
+                    {/*
                     <div className="form-group">
                         <label className={this.state.quantity !== this.state.initialQuantity ? "text-success" : ""}>Quantity: </label>
                         <input
@@ -219,13 +232,22 @@ class EditInventoryItem extends Component {
                             value={this.state.quantity}
                             onChange={this.onChangeQuantity}
                         />
+                    </div> */}
+                    <div className="form-group">
+                        <label className={this.state.unitcost !== this.state.initialUnitCost ? "text-success" : ""}>UnitCost: </label>
+                        <input
+                            type="text"
+                            className={`form-control ${this.state.unitcost !== this.state.initialUnitCost ? "text-success" : ""}`}
+                            value={this.state.unitcost}
+                            onChange={this.onChangeUnitCost}
+                        />
                     </div>
                     <div className="form-group">
                         <input
                             type="submit"
                             value="Update Inventory Item"
                             className="btn btn-primary"
-                            disabled={this.state.internal_name === this.state.initialInternalName && this.state.description == this.state.initialDescription && this.state.quantity === this.state.initialQuantity}
+                            disabled={this.state.product_name === this.state.initialProductName && this.state.owner_party == this.state.initialOwnerParty && this.state.facility_id === this.state.initialFacilityID && this.state.unitcost === this.state.initialUnitCost}
                         />
                     </div>
                 </form>
@@ -243,13 +265,15 @@ class EditInventoryItem extends Component {
                             >
                                 <div className="card-body">
                                     <h5 className="card-title">{index === this.state.itemHistory.length - 1 ? 'Latest Version' : `Version ${index + 1}`}</h5>
-                                    <p className="card-text">ProductID: {historyItem.ProductID}</p>
+                                    <p className="card-text">InventoryItemID: {historyItem.InventoryItemID}</p>
+                                    <p className="card-text">InventoryItemTypeID: {historyItem.InventoryItemTypeID}</p>
                                     <p className={`card-text ${changes.ProductName ? "text-success" : ""}`}>ProductName: {historyItem.ProductNameID}</p>
-                                    <p className={`card-text ${changes.InternalName ? "text-success" : ""}`}>InternalName: {historyItem.InternalName}</p>
-                                    <p className={`card-text ${changes.Description ? "text-success" : ""}`}>Description: {historyItem.Description}</p>
-                                    <p className={`card-text ${changes.Quantity ? "text-success" : ""}`}>Quantity: {historyItem.Quantity}</p>
+                                    <p className={`card-text ${changes.OwnerPartyID ? "text-success" : ""}`}>OwnerPartyID: {historyItem.OwnerPartyID}</p>
+                                    <p className={`card-text ${changes.FacilityID ? "text-success" : ""}`}>FacilityID: {historyItem.FacilityID}</p>
+                                    <p className={`card-text ${changes.UnitCost ? "text-success" : ""}`}>UnitCost: {historyItem.UnitCost}</p>
+                                    <p className="card-text">Quantity: {historyItem.QuantityOnHandTotal}</p>
                                     <p className="card-text">Status: {historyItem.Status}</p>
-                                    <p className="card-text">{index === 0 ? 'Imported Date' : 'Modified Date'}: {index === 0 ? historyItem.Date.ProductionDate : historyItem.LastUpdatedStamp}</p>
+                                    <p className="card-text">{index === 0 ? 'Created Date' : 'Modified Date'}: {index === 0 ? historyItem.CreatedStamp : historyItem.LastUpdatedStamp}</p>
                                 </div>
                             </div>
                         );

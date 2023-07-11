@@ -51,6 +51,7 @@ const ShipmentsList = () => {
             <th>Shipment Name</th>
             <th>Shipment Type ID</th>
             <th>Shipment Cost</th>
+            <th>OrderNameID</th>
             <th>Party ID To</th>
             <th>Party ID From</th>
             <th>Last Updated Timestamp</th>
@@ -64,6 +65,7 @@ const ShipmentsList = () => {
               <td>{shipment.ShipmentName}</td>
               <td>{shipment.ShipmentTypeID}</td>
               <td>{shipment.EstimatedShipCost}</td>
+              <td>{shipment.PrimaryOrderID}</td>
               <td>{shipment.PartyIDTo}</td>
               <td>{shipment.PartyIDFrom}</td>
               <td>{shipment.LastUpdatedStamp}</td>

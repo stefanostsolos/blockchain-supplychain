@@ -38,8 +38,8 @@ exports.importShipments = async (req, res) => {
 
             let createShipmentsResponse;
             for (let shipment of shipments) {
-                const { SHIPMENT_ID: shipment_name, SHIPMENT_TYPE_ID: shipment_type_id, STATUS_ID: status_id, ESTIMATED_SHIP_COST: estimated_ship_cost, PARTY_ID_TO: party_id_to, PARTY_ID_FROM: party_id_from, LAST_UPDATED_STAMP: last_updated_stamp } = shipment;
-                const shipmentData = { shipmentname: shipment_name, shipmenttypeid: shipment_type_id, statusid: status_id, estimatedshipcost: estimated_ship_cost, partyidto: party_id_to, partyidfrom: party_id_from, lastupdatedstamp: last_updated_stamp, id };
+                const { SHIPMENT_ID: shipment_name, SHIPMENT_TYPE_ID: shipment_type_id, STATUS_ID: status_id, PRIMARY_ORDER_ID: primary_order_id, ESTIMATED_SHIP_COST: estimated_ship_cost, PARTY_ID_TO: party_id_to, PARTY_ID_FROM: party_id_from, LAST_UPDATED_STAMP: last_updated_stamp, CREATED_STAMP: created_stamp } = shipment;
+                const shipmentData = { shipmentname: shipment_name, shipmenttypeid: shipment_type_id, statusid: status_id, primaryorderid: primary_order_id, estimatedshipcost: estimated_ship_cost, partyidto: party_id_to, partyidfrom: party_id_from, lastupdatedstamp: last_updated_stamp, createdstamp: created_stamp, id };
                 console.log(shipmentData);
                 createShipmentsResponse = await productModel.createShipment(shipmentData);
                 if (createShipmentsResponse.error) {
@@ -56,10 +56,10 @@ exports.importShipments = async (req, res) => {
 };
 
 exports.createShipment = async (req, res) => {
-    const { shipmentname, shipmenttypeid, statusid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp, id } = req.body;
+    const { shipmentname, shipmenttypeid, statusid, primaryorderid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp, createdstamp, id } = req.body;
     console.log('controller createShipment 1');
 
-    if (!shipmentname || !shipmenttypeid || !statusid || !estimatedshipcost || !partyidto || !partyidfrom || !lastupdatedstamp || !id) {
+    if (!shipmentname || !shipmenttypeid || !statusid || !estimatedshipcost || !partyidto || !partyidfrom || !lastupdatedstamp || !createdstamp || !id) {
         console.log('controller createShipment error')
         return apiResponse.badRequest(res);
     }
@@ -71,7 +71,7 @@ exports.createShipment = async (req, res) => {
     }
     console.log('controller createShipment 3');
 
-    const modelRes = await productModel.createShipment({ shipmentname, shipmenttypeid, statusid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp });
+    const modelRes = await productModel.createShipment({ shipmentname, shipmenttypeid, statusid, primaryorderid, estimatedshipcost, partyidto, partyidfrom, lastupdatedstamp });
     console.log('done')
     return apiResponse.send(res, modelRes);
 };
@@ -363,12 +363,12 @@ exports.updateProduct = async (req, res) => {
 };
 
 exports.updateInventoryItem = async (req, res) => {
-    const { product_id, loggedUserId, name, price, quantity } = req.body;
+    const { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, unitcost, loggedUserId } = req.body;
     const { role } = req.params;
     console.log(req.body);
     console.log('controller update inventory item 1');
 
-    if (!name || !product_id || !price || !role || !loggedUserId) {
+    if (!inventoryitemid || !inventoryitemtypeid || !productname || !ownerpartyid || !facilityid || !unitcost || !loggedUserId) {
         return apiResponse.badRequest(res);
     }
     console.log('controller update 2');
@@ -380,19 +380,19 @@ exports.updateInventoryItem = async (req, res) => {
 
     let modelRes
     if (role === 'producer') {
-        modelRes = await productModel.updateInventoryItem(true, false, false, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateInventoryItem(true, false, false, false, { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, unitcost, loggedUserId });
     } else if (role === 'manufacturer') {
-        modelRes = await productModel.updateInventoryItem(false, true, false, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateInventoryItem(false, true, false, false, { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, unitcost, loggedUserId });
     } else if (role === 'distributor') {
-        modelRes = await productModel.updateInventoryItem(false, false, true, false, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateInventoryItem(false, false, true, false, { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, unitcost, loggedUserId });
     } else if (role === 'retailer') {
-        modelRes = await productModel.updateInventoryItem(false, false, false, true, { product_id, loggedUserId, name, price, quantity });
+        modelRes = await productModel.updateInventoryItem(false, false, false, true, { inventoryitemid, inventoryitemtypeid, productname, ownerpartyid, facilityid, unitcost, loggedUserId });
     } else {
         return apiResponse.badRequest(res);
     }
     if (modelRes.status === 200) {
-        // Update product_id with new ID
-        req.body.product_id = modelRes.data.product_id;
+        // Update inventoryitemid with new ID
+        req.body.inventoryitemid = modelRes.data.inventoryitemid;
     }
 
     return apiResponse.send(res, modelRes);

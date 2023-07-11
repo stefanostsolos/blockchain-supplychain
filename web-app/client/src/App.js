@@ -6,6 +6,7 @@ import SignIn from "./components/signIn.component";
 import CreateUser from "./components/create-user.component";
 import CreateProduct from "./components/create-product.component";
 import ImportOrders from "./components/import-orders.component";
+import ImportOrderItems from "./components/import-order-items.component";
 import ImportProducts from "./components/import-products.component";
 import ImportInventoryItems from "./components/import-inventory-items.component";
 import CreateOrder from "./components/create-order.component";
@@ -38,6 +39,7 @@ function App() {
           <Route path="/products" element={<ProductsList />} />
           <Route path="/inventoryitems" element={<InventoryItemsList />} />
           <Route path="/importOrders" element={<ImportOrders />} />
+          <Route path="/importOrderItems" element={<ImportOrderItems />} />
           <Route path="/importProducts" element={<ImportProducts />} />
           <Route path="/importInventoryItems" element={<ImportInventoryItems />} />
           <Route path="/createUser" element={<CreateUser />} />

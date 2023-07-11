@@ -16,20 +16,13 @@ if (!fs.existsSync(dirPath)) {
 }
 
 orderRouter.use('/', authMiddleware);
-orderRouter.post('/', controller.createProduct);
-orderRouter.get('/list/:role', controller.getAllProducts);
-orderRouter.put('/:productId/:role', controller.updateProduct);
-orderRouter.get('/:productId/:role', controller.getProductbyId);
-orderRouter.get('/inventory/items/get/:inventoryitemId/:role', controller.getInventoryItembyId);
 
 orderRouter.post('/importOrders', upload.single('file'), controller.importOrders);
 orderRouter.post('/import/OrderItems', upload.single('file'), controller.importOrderItems);
-orderRouter.post('/import/Order/Item/Ship/Details', upload.single('file'), controller.importOrderItemDetails);
-orderRouter.post('/import/Inventory/Item/Details/', upload.single('file'), controller.importInventoryItemDetails);
+//orderRouter.post('/import/Order/Item/Ship/Details', upload.single('file'), controller.importOrderItemDetails);
+//orderRouter.post('/import/Inventory/Item/Details/', upload.single('file'), controller.importInventoryItemDetails);
 
-orderRouter.post('/inventory/items/upload/all/item', upload.single('file'), controller.importInventoryItems);
-orderRouter.post('/history/:role/:productId', controller.getFullProductHistory);
-orderRouter.post('/history/of/all/inventory/items/:role/:inventoryitemId', controller.getFullInventoryItemHistory);
-orderRouter.get('/list/show/inventory/:role', controller.getAllInventoryItems);
+orderRouter.get('/orders', controller.getAllOrders);
+orderRouter.get('/orders/items/:role', controller.getAllOrderItems);
 
 module.exports = orderRouter;

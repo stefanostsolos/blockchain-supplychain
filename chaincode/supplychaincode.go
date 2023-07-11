@@ -206,6 +206,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "createUser" {
 		//create a new user
 		return t.createUser(stub, args)
+	} else if function == "createOrder" {
+		//create a new order
+		return t.createOrder(stub, args)
 	} else if function == "createShipment" {
 		//create a new shipment
 		return t.createShipment(stub, args)
@@ -218,6 +221,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "createShipmentItem" {
 		//create a new shipment item
 		return t.createShipmentItem(stub, args)
+	} else if function == "createOrderItem" {
+		//create a new order item
+		return t.createOrderItem(stub, args)
 	} else if function == "updateProduct" {
 		// update a product
 		return t.updateProduct(stub, args)
@@ -260,6 +266,9 @@ func (t *s_supplychain) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "queryShipmentByName" {
 		// get shipment id from shipment name
 		return t.queryShipmentByName(stub, args)
+	} else if function == "queryOrderByName" {
+		// get order id from order name
+		return t.queryOrderByName(stub, args)
 	}
 	fmt.Println("invoke could not find func: " + function)
 	//error
@@ -416,9 +425,9 @@ func (t *s_supplychain) createUser(APIstub shim.ChaincodeStubInterface, args []s
 
 func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	//To check number of arguments are 7
-	if len(args) != 7 {
-		return shim.Error("Incorrect number of arguments, expected 7 arguments")
+	//To check number of arguments are 9
+	if len(args) != 9 {
+		return shim.Error("Incorrect number of arguments, expected 9 arguments")
 	}
 	
 	if len(args[0]) == 0 {
@@ -432,30 +441,38 @@ func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args
 	if len(args[2]) == 0 {
 		return shim.Error("Status_ID must be provided")
 	}
+
+	if len(args[3]) == 0 {
+		return shim.Error("Primary_Order_ID must be provided")
+	}
 	
-	//if len(args[3]) == 0 {
+	//if len(args[4]) == 0 {
 	//	return shim.Error("Estimated_Ship_Cost must be provided")
 	//}
 	
-	//if len(args[4]) == 0 {
+	//if len(args[5]) == 0 {
 	//	return shim.Error("Party_ID_To must be non-empty")
 	//}
 	
-	//if len(args[5]) == 0 {
+	//if len(args[6]) == 0 {
 	//	return shim.Error("Party_ID_From must be non-empty")
 	//}
 	
-	if len(args[6]) == 0 {
+	if len(args[7]) == 0 {
 		return shim.Error("Last_Updated_Stamp must be non-empty")
+	}
+
+	if len(args[8]) == 0 {
+		return shim.Error("Created_Stamp must be non-empty")
 	}
 	
 	var i1 float64
 	
 	//Estimated_Ship_Cost conversion - Error handling
-	if len(args[3]) != 0 {
-		i1Temp, errShipCost := strconv.ParseFloat(args[3], 64)
+	if len(args[4]) != 0 {
+		i1Temp, errShipCost := strconv.ParseFloat(args[4], 64)
 		if errShipCost != nil {
-			return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errShipCost))
+			return shim.Error(fmt.Sprintf("Failed to Convert Estimated_Ship_Cost: %s", errShipCost))
 		}
 		i1 = i1Temp
 	}
@@ -465,7 +482,7 @@ func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args
 	// Convert shipmentCounter to a string with leading zeros.
         shipmentCounterStr := fmt.Sprintf("%03d", shipmentCounter)  // Use "%03d" if you expect up to 999 shipments.
 	
-	var comAsset = Shipment{Shipment_ID: "Shipment" + shipmentCounterStr, Shipment_Name: args[0], Shipment_Type_ID: args[1], Status_ID: args[2], Estimated_Ship_Cost: i1, Party_ID_To: args[4], Party_ID_From: args[5], Last_Updated_Stamp: args[6] }
+	var comAsset = Shipment{Shipment_ID: "Shipment" + shipmentCounterStr, Shipment_Name: args[0], Shipment_Type_ID: args[1], Status_ID: args[2], Primary_Order_ID: args[3], Estimated_Ship_Cost: i1, Party_ID_To: args[5], Party_ID_From: args[6], Last_Updated_Stamp: args[7], Created_Stamp: args[8] }
 
 	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
 
@@ -483,6 +500,82 @@ func (t *s_supplychain) createShipment(APIstub shim.ChaincodeStubInterface, args
 	incrementCounter(APIstub, "ShipmentCounterNO")
 
 	fmt.Println("Success in creating Shipment Asset %v", comAsset)
+	return shim.Success(comAssetAsBytes)
+}
+
+func (t *s_supplychain) createOrder(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	//To check number of arguments are 8
+	if len(args) != 8 {
+		return shim.Error("Incorrect number of arguments, expected 8 arguments")
+	}
+	
+	if len(args[0]) == 0 {
+		return shim.Error("Order_Name_ID must be provided to create an order")
+	}
+	
+	if len(args[1]) == 0 {
+		return shim.Error("Order_Type_ID must be provided to create an order")
+	}
+
+	//if len(args[2]) == 0 {
+	//	return shim.Error("Order_Name must be provided")
+	//}
+	
+	if len(args[3]) == 0 {
+		return shim.Error("Order_Date must be provided")
+	}
+	
+	if len(args[4]) == 0 {
+		return shim.Error("Order_Status_ID must be non-empty")
+	}
+	
+	if len(args[5]) == 0 {
+		return shim.Error("Grand_Total must be non-empty")
+	}
+	
+	if len(args[6]) == 0 {
+		return shim.Error("Last_Updated_Stamp must be non-empty")
+	}
+
+	if len(args[7]) == 0 {
+		return shim.Error("Created_Stamp must be non-empty")
+	}
+	
+	var i1 float64
+	
+	//Grand_Total conversion - Error handling
+	if len(args[5]) != 0 {
+		i1Temp, errShipCost := strconv.ParseFloat(args[5], 64)
+		if errShipCost != nil {
+			return shim.Error(fmt.Sprintf("Failed to Convert Grand_Total: %s", errShipCost))
+		}
+		i1 = i1Temp
+	}
+	orderCounter := getCounter(APIstub, "OrderCounterNO")
+	orderCounter++
+	
+	// Convert orderCounter to a string with leading zeros.
+	orderCounterStr := fmt.Sprintf("%03d", orderCounter)  // Use "%03d" if you expect up to 999 orders.
+	
+	var comAsset = Order{Order_ID: "Order" + orderCounterStr, Order_Name_ID: args[0], Order_Type_ID: args[1], Order_Name: args[2], Grand_Total: i1, Order_Date: args[3], Order_Status_ID: args[4], Last_Updated_Stamp: args[6], Created_Stamp: args[7] }
+
+	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
+
+	if errMarshal != nil {
+		return shim.Error(fmt.Sprintf("Marshal Error in Order: %s", errMarshal))
+	}
+
+	errPut := APIstub.PutState(comAsset.Order_ID, comAssetAsBytes)
+
+	if errPut != nil {
+		return shim.Error(fmt.Sprintf("Failed to create Order Asset: %s", comAsset.Order_ID))
+	}
+
+	//To Increment the Order Counter
+	incrementCounter(APIstub, "OrderCounterNO")
+
+	fmt.Println("Success in creating Order Asset %v", comAsset)
 	return shim.Success(comAssetAsBytes)
 }
 
@@ -683,6 +776,97 @@ func (t *s_supplychain) createShipmentItem(APIstub shim.ChaincodeStubInterface, 
 	incrementCounter(APIstub, "ShipmentItemCounterNO")
 
 	fmt.Println("Success in creating Shipment Item Asset %v", comAsset)
+	return shim.Success(comAssetAsBytes)
+}
+
+func (t *s_supplychain) createOrderItem(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	//To check number of arguments are 10
+	if len(args) != 10 {
+		return shim.Error("Incorrect number of arguments, expected 10 arguments")
+	}
+	
+	if len(args[0]) == 0 {
+		return shim.Error("Order_Name_ID must be provided")
+	}
+	
+	if len(args[1]) == 0 {
+		return shim.Error("Order_Item_Type_ID must be provided")
+	}
+
+	if len(args[2]) == 0 {
+		return shim.Error("Product_Name_ID must be provided")
+	}
+	
+	if len(args[3]) == 0 {
+		return shim.Error("Quantity must be provided")
+	}
+	
+	if len(args[4]) == 0 {
+		return shim.Error("Unit_Price must be non-empty")
+	}
+	
+	if len(args[5]) == 0 {
+		return shim.Error("Item_Description must be non-empty")
+	}
+
+	if len(args[6]) == 0 {
+		return shim.Error("Status_ID must be non-empty")
+	}
+
+	if len(args[7]) == 0 {
+		return shim.Error("Last_Updated_Stamp must be non-empty")
+	}
+
+	if len(args[8]) == 0 {
+		return shim.Error("Created_Stamp must be non-empty")
+	}
+
+	//if len(args[9]) == 0 {
+	//	return shim.Error("Inventory_Item_Num_ID must be non-empty")
+	//}
+	
+	//Quantity conversion - Error handling
+	i1, errQuantity := strconv.ParseFloat(args[3], 64)
+	if errQuantity != nil {
+		return shim.Error(fmt.Sprintf("Failed to Convert Quantity: %s", errQuantity))
+	}
+
+	i2, errUnitPrice := strconv.ParseFloat(args[4], 64)
+	if errUnitPrice != nil {
+		return shim.Error(fmt.Sprintf("Failed to Convert Unit_Price: %s", errUnitPrice))
+	}
+
+	orderItemCounter := getCounter(APIstub, "OrderItemCounterNO")
+	orderItemCounter++
+	
+	// Convert orderItemCounter to a string with leading zeros.
+	orderItemCounterStr := fmt.Sprintf("%03d", orderItemCounter)  // Use "%03d" if you expect up to 999 order items.
+
+	//To get the transaction TimeStamp from the Channel Header
+	//txTimeAsPtr, errTx := t.GetTxTimestampChannel(APIstub)
+	//if errTx != nil {
+	//	return shim.Error("Returning error in transaction timestamp")
+	//}
+
+	var comAsset = OrderItem{Order_Item_ID: "OrderItem" + orderItemCounterStr, Order_Name_ID: args[0], Order_Item_Type_ID: args[1], Quantity: i1, Unit_Price: i2, Item_Description: args[5], Status_ID: args[6], Product_Name_ID: args[2], Last_Updated_Stamp: args[7], Created_Stamp: args[8], Inventory_Item_Num_ID: args[9]}
+
+	comAssetAsBytes, errMarshal := json.Marshal(comAsset)
+
+	if errMarshal != nil {
+		return shim.Error(fmt.Sprintf("Marshal Error in Order Item: %s", errMarshal))
+	}
+
+	errPut := APIstub.PutState(comAsset.Order_Item_ID, comAssetAsBytes)
+
+	if errPut != nil {
+		return shim.Error(fmt.Sprintf("Failed to create Order Item Asset: %s", comAsset.Order_Item_ID))
+	}
+
+	//To Increment the Order Item Counter
+	incrementCounter(APIstub, "OrderItemCounterNO")
+
+	fmt.Println("Success in creating Order Item Asset %v", comAsset)
 	return shim.Success(comAssetAsBytes)
 }
 
@@ -1610,7 +1794,7 @@ func (t *s_supplychain) getProductHistory(APIstub shim.ChaincodeStubInterface, a
 
 func (t *s_supplychain) queryShipmentByName(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
     if len(args) != 1 {
-        return shim.Error("Incorrect number of arguments. Expecting 1")
+        return shim.Error("Incorrect number of arguments. Expected 1.")
     }
 
     shipmentName := args[0]
@@ -1643,5 +1827,43 @@ func (t *s_supplychain) queryShipmentByName(APIstub shim.ChaincodeStubInterface,
     }
 
     jsonResp := "{\"Error\":\"Shipment not found\"}"
+    return shim.Error(jsonResp)
+}
+
+func (t *s_supplychain) queryOrderByName(APIstub shim.ChaincodeStubInterface, args []string) pb.Response {
+    if len(args) != 1 {
+        return shim.Error("Incorrect number of arguments. Expected 1.")
+    }
+
+    orderName := args[0]
+
+    startKey := "Order000"
+    endKey := "Order{"
+
+    resultsIterator, err := APIstub.GetStateByRange(startKey, endKey)
+    if err != nil {
+        return shim.Error(err.Error())
+    }
+    defer resultsIterator.Close()
+
+    for resultsIterator.HasNext() {
+        queryResponse, err := resultsIterator.Next()
+        if err != nil {
+            return shim.Error(err.Error())
+        }
+        
+        order := Order{}
+	err = json.Unmarshal(queryResponse.Value, &order)
+	if err != nil {
+	    return shim.Error("Failed to unmarshal order: " + err.Error())
+	}
+	fmt.Printf("Unmarshalled Order: %v\n", order)
+
+	if order.Order_Name_ID == orderName {
+	    return shim.Success([]byte(`{"orderId": "` + queryResponse.Key + `"}`))
+	}
+    }
+
+    jsonResp := "{\"Error\":\"Order not found\"}"
     return shim.Error(jsonResp)
 }

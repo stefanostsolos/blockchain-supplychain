@@ -17,11 +17,11 @@ export class Navbar extends Component {
                 Create User
               </Link>
             </li>
-            <li className="navbar-item">
+            {/* <li className="navbar-item">
               <Link to="/createProduct" className="nav-link">
                 Create Product
               </Link>
-            </li>
+            </li> */}
             <li className="navbar-item">
               <Link to="/importProducts" className="nav-link">
                 Import Products
@@ -30,6 +30,16 @@ export class Navbar extends Component {
             <li className="navbar-item">
               <Link to="/importInventoryItems" className="nav-link">
                 Import Inventory Items
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/importOrders" className="nav-link">
+                Import Orders
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/importOrderItems" className="nav-link">
+                Import Order Items
               </Link>
             </li>
             <li className="navbar-item">
@@ -55,6 +65,11 @@ export class Navbar extends Component {
             <li className="navbar-item">
               <Link to="/inventoryitems" className="nav-link">
                 Inventory Items
+              </Link>
+            </li>
+            <li className="navbar-item">
+              <Link to="/orders" className="nav-link">
+                Orders
               </Link>
             </li>
             <li className="navbar-item">
