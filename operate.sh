@@ -9,12 +9,11 @@ export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${
 export FABRIC_CFG_PATH=${PWD}/artifacts
 export VERBOSE=false
 
-# Print the usage message
 function printHelp() {
     echo "Usage: "
     echo "  operate.sh <mode> [-y]"
-    echo "    <mode> - One of 'up', 'down', 'restart', 'generate'"
-    echo "      - 'up'        - Bring up the network with docker-compose up"
+    echo "    <mode> - Select 'up', 'down', 'restart' or 'generate'"
+    echo "      - 'up'        - Start the network with docker-compose up"
     echo "      - 'down'      - Clear the network with docker-compose down"
     echo "      - 'restart'   - Restart the network"
     echo "      - 'generate'  - Generate required certificates and genesis block"
@@ -27,14 +26,14 @@ function askProceed() {
     read -p "Continue? [Y/n] " ans
     case $ans in
     y | Y | "")
-        echo "proceeding ..."
+        echo "Proceeding ..."
         ;;
     n | N)
-        echo "exiting..."
+        echo "Exiting..."
         exit 1
         ;;
     *)
-        echo "invalid response"
+        echo "Invalid Response"
         askProceed
         ;;
     esac
@@ -62,7 +61,7 @@ function clearContainers() {
 #     fi
 # }
 
-# Do some basic sanity checking to make sure that the appropriate versions of fabric
+# Do some basic sanity checking to make sure that the appropriate versions of Hyperledger Fabric files are available
 # function checkPrereqs() {
 #     BLACKLISTED_VERSIONS="^1\.0\. ^1\.1\.0-preview ^1\.1\.0-alpha"
 #     LOCAL_VERSION=$(configtxlator version | sed -ne 's/ Version: //p')
@@ -93,7 +92,7 @@ function clearContainers() {
 #     done
 # }
 
-# Generate the needed certificates, the genesis block and start the network.
+# Generate the needed certificates, the genesis block and start the network
 function networkUp() {
     echo $PWD
     if [ ! -x "scripts/script.sh" -o ! -x "scripts/utils.sh" ]; then
@@ -117,7 +116,6 @@ function networkUp() {
         exit 1
     fi
 
-    # now run the end to end script
     docker exec cli scripts/script.sh
     if [ $? -ne 0 ]; then
         echo "ERROR !!!! Test failed"
@@ -125,7 +123,7 @@ function networkUp() {
     fi
 }
 
-# Tear down running network
+# Tear down the running network
 # function networkDown() {
 #     export MANUFACTURER_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/manufacturer.example.com/ca && ls *_sk)
 #     export MIDDLEMEN_CA_PRIVATE_KEY=$(cd ./artifacts/network/crypto-config/peerOrganizations/middlemen.example.com/ca && ls *_sk)
@@ -145,7 +143,7 @@ function networkUp() {
 function generateCerts() {
     which cryptogen
     if [ $? -ne 0 ]; then
-        echo "cryptogen tool not found. exiting"
+        echo "cryptogen tool not found. Exiting..."
         exit 1
     fi
     echo
@@ -170,7 +168,7 @@ function generateCerts() {
 function generateChannelArtifacts() {
     which configtxgen
     if [ $? -ne 0 ]; then
-        echo "configtxgen tool not found. exiting"
+        echo "configtxgen tool not found. Exiting..."
         exit 1
     fi
 
@@ -183,7 +181,7 @@ function generateChannelArtifacts() {
     configtxgen -profile TraceOrdererGenesis -outputBlock ./artifacts/network/genesis.block
     else
         set +x
-        echo "unrecognized CONSESUS_TYPE='$CONSENSUS_TYPE'. exiting"
+        echo "unrecognized CONSESUS_TYPE='$CONSENSUS_TYPE'. Exiting..."
         exit 1
     fi
     res=$?
@@ -274,9 +272,9 @@ function generateChannelArtifacts() {
 
 # Obtain the OS and Architecture string that will be used to select the correct
 OS_ARCH=$(echo "$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
-SYS_CHANNEL="supplychain_hlfn-sys-channel"
+SYS_CHANNEL="supplychain-sys-channel"
 CHANNEL_NAME="supplychainchannel"
-CC_NAME="dummycc6"
+CC_NAME="supplycc"
 COMPOSE_FILE=./artifacts/docker-compose.yaml
 IMAGETAG="1.4.12"
 CONSENSUS_TYPE="solo"

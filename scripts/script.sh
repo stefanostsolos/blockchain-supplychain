@@ -12,7 +12,7 @@ echo "\___ \    | |     / _ \   | |_) |   | |  "
 echo " ___) |   | |    / ___ \  |  _ <    | |  "
 echo "|____/    |_|   /_/   \_\ |_| \_\   |_|  "
 echo
-echo "supplychain_hlfn end-to-end test"
+echo "Welcome to SupplyChain Blockchain"
 echo
 CHANNEL_NAME="supplychainchannel"
 LANGUAGE="go"
@@ -20,7 +20,7 @@ DELAY=5
 COUNTER=1
 MAX_RETRY=5
 
-CC_NAME="dummycc6"
+CC_NAME="supplycc"
 CC_SRC_PATH="github.com/chaincode"
 echo "Channel name : "$CHANNEL_NAME
 
@@ -43,7 +43,7 @@ createChannel() {
     fi
     cat log.txt
     verifyResult $res "Channel creation failed"
-    echo "===================== Channel '$CHANNEL_NAME' created ===================== "
+    echo "===================== Channel '$CHANNEL_NAME' was created ===================== "
     echo
 }
 
@@ -63,7 +63,7 @@ echo "Creating channel..."
 createChannel
 
 ## Join all the peers to the channel
-echo "Having all peers join the channel..."
+echo "Making peers join the channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
@@ -101,7 +101,7 @@ echo "Sending invoke transaction on peer0.manufacturer"
 chaincodeInvoke "manufacturer" 0 2
 
 echo
-echo "========= All GOOD, execution completed =========== "
+echo "========= All good, execution was successfully completed =========== "
 echo
 
 echo

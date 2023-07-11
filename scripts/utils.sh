@@ -26,7 +26,7 @@ COLLECTIONS_CONFIG=/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-ar
 verifyResult() {
     if [ $1 -ne 0 ]; then
         echo "!!!!!!!!!!!!!!! "$2" !!!!!!!!!!!!!!!!"
-        echo "========= ERROR !!! FAILED to execute End-2-End Scenario ==========="
+        echo "========= ERROR ! Failed to start SupplyChain Blockchain ==========="
         echo
         exit 1
     fi
@@ -114,7 +114,7 @@ updateAnchorPeers() {
     echo
 }
 
-## Sometimes Join takes time hence RETRY at least 5 times
+## Sometimes Join takes time, retry at least 5 times
 joinChannelWithRetry() {
     PEER=$1
     ORG=$2
