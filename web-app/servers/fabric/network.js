@@ -55,7 +55,6 @@ function getConnectionMaterial(isProducer, isManufacturer, isDistributor, isReta
     }
 
     if (isConsumer) {
-        console.log(process.env.CONSUMER_WALLET);
         connectionMaterial.walletPath = path.join(process.cwd(), process.env.CONSUMER_WALLET);
         connectionMaterial.connection = consumerCcp;
         connectionMaterial.orgMSPID = process.env.CONSUMER_MSP;
@@ -85,7 +84,7 @@ exports.connect = async (isProducer, isManufacturer, isDistributor, isRetailer, 
         });
         const network = await gateway.getNetwork(process.env.CHANNEL);
         const contract = await network.getContract(process.env.CONTRACT);
-        console.log('Connected to fabric network successfully.');
+        console.log('Connected to Hyperledger Fabric network successfully.');
 
         const networkObj = { gateway, network, contract };
 
