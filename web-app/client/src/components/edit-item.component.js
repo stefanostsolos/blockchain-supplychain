@@ -115,24 +115,25 @@ class EditInventoryItem extends Component {
         console.log('Logged user id:', sessionStorage.getItem('userId'));
 
         const inventoryitem = {
-            product_id: this.props.id,
+            inventory_item_id: this.props.id,
             loggedUserId: sessionStorage.getItem('userId'),
             name: this.state.product_name,
-            internalname: this.state.internal_name,
-            description: this.state.description,
+            ownerparty: this.state.owner_party,
+            facilityid: this.state.facility_id,
             quantity: this.state.quantity,
+            unitcost: this.state.unitcost,
         };
-        console.log(inventoryitem.product_id);
+        console.log(inventoryitem.inventory_item_id);
         console.log(inventoryitem);
 
         const headers = {
             "x-access-token": sessionStorage.getItem("jwtToken"),
         };
 
-        axios.put("http://localhost:8090/product/" + this.props.id + "/" + this.state.role, product, { headers: headers })
+        axios.put("http://localhost:8090/product/inventoryitem/" + this.props.id + "/" + this.state.role, inventoryitem, { headers: headers })
             .then((res) => {
                 console.log(res.data);
-                toast.success(`Updated inventoryitem successfully.`, {
+                toast.success(`Updated inventory item successfully.`, {
                     position: toast.POSITION.TOP_CENTER,
                     onClose: () => {
                         window.location = "/inventoryitems";
@@ -141,19 +142,25 @@ class EditInventoryItem extends Component {
             })
             .catch((error) => {
                 console.error(error);
-                toast.error("An error occurred while updating the inventoryitem.");
+                toast.error("An error occurred while updating the inventory item.");
             });
     }
 
-    onChangeInternalName(e) {
+    onChangeProductName(e) {
         this.setState({
-            internal_name: e.target.value,
+            product_name: e.target.value,
         });
     }
 
-    onChangeDescription(e) {
+    onChangeOwnerParty(e) {
         this.setState({
-            description: e.target.value,
+            owner_party: e.target.value,
+        });
+    }
+
+    onChangeFacilityID(e) {
+        this.setState({
+            facility_id: e.target.value,
         });
     }
 
@@ -163,11 +170,19 @@ class EditInventoryItem extends Component {
         });
     }
 
+    onChangeUnitCost(e) {
+        this.setState({
+            unitcost: e.target.value,
+        });
+    }
+
     compareHistoryItems(previousItem, currentItem) {
         return {
-            InternalName: previousItem.InternalName !== currentItem.InternalName,
-            Description: previousItem.Description !== currentItem.Description,
+            ProductName: previousItem.ProductName !== currentItem.ProductName,
+            OwnerPartyID: previousItem.OwnerPartyID !== currentItem.OwnerPartyID,
+            FacilityID: previousItem.FacilityID !== currentItem.FacilityID,
             Quantity: previousItem.Quantity !== currentItem.Quantity,
+            UnitCost: previousItem.UnitCost !== currentItem.UnitCost,
         };
     }
 
