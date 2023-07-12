@@ -11,7 +11,7 @@ Our data comes from the Apache OFBiz test dataset. Using an SQL explorer, we can
 ![Architecture of the blockchain system](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/architecture.png?raw=true)
 The stakeholders that are available on the system are five: Producer, Manufacturer (Owner of the business), Distributor, Retailer and Consumer. For our use case we focus on the order process of some items from the Manufacturer-Owner.
 - Five Orgs (Producer / Manufacturer / Distributor / Retailer / Consumer)
-- 2 Peers Producer / 1 Peer Manufacturer / 1 Peer Distributor / 2 Peers Retailer / 2 Peers Consumer
+- 2 Peers of type Producer, 1 Peer of type Manufacturer, 1 Peer of type Distributor, 2 Peers of type Retailer, 2 Peers of type Consumer
 - One Orderer
 - One Channel
 - Five Certificate Authorities
@@ -56,12 +56,16 @@ Pull the Docker containers and binaries:
 
 ### Network Setup and Run
 Navigate to the main directory (~/src/github.com) and execute: 
+
 ```./stopNetwork.sh && ./teardown.sh``` to clear the Docker containers and network
+
 ```export CHANNEL_NAME=supplychainchannel ; export $(xargs <.env) ; export DOCKER_CLIENT_TIMEOUT=120 ; export COMPOSE_HTTP_TIMEOUT=120 ; source ~/.bashrc ; ./operate.sh up``` to start the blockchain network
 
 ### Frontend Setup
 Navigate to the client directory (~/src/github.com/web-app/client) and execute:
+
 ```npm install``` to install the required packages
+
 ```npm start``` to start the client
 
 ### Server Setup
@@ -69,4 +73,5 @@ Navigate to the server directory (~/src/github.com/web-app/servers) and execute:
 ```node app.js```
 
 Then you can navigate to http://localhost:3000 to login as an admin with Username: admin and Password: adminpw
+
 You can continue with creating a user that will be able to use the application's functions.
