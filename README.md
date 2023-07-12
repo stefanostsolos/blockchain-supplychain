@@ -54,7 +54,19 @@ Get the install script:
 Pull the Docker containers and binaries:
 ```./install-fabric.sh docker --fabric-version 1.4.12 binary```
 
+### Network Setup and Run
+Navigate to the main directory (~/src/github.com) and execute: 
+```./stopNetwork.sh && ./teardown.sh``` to clear the Docker containers and network
+```export CHANNEL_NAME=supplychainchannel ; export $(xargs <.env) ; export DOCKER_CLIENT_TIMEOUT=120 ; export COMPOSE_HTTP_TIMEOUT=120 ; source ~/.bashrc ; ./operate.sh up``` to start the blockchain network
 
-### Application Setup
-- ./stopNetwork.sh && ./teardown.sh
-- export CHANNEL_NAME=supplychainchannel ; export $(xargs <.env) ; export DOCKER_CLIENT_TIMEOUT=120 ; export COMPOSE_HTTP_TIMEOUT=120 ; source ~/.bashrc ; ./operate.sh up
+### Frontend Setup
+Navigate to the client directory (~/src/github.com/web-app/client) and execute:
+```npm install``` to install the required packages
+```npm start``` to start the client
+
+### Server Setup
+Navigate to the server directory (~/src/github.com/web-app/servers) and execute:
+```node app.js```
+
+Then you can navigate to http://localhost:3000 to login as an admin with Username: admin and Password: adminpw
+You can continue with creating a user that will be able to use the application's functions.
