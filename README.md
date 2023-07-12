@@ -51,12 +51,15 @@ Add your user to the Docker group:
 ```mkdir -p $HOME/hyperledger-fabric```
 
 Get the install script:
+
 ```curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh && chmod +x install-fabric.sh```
 
 Pull the Docker containers and binaries:
+
 ```./install-fabric.sh docker --fabric-version 1.4.12 binary```
 
-> Node.js and NPM installation
+> Node.js and NPM
+
 ```sudo apt install nodejs```
 
 ```sudo apt install npm```
