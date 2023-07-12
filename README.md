@@ -1,17 +1,15 @@
 # Blockchain Supplychain, NTUA ECE Diploma
 This project showcases an application of blockchain technology, built on the Hyperledger Fabric platform, aimed at redefining how we view supply chain management in the ERP (Enterprise Resource Planning) landscape. The solution offers a decentralized, transparent and efficient system to manage various stages of a supply chain process. 
-## Stakeholders
-1) Producer
-2) Manufacturer (Owner)
-3) Distributor
-4) Retailer
-5) Consumer
 
 ## Data
 Our data comes from the Apache OFBiz test dataset. Using an SQL explorer, we can extract the selected data we need. Specifically, we extract the tables PRODUCT, INVENTORY_ITEM, ORDER_HEADER, ORDER_ITEM, SHIPMENT, SHIPMENT_ITEM. The JSON files of the above tables are included here to facilitate user testing of the application. In case we want to explore the database of Apache OFBiz, below is the connection profile that allows us to connect from RazorSQL to the database of Apache OFBiz, through a JDBC driver. Accordingly, we can connect another SQL explorer to our ERP system.
 
-## Architecture and Network Details
+## System Design
+
+
+## Hyperledger Fabric Network Details
 ![Architecture of the blockchain system](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/architecture.png?raw=true)
+The stakeholders available on the system are 5: Producer, Manufacturer (Owner of the business), Distributor, Retailer and Consumer. For our use case we focus on the order process of some items from the Manufacturer-Owner  
 - Five Orgs (Producer / Manufacturer / Distributor / Retailer / Consumer)
 - 2 Peers Producer / 1 Peer Manufacturer / 1 Peer Distributor / 2 Peers Retailer / 2 Peers Consumer
 - One Orderer
@@ -46,7 +44,7 @@ If you want the Docker daemon to start when the system starts, use the following
 Add your user to the Docker group:
 ```sudo usermod -a -G docker <username>```
 
-> Fabric
+> Hyperledger Fabric
 
 ```mkdir -p $HOME/hyperledger-fabric```
 
@@ -58,6 +56,5 @@ Pull the Docker containers and binaries:
 
 
 ### Application Setup
-- ./stopNetwork.sh
-- ./teardown.sh
-- ./operate.sh up
+- ./stopNetwork.sh && ./teardown.sh
+- export CHANNEL_NAME=supplychainchannel ; export $(xargs <.env) ; export DOCKER_CLIENT_TIMEOUT=120 ; export COMPOSE_HTTP_TIMEOUT=120 ; source ~/.bashrc ; ./operate.sh up
