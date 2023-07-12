@@ -9,7 +9,7 @@ export class Navbar extends Component {
     return (
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <div className="collapse navbar-collapse justify-content-center" style={{ display: 'flex', justifyContent: 'center' }}>
-          <div className="nav-link" style={{ color: 'rgba(255,255,255,.5)', paddingLeft: '15px', paddingRight: '15px'}}>Welcome {userid} - ({role})</div>
+          <div className="nav-link" style={{ color: 'rgba(255,255,255,.5)', paddingLeft: '15px', paddingRight: '15px'}}>Welcome {userid}</div>
           <div className="navbar-brand">SupplyChain</div>
           <ul className="navbar-nav ml-auto">
             <li className="navbar-item">

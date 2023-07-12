@@ -17,6 +17,8 @@ This project showcases an application of blockchain technology, built on the Hyp
 
 ## Installation
 
+Navigate to /src/github.com that we're using as the working directory.
+
 ### Prerequisities
 > cURL
 
