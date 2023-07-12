@@ -9,7 +9,7 @@ Our data comes from the Apache OFBiz test dataset. Using an SQL explorer, we can
 
 ## Hyperledger Fabric Network Details
 ![Architecture of the blockchain system](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/architecture.png?raw=true)
-The stakeholders available on the system are 5: Producer, Manufacturer (Owner of the business), Distributor, Retailer and Consumer. For our use case we focus on the order process of some items from the Manufacturer-Owner  
+The stakeholders available on the system are 5: Producer, Manufacturer (Owner of the business), Distributor, Retailer and Consumer. For our use case we focus on the order process of some items from the Manufacturer-Owner.
 - Five Orgs (Producer / Manufacturer / Distributor / Retailer / Consumer)
 - 2 Peers Producer / 1 Peer Manufacturer / 1 Peer Distributor / 2 Peers Retailer / 2 Peers Consumer
 - One Orderer
