@@ -27,8 +27,7 @@ Install the latest version of cURL if it is not already installed:
 > Go
 
 Install Golang 1.14.15:
-wget https://go.dev/dl/go1.14.15.linux-amd64.tar.gz
-...
+```wget https://go.dev/dl/go1.14.15.linux-amd64.tar.gz```
 
 > Docker
 
