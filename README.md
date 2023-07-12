@@ -18,7 +18,7 @@ The stakeholders that are available on the system are five: Producer, Manufactur
 
 ## Installation
 
-Navigate to /src/github.com that we're using as the working directory.
+Navigate to /src that we're using as the working directory.
 
 ### Prerequisities
 As an operating system, we're using Ubuntu 23.04.
