@@ -19,6 +19,7 @@ The stakeholders that are available on the system are five: Producer, Manufactur
 ## Installation
 
 ### Prerequisities
+As an operating system, we're using Ubuntu 23.04.
 > cURL
 
 Install the latest version of cURL if it is not already installed:
@@ -28,6 +29,8 @@ Install the latest version of cURL if it is not already installed:
 
 Install Golang 1.14.15:
 ```wget https://go.dev/dl/go1.14.15.linux-amd64.tar.gz```
+
+Then follow the instructions at https://go.dev/doc/install for Golang installation
 
 > Docker
 
@@ -52,6 +55,11 @@ Get the install script:
 
 Pull the Docker containers and binaries:
 ```./install-fabric.sh docker --fabric-version 1.4.12 binary```
+
+> Node.js and NPM installation
+```sudo apt install nodejs```
+
+```sudo apt install npm```
 
 ### Network Setup and Run
 Navigate to the main directory (~/src/github.com) and execute: 
