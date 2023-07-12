@@ -5,7 +5,7 @@ This project showcases an application of blockchain technology, built on the Hyp
 Our data comes from the Apache OFBiz test dataset. Using an SQL explorer, we can extract the selected data we need. Specifically, we extract the tables PRODUCT, INVENTORY_ITEM, ORDER_HEADER, ORDER_ITEM, SHIPMENT, SHIPMENT_ITEM. The JSON files of the above tables are included here to facilitate user testing of the application. In case we want to explore the database of Apache OFBiz, below is the connection profile that allows us to connect from RazorSQL to the database of Apache OFBiz, through a JDBC driver. Accordingly, we can connect another SQL explorer to our ERP system.
 
 ## System Design
-
+![System design](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/system.png?raw=true)
 
 ## Hyperledger Fabric Network Details
 ![Architecture of the blockchain system](https://github.com/stefanostsolos/blockchain-supplychain/blob/main/imgs/architecture.png?raw=true)
